@@ -1,7 +1,6 @@
 package ro.go.redhomeserver.tom.models;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -9,7 +8,7 @@ import java.util.Set;
 
 @Entity(name = "Employee")
 @Table(name = "employee")
-public class Employee implements Serializable {
+public class Employee{
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
