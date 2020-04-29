@@ -1,10 +1,89 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+    <title>Registration</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/auth_style.css" rel="stylesheet" type="text/css">
+    <link rel="icon" href="/images/favicon.png" type="image/icon type">
 </head>
 <body>
-it sign up form
+<div id="login">
+    <h3 class="text-center text-white pt-5">Time off Manager</h3>
+    <div class="container">
+        <div id="login-row" class="row justify-content-center align-items-center">
+            <div id="login-column" class="col-md-6">
+                <div id="login-box" class="col-md-12">
+                    <form id="login-form" class="form" action="/checkCredentials" method="post">
+                        <div class="w-100 text-center">
+                            <img src="images/favicon.png" class="w-25 cent pb-2">
+                        </div>
+                        <h3 class="text-center text-info pb-3">Sign UP</h3>
+                        <div class="form-group">
+                            <label for="name" class="text-info">Name:</label><br>
+                            <input type="text" name="name" id="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="text-info">Address:</label><br>
+                            <input type="text" name="address" id="address" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="text-info">Email:</label><br>
+                            <input type="text" name="email" id="email" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tel" class="text-info">Telephone:</label><br>
+                            <input type="tel" name="tel" id="tel" class="form-control"
+                                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="salary" class="text-info">Salary:</label><br>
+                            <input name="salary" type="text"  id="salary" maxlength="50"  /> </td> <td>
+                        </div>
+
+
+                        <form action="/action_page.php">
+                            <label for="empl_date" class="text-info">Employment date:</label><br>
+                            <input type="date" id="empl_date" name="empl_date">
+                        </form>
+
+                        <p><strong>*Note:</strong> This field is not supported in Safari or Internet Explorer 11 (or earlier).*</p>
+
+                        <div class="form-group">
+
+                            <label for="department" class="text-info">Choose your department:</label><br>
+
+                            <select id="department">
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Development">Development</option>
+                            </select>
+
+                        </div><br>
+
+                        <div class="form-group">
+                            <label class="text-info">Sign UP:</label>
+                            <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+                        </div>
+
+
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
 </body>
 </html>
