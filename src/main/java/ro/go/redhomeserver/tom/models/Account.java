@@ -1,13 +1,14 @@
 package ro.go.redhomeserver.tom.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "Account")
 @Table(name = "account")
-public class Account {
+public class Account implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -52,40 +53,80 @@ public class Account {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getSalt() {
         return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public Employee getEmployee() {
         return employee;
     }
 
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
     public Set<IssueReq> getIssueReqs() {
         return issueReqs;
+    }
+
+    public void setIssueReqs(Set<IssueReq> issueReqs) {
+        this.issueReqs = issueReqs;
     }
 
     public Set<HolidayReq> getSentHolidayReqs() {
         return sentHolidayReqs;
     }
 
+    public void setSentHolidayReqs(Set<HolidayReq> sentHolidayReqs) {
+        this.sentHolidayReqs = sentHolidayReqs;
+    }
+
     public Set<HolidayReq> getReceivedHolidayReqs() {
         return receivedHolidayReqs;
+    }
+
+    public void setReceivedHolidayReqs(Set<HolidayReq> receivedHolidayReqs) {
+        this.receivedHolidayReqs = receivedHolidayReqs;
     }
 
     public Set<Account> getMembers() {
         return members;
     }
 
+    public void setMembers(Set<Account> members) {
+        this.members = members;
+    }
+
     public Account getTl() {
         return tl;
+    }
+
+    public void setTl(Account tl) {
+        this.tl = tl;
     }
 
     @Override

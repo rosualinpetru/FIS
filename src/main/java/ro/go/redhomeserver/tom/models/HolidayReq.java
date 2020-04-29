@@ -1,12 +1,13 @@
 package ro.go.redhomeserver.tom.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity(name = "HolidayRequest")
 @Table(name = "holiday_req")
-public class HolidayReq {
+public class HolidayReq implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
@@ -48,32 +49,64 @@ public class HolidayReq {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public RequestType getType() {
         return type;
+    }
+
+    public void setType(RequestType type) {
+        this.type = type;
     }
 
     public RequestStatus getStatus() {
         return status;
     }
 
+    public void setStatus(RequestStatus status) {
+        this.status = status;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getStart() {
         return start;
     }
 
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
     public Date getEnd() {
         return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
     }
 
     public Account getAccount_req() {
         return account_req;
     }
 
+    public void setAccount_req(Account account_req) {
+        this.account_req = account_req;
+    }
+
     public Account getAccount_tl() {
         return account_tl;
+    }
+
+    public void setAccount_tl(Account account_tl) {
+        this.account_tl = account_tl;
     }
 
     @Override
