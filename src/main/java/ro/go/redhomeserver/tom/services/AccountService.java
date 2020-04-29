@@ -69,7 +69,7 @@ public class AccountService {
 
             String appUrl = request.getScheme() + "://" + request.getServerName();
 
-            ResetPasswordEmail data = new ResetPasswordEmail( appUrl + "/reset?token=" + req.getToken(), username);
+            ResetPasswordEmail data = new ResetPasswordEmail( appUrl + ":8080/reset?token=" + req.getToken(), username);
             emailService.prepareAndSend(acc.getEmployee().getEmail(), data);
         }
     }
