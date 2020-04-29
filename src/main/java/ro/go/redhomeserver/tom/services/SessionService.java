@@ -4,18 +4,19 @@ import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.models.Account;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 
 @Service
 public class SessionService {
-    private ArrayList<Account> activeUsers;
-
-    public void addAccountToSession(Account acc, HttpServletRequest request) {
-        activeUsers = (ArrayList<Account>) request.getSession().getAttribute("activeUsers");
-        if(activeUsers == null) {
-            activeUsers = new ArrayList<>();
-            request.getSession().setAttribute("activeUsers", activeUsers);
+    public void addAccountSession(Account acc, HttpServletRequest request) {
+        Account active = (Account) request.getSession().getAttribute("active");
+        if(active == null) {
+            active = acc;
+            request.getSession().setAttribute("active", active);
         }
-        activeUsers.add(acc);
+    }
+
+    public boolean amILoggedIn(HttpServletRequest request) {
+        Account active = (Account) request.getSession().getAttribute("active");
+        return !(active == null);
     }
 }
