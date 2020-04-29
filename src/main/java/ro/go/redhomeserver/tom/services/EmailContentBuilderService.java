@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import ro.go.redhomeserver.tom.dtos.EmailData;
 
 @Service
 public class EmailContentBuilderService {
@@ -15,9 +16,9 @@ public class EmailContentBuilderService {
         this.templateEngine = templateEngine;
     }
 
-    public String build(String message) {
+    public String build(EmailData data) {
         Context context = new Context();
-        return templateEngine.process("emailTemplate", context);
+        data.setContext(context);
+        return templateEngine.process((String) context.getVariable("templateName"), context);
     }
-
 }

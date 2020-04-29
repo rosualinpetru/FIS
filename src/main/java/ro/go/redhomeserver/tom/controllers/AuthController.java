@@ -3,8 +3,10 @@ package ro.go.redhomeserver.tom.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.go.redhomeserver.tom.exceptions.LogInException;
 import ro.go.redhomeserver.tom.exceptions.PasswordMatchException;
 import ro.go.redhomeserver.tom.exceptions.SystemException;
@@ -24,24 +26,35 @@ public class AuthController {
     private SessionService sessionService;
 
     @PostMapping("/auth")
-    public String checkCredentials(@RequestParam("username") String username, @RequestParam("password") String password, Model model, HttpServletRequest request) {
-        model.addAttribute("user", username);
+    public String authenticate(@RequestParam("username") String username, @RequestParam("password") String password, HttpServletRequest request, RedirectAttributes ra) {
+        ra.addFlashAttribute("user", username);
         if (!username.equals("") && !password.equals("")) {
-            model.addAttribute("error", "");
+            ra.addFlashAttribute("error", "");
             try {
                 Account acc = accountService.checkCredentials(username, password);
                 sessionService.addAccountSession(acc, request);
                 return "redirect:/";
             } catch (UserNotFoundException e) {
-                model.addAttribute("error", "User not found!");
+                ra.addFlashAttribute("error", "User not found!");
             } catch (PasswordMatchException e) {
-                model.addAttribute("error", "Wrong password!");
+                ra.addFlashAttribute("error", "Wrong password!");
             } catch (SystemException | LogInException e) {
-                model.addAttribute("error", "We're having some system issues! Try again later!");
+                ra.addFlashAttribute("error", "We're having some system issues! Try again later!");
             }
         } else {
-            model.addAttribute("error", "Please complete all fields!");
+            ra.addFlashAttribute("error", "Please complete all fields!");
         }
-        return "auth";
+        return "redirect:/auth";
+    }
+
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam("username") String username, HttpServletRequest request, RedirectAttributes ra) {
+        ra.addFlashAttribute("sentEmail", "Check your email address!");
+        try {
+            accountService.sendResetEmail(username, request);
+        } catch (UserNotFoundException e) {
+            ra.addFlashAttribute("sentEmail", "User Not Found!");
+        }
+        return "redirect:/auth";
     }
 }

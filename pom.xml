@@ -72,6 +72,17 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>5.13.0</version>
+        </dependency>
     </dependencies>
 
     <build>
