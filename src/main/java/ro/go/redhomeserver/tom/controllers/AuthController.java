@@ -2,59 +2,55 @@ package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.exceptions.LogInException;
-import ro.go.redhomeserver.tom.exceptions.PasswordMatchException;
-import ro.go.redhomeserver.tom.exceptions.SystemException;
-import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
+import org.springframework.web.servlet.ModelAndView;
+import ro.go.redhomeserver.tom.exceptions.*;
 import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.services.AccountService;
-import ro.go.redhomeserver.tom.services.SessionService;
+import ro.go.redhomeserver.tom.services.AuthService;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 public class AuthController {
 
     @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private SessionService sessionService;
+    private AuthService authService;
 
     @PostMapping("/auth")
-    public String authenticate(@RequestParam("username") String username, @RequestParam("password") String password, HttpServletRequest request, RedirectAttributes ra) {
-        ra.addFlashAttribute("user", username);
-        if (!username.equals("") && !password.equals("")) {
-            ra.addFlashAttribute("error", "");
-            try {
-                Account acc = accountService.checkCredentials(username, password);
-                sessionService.addAccountSession(acc, request);
-                return "redirect:/";
-            } catch (UserNotFoundException e) {
-                ra.addFlashAttribute("error", "User not found!");
-            } catch (PasswordMatchException e) {
-                ra.addFlashAttribute("error", "Wrong password!");
-            } catch (SystemException | LogInException e) {
-                ra.addFlashAttribute("error", "We're having some system issues! Try again later!");
-            }
-        } else {
-            ra.addFlashAttribute("error", "Please complete all fields!");
+    public ModelAndView authenticate(@RequestParam Map<String, String> authData, HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView("auth");
+        mv.addObject("user", authData.get("username"));
+        try {
+            authService.validateData(authData.get("username"), authData.get("password"));
+            Account acc = authService.findAccountByUsername(authData.get("username"));
+            authService.checkCredentials(acc, authData.get("password"));
+            request.getSession().setAttribute("active", acc);
+            return new ModelAndView("redirect:/");
+        } catch (EmptyFiledException e) {
+            mv.addObject("error", "Some fields are empty!");
+        } catch (UserNotFoundException e) {
+            mv.addObject("error", "User not found!");
+        } catch (PasswordMatchException e) {
+            mv.addObject("error", "Wrong password!");
+        } catch (SystemException e) {
+            mv.addObject("error", "We're having some system issues! Try again later!");
         }
-        return "redirect:/auth";
+        return mv;
     }
 
     @PostMapping("/resetPassword")
-    public String resetPassword(@RequestParam("username") String username, HttpServletRequest request, RedirectAttributes ra) {
-        ra.addFlashAttribute("sentEmail", "Check your email address!");
+    public ModelAndView resetPassword(@RequestParam("username") String username, HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView("auth");
+        mv.addObject("sentEmail", "Check your email address!");
         try {
-            accountService.sendResetEmail(username, request);
-        } catch (UserNotFoundException e) {
-            ra.addFlashAttribute("sentEmail", "User Not Found!");
+            Account acc = authService.findAccountByUsername(username);
+            String hostLink = request.getScheme() + "://" + request.getServerName();
+            authService.makeResetRequest(acc, hostLink);
+        } catch (LogInException e) {
+            mv.addObject("sentEmail", "User Not Found!");
         }
-        return "redirect:/auth";
+        return mv;
     }
 }

@@ -22,12 +22,13 @@ public class EmailService {
     }
 
     @Async
-    public void prepareAndSend(String recipient, EmailData data) throws MailException {
+    public void prepareAndSend(EmailData data) throws MailException {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("tomapplication.dia@gmail.com");
-            messageHelper.setTo(recipient);
-            String content = emailContentBuilderService.build(data);
+            messageHelper.setSubject(data.getSubject());
+            messageHelper.setTo(data.getTo().getEmployee().getEmail());
+            String content = emailContentBuilderService.build(data.getContext());
             messageHelper.setText(content, true);
         };
         mailSender.send(messagePreparator);

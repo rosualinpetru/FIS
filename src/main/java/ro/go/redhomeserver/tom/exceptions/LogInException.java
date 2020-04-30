@@ -1,4 +1,4 @@
 package ro.go.redhomeserver.tom.exceptions;
 
-public class LogInException extends Exception {
+public class LogInException extends SystemException {
 }

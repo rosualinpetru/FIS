@@ -16,9 +16,7 @@ public class EmailContentBuilderService {
         this.templateEngine = templateEngine;
     }
 
-    public String build(EmailData data) {
-        Context context = new Context();
-        data.setContext(context);
+    public String build(Context context) {
         return templateEngine.process((String) context.getVariable("templateName"), context);
     }
 }
