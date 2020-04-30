@@ -2,15 +2,12 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.go.redhomeserver.tom.dtos.EmailData;
 import ro.go.redhomeserver.tom.dtos.ResetPasswordEmail;
 import ro.go.redhomeserver.tom.exceptions.*;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.ResetPassReq;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.ResetPassReqRepository;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -62,10 +59,7 @@ public class AuthService {
         calendar.setTime(new Date());
         calendar.add(Calendar.HOUR_OF_DAY, 1);
 
-        ResetPassReq req = new ResetPassReq();
-        req.setAccount_req(acc);
-        req.setExpirationDate(calendar.getTime());
-        req.setToken(UUID.randomUUID().toString());
+        ResetPassReq req = new ResetPassReq(acc, UUID.randomUUID().toString(), calendar.getTime());
         resetPassReqRepository.save(req);
 
         ResetPasswordEmail data = new ResetPasswordEmail(acc, hostLink + "/reset?token=" + req.getToken());

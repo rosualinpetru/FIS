@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -23,4 +22,10 @@ public class IssueReq implements Serializable {
     @ManyToOne()
     @JoinColumn(name = "FK_employee")
     private Account account;
+
+    public IssueReq(String description, Account account) {
+        this.description = description;
+        this.account = account;
+    }
+
 }

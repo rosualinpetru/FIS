@@ -1,6 +1,5 @@
 package ro.go.redhomeserver.tom.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.thymeleaf.context.Context;
 import ro.go.redhomeserver.tom.models.Account;

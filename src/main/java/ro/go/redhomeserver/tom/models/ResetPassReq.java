@@ -22,4 +22,10 @@ public class ResetPassReq {
     private Account account_req;
     private String token;
     private Date expirationDate;
+
+    public ResetPassReq(Account account_req, String token, Date expirationDate) {
+        this.account_req = account_req;
+        this.token = token;
+        this.expirationDate = expirationDate;
+    }
 }
