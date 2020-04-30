@@ -11,7 +11,6 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode
 @Entity(name = "HolidayRequest")
 @Table(name = "holiday_req")

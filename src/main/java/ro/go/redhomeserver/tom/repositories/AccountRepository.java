@@ -7,4 +7,5 @@ import ro.go.redhomeserver.tom.models.Account;
 @Repository
 public interface AccountRepository extends CrudRepository<Account, Integer> {
     Account findByUsername(String username);
+    Account findById(int id);
 }

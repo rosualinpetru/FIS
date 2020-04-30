@@ -40,17 +40,4 @@ public class AuthController {
         return mv;
     }
 
-    @PostMapping("/resetPassword")
-    public ModelAndView resetPassword(@RequestParam("username") String username, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("auth");
-        mv.addObject("sentEmail", "Check your email address!");
-        try {
-            Account acc = authService.findAccountByUsername(username);
-            String hostLink = request.getScheme() + "://" + request.getServerName();
-            authService.makeResetRequest(acc, hostLink);
-        } catch (LogInException e) {
-            mv.addObject("sentEmail", "User Not Found!");
-        }
-        return mv;
-    }
 }

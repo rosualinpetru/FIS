@@ -10,7 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode
 @Entity(name = "Account")
 @Table(name = "account")
@@ -40,7 +39,7 @@ public class Account implements Serializable {
     @OneToMany(mappedBy = "tl", cascade = CascadeType.ALL)
     private Set<Account> members = new HashSet<>();
 
-    @OneToMany(mappedBy = "account_req", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<ResetPassReq> resetPassReqs = new HashSet<>();
 
     @ManyToOne
