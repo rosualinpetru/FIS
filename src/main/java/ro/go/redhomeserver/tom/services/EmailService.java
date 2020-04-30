@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import ro.go.redhomeserver.tom.dtos.EmailData;
 
 @Service
 public class EmailService {
@@ -21,12 +22,13 @@ public class EmailService {
     }
 
     @Async
-    public void prepareAndSend(String recipient, String message) throws MailException {
+    public void prepareAndSend(EmailData data) throws MailException {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("tomapplication.dia@gmail.com");
-            messageHelper.setTo(recipient);
-            String content = emailContentBuilderService.build(message);
+            messageHelper.setSubject(data.getSubject());
+            messageHelper.setTo(data.getTo().getEmployee().getEmail());
+            String content = emailContentBuilderService.build(data.getContext());
             messageHelper.setText(content, true);
         };
         mailSender.send(messagePreparator);
