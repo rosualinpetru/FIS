@@ -1,4 +1,4 @@
-package ro.go.redhomeserver.tom.models;
+package ro.go.redhomeserver.tom.dtos;
 
 public enum RequestStatus {
     sentTL,
