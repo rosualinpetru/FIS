@@ -1,5 +1,4 @@
 package ro.go.redhomeserver.tom.controllers;
-import ro.go.redhomeserver.tom.exceptions.EmailAlreadyExist;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,7 +30,7 @@ public class HRController {
             Employee toAdd = new Employee(name, address, tel, 10, email, empl_date, new Department("HR"));
             employeeRepository.save(toAdd);
             try {
-                Employee result = employeeRepository.findByEmail(email);
+                //Employee result = employeeRepository.findByEmail(email);
                 RA.addFlashAttribute("employeeData", toAdd);
                 return "redirect:/createAccount";
             } catch(Exception e){

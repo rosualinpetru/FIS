@@ -1,34 +1,17 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-
     <title>Registration</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
-    <link rel="icon" href="/images/favicon.png" type="image/icon type">
-    <script>
-        $(document).ready(function () {
-
-            $(".alert:not(:empty)").removeClass("d-none");
-
-            setTimeout(function () {
-                $(".alert").fadeOut();
-            }, 3000);
-
-        });
-    </script>
-
-
+    <link href="/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/form_style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div id="login">
-    <h3 class="text-center text-white pt-5">Time off Manager</h3>
     <div class="container">
         <div id="login-row" class="row justify-content-center align-items-center">
             <div id="login-column" class="col-md-6">
-                <div id="login-box" class="col-md-12">
+                <div id="login-box" class="col-md-12 mt-3 mb-3">
                     <form id="signUp-form" class="form" action="/resolveSignUP" method="post">
                         <div class="w-100 text-center">
                             <img src="images/favicon.png" class="w-25 cent pb-2">
@@ -49,60 +32,58 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="tel" class="text-info">Telephone:</label><br>
-                            <input type="tel" name="tel" id="tel" class="form-control"
-                                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                   required>
+                            <label for="tel" class="text-info">Phone:</label><br>
+                            <input type="tel" name="tel" id="tel" class="form-control" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="salary" class="text-info">Salary:</label><br>
-                            <input name="salary" type="text"  id="salary" maxlength="50"  /> </td> <td>
+                            <input type="text" name="salary" id="salary" class="form-control">
                         </div>
-
 
                         <div class="form-group">
-                            <label for="empl_date" class="text-info">Employment date:</label><br>
-                            <input type="date" id="empl_date" name="empl_date">
+                            <label for="empl_date" class="text-info">Employment date:</label>
+                            <input class="form-control" type="date" id="empl_date">
                         </div>
-
-                        <p><strong>*Note:</strong> This field is not supported in Safari or Internet Explorer 11 (or earlier).*</p>
 
                         <div class="form-group">
 
-                            <label for="department" class="text-info">Choose your department:</label><br>
+                            <label for="department" class="text-info">Choose department:</label><br>
 
-                            <select name="department"  id="department">
+                            <select name="department"  id="department" class="custom-select">
                                 <option value="IT">IT</option>
                                 <option value="HR">HR</option>
                                 <option value="Testing">Testing</option>
                                 <option value="Development">Development</option>
                             </select>
 
-                        </div><br>
-
+                        </div>
 
                         <div th:if='${error != ""}' th:text="${error}" class="alert alert-danger mt-2 d-none"
                              role="alert">
                         </div>
                         <div class="form-group">
-                            <label class="text-info">Sign UP:</label>
                             <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
                         </div>
-
-
-
-
-
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="jquery-3.2.1.min.js"></script>
-<script src="script.js"></script>
+<script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+<link rel="icon" href="/images/favicon.png" type="image/icon type">
+<script>
+    $(document).ready(function () {
+
+        $(".alert:not(:empty)").removeClass("d-none");
+
+        setTimeout(function () {
+            $(".alert").fadeOut();
+        }, 3000);
+
+    });
+</script>
 </body>
 </html>
