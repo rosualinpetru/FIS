@@ -22,14 +22,6 @@ public class AppController {
         return "index";
     }
 
-    @GetMapping("/auth")
-    public String auth(HttpServletRequest request) {
-        if(request.getSession().getAttribute("active")!=null)
-            return "redirect:/";
-
-        return "auth";
-    }
-
     @GetMapping("/addEmployeeRecord")
     public String addEmployeeRecord() {
         return "addEmployeeRecord";
@@ -53,11 +45,6 @@ public class AppController {
     @GetMapping("/reqStatus")
     public String reqStatus() {
         return "reqStatus";
-    }
-
-    @GetMapping("/signUp")
-    public String signUp() {
-        return "signUp";
     }
 
     @GetMapping("/reportIssue")

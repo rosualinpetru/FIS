@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,18 +19,23 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @GetMapping("/auth")
+    public String auth(HttpServletRequest request) {
+        if(request.getSession().getAttribute("active")!=null)
+            return "redirect:/";
+
+        return "auth";
+    }
+
     @PostMapping("/auth")
     public ModelAndView authenticate(@RequestParam Map<String, String> authData, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("auth");
         mv.addObject("user", authData.get("username"));
         try {
-            authService.validateData(authData.get("username"), authData.get("password"));
             Account acc = authService.findAccountByUsername(authData.get("username"));
             authService.checkCredentials(acc, authData.get("password"));
             request.getSession().setAttribute("active", acc);
             return new ModelAndView("redirect:/");
-        } catch (EmptyFiledException e) {
-            mv.addObject("error", "Some fields are empty!");
         } catch (UserNotFoundException e) {
             mv.addObject("error", "User not found!");
         } catch (PasswordMatchException e) {

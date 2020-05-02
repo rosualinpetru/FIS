@@ -83,6 +83,11 @@
             <artifactId>font-awesome</artifactId>
             <version>5.13.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -2,7 +2,6 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.go.redhomeserver.tom.exceptions.EmptyFiledException;
 import ro.go.redhomeserver.tom.exceptions.PasswordMatchException;
 import ro.go.redhomeserver.tom.exceptions.SystemException;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
@@ -25,11 +24,6 @@ public class AuthService {
             throw new UserNotFoundException();
 
         return acc;
-    }
-
-    public void validateData(String username, String password) throws EmptyFiledException {
-        if (username.equals("") || password.equals(""))
-            throw new EmptyFiledException();
     }
 
     public void checkCredentials(Account acc, String password) throws SystemException, PasswordMatchException {
