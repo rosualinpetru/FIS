@@ -1,5 +1,6 @@
 package ro.go.redhomeserver.tom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,6 +29,8 @@ public class Employee implements Serializable {
     @JoinColumn(name = "FK_department")
     private Department department;
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     private Account account;
 

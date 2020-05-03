@@ -1,5 +1,6 @@
 package ro.go.redhomeserver.tom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,18 +28,28 @@ public class Account implements Serializable {
     @JoinColumn(name = "FK_employee")
     private Employee employee;
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<IssueReq> issueReqs= new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "account_req", cascade = CascadeType.ALL)
     private Set<HolidayReq> sentHolidayReqs= new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "account_tl", cascade = CascadeType.ALL)
     private Set<HolidayReq> receivedHolidayReqs= new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "tl", cascade = CascadeType.ALL)
     private Set<Account> members = new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<ResetPassReq> resetPassReqs = new HashSet<>();
 
