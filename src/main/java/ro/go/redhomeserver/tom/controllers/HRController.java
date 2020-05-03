@@ -27,11 +27,13 @@ public class HRController {
 
 
     @GetMapping("/signUp")
-    public ModelAndView signUp(HttpServletRequest request) {
-        if (request.getSession().getAttribute("active") == null)
-            return new ModelAndView("redirect:/auth");
-
+    public ModelAndView signUp(HttpServletRequest request, RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("signUp");
+        if(request.getSession().getAttribute("active")==null) {
+            mv = new ModelAndView("redirect:/auth");
+            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
+        }
+
         mv.addObject("departments", hrService.loadDepartments());
         mv.addObject("error", "");
         return mv;
@@ -45,8 +47,12 @@ public class HRController {
 
 
     @PostMapping("/signUp")
-    public ModelAndView resolveSignUP(@RequestParam Map<String, String> params, RedirectAttributes ra) {
+    public ModelAndView resolveSignUP(@RequestParam Map<String, String> params, HttpServletRequest request, RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("signUp");
+        if(request.getSession().getAttribute("active")==null) {
+            mv = new ModelAndView("redirect:/auth");
+            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
+        }
         try {
             hrService.validateFormData(params);
             int empl_id = hrService.addEmployeeRecord(params);

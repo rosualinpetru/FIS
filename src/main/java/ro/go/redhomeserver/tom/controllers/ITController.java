@@ -21,12 +21,13 @@ public class ITController {
     private ITService itService;
 
     @GetMapping("/createAccount")
-    public String createAccount(@ModelAttribute("emplId") int id_empl, @ModelAttribute("tlId") int id_tl) {
+    public String createAccount(@ModelAttribute("emplId") int id_empl, @ModelAttribute("tlId") int id_tl, RedirectAttributes ra) {
         try {
             itService.generateAccount(id_empl, id_tl);
         }catch (SystemException e){
-            System.out.println(e);//TODO:Resolve exception
+            itService.informItAboutError(id_empl);
         }
+        ra.addFlashAttribute("upperNotification", "The employee record was added!");
         return "redirect:/";
 
     }

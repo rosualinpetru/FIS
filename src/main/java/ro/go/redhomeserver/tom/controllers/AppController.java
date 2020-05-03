@@ -3,6 +3,8 @@ package ro.go.redhomeserver.tom.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.go.redhomeserver.tom.services.AppRefreshService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,17 +16,14 @@ public class AppController {
     private AppRefreshService appRefreshService;
 
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
+    public ModelAndView index(HttpServletRequest request, RedirectAttributes ra) {
+        ModelAndView mv = new ModelAndView("index");
         appRefreshService.refreshData();
-        if(request.getSession().getAttribute("active")==null)
-            return "redirect:/auth";
+        if(request.getSession().getAttribute("active")==null) {
+            mv = new ModelAndView("redirect:/auth");
+        }
 
-        return "index";
-    }
-
-    @GetMapping("/addEmployeeRecord")
-    public String addEmployeeRecord() {
-        return "addEmployeeRecord";
+        return mv;
     }
     
     @GetMapping("/calendar")

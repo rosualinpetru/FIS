@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.dtos.CredentialsEmail;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
+import ro.go.redhomeserver.tom.models.IssueReq;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
+import ro.go.redhomeserver.tom.repositories.IssueReqRepository;
 
 import javax.transaction.SystemException;
 import javax.xml.bind.DatatypeConverter;
@@ -25,8 +27,13 @@ public class ITService {
     private EmailService emailService;
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private IssueReqRepository issueReqRepository;
 
     public void generateAccount(int id_empl, int id_tl) throws SystemException {
+        Employee emp = employeeRepository.findById(id_empl);
+        Account tl_acc = accountRepository.findByEmployee_Id(id_tl);
+
         String username;
         String password;
         String salt;
@@ -49,18 +56,33 @@ public class ITService {
             throw new SystemException();
         }
 
-        Employee emp = employeeRepository.findById(id_empl);
-        Account tl_acc = accountRepository.findByEmployee_Id(id_tl);
+        int index = (emp.getName()).indexOf(" ");
+        String name = emp.getName();
+        username = (name.substring(index + 1, index + 2) + name.substring(0, index)).toLowerCase();
+        if(accountRepository.findByUsername(username)!=null) {
+            int i = 1;
+            String aux = username;
+            do
+            {
+                username = aux + i;
+                i++;
+            } while(accountRepository.findByUsername(username)!=null);
+
+        }
+        Account acc = new Account(username, hashedPassword, salt, emp, tl_acc);
+        CredentialsEmail data = new CredentialsEmail(acc, "Account data", username, passwordToSend);
+
         try {
-            int index = (emp.getName()).indexOf(" ");
-            username = ((emp.getName()).substring(index + 1, index + 2) + (emp.getName()).substring(0, index)).toLowerCase();
-            Account acc = new Account(username, hashedPassword, salt, emp, tl_acc);
-            CredentialsEmail data = new CredentialsEmail(acc, "Account data", username, passwordToSend);
+
             emailService.prepareAndSend(data);
             accountRepository.save(acc);
         } catch (MailException | NullPointerException e) {
             throw new SystemException();
         }
+    }
+
+    public void informItAboutError(int id_empl) {
+        issueReqRepository.save(new IssueReq("The user with id: " + id_empl + "doesn't have an account due to some system problems!", null));
     }
 
 }
