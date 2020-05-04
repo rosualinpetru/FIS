@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.HolidayReq;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 @Service
 public class EmployeeService {
 
@@ -28,7 +30,7 @@ public class EmployeeService {
         else {
             List<Account> colleges;
             if (acc_current.getTl() == null) {
-                colleges=accountRepository.findAllByTlIsNull();
+                colleges = accountRepository.findAllByTlIsNull();
                 colleges.remove(acc_current);
                 if (colleges.size() != 0)
                     return colleges;
@@ -56,23 +58,18 @@ public class EmployeeService {
             end_date = new Date();
         }
 
-        Account account_tl;
-        // if()
-
         HolidayReq newHolidayReq = new HolidayReq(
                 RequestType.valueOf(params.get("requestTypeId")),
-                null,
+                RequestStatus.sentTL,
                 params.get("description"),
                 start_date,
                 end_date,
-                accountRepository.findById(account_req),
-                new Account()
+                account_req,
+                account_req.getTl()
         );
 
+        holidayReqRepository.save(newHolidayReq);
 
-        // holidayReqRepository.save(newHolidayReq);
-        // return newEmployee.getId();
     }
-
 
 }
