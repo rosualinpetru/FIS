@@ -30,7 +30,7 @@ public class EmployeeService {
         else {
             List<Account> colleges;
             if (acc_current.getTl() == null) {
-                colleges = accountRepository.findAllByTlIsNull();
+                colleges = accountRepository.findAllByTlIsNullAndEmployee_Department(acc_current.getEmployee().getDepartment());
                 colleges.remove(acc_current);
                 if (colleges.size() != 0)
                     return colleges;
