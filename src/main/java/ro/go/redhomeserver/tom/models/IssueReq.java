@@ -19,7 +19,7 @@ public class IssueReq implements Serializable {
     private String description;
 
     @ManyToOne()
-    @JoinColumn(name = "FK_employee")
+    @JoinColumn(name = "FK_account")
     private Account account;
 
     public IssueReq(String description, Account account) {
