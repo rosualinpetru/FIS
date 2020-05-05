@@ -1,5 +1,7 @@
-# This is a basic workflow to help you get started with Actions
+env:
+  ENC_KEY: ${{ secrets.ENC_KEY }}
 
+# This is a basic workflow to help you get started with Actions
 name: Build Artifact
 
 # Controls when the action will run. Triggers the workflow on push or pull request
@@ -18,13 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      #Define env var
-      - name: Define Env Var
-        uses: actions/checkout@v1
-        env:
-          ENC_KEY: ${{ secrets.ENC_KEY }}
-          
+    steps:        
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
