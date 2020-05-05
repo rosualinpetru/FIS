@@ -23,7 +23,7 @@ jobs:
       - name: Define Env Var
         uses: actions/checkout@v1
         env:
-          ENV_KEY: ${{ secrets.ENV_KEY }}
+          ENC_KEY: ${{ secrets.ENC_KEY }}
           
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
