@@ -19,6 +19,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      #Define env var
+      - name: Define Env Var
+        uses: actions/checkout@v1
+        env:
+          ENV_KEY: ${{ secrets.ENV_KEY }}
+          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,8 +48,6 @@ jobs:
       # Builds and installs the artifact
       - name: Build and Install
         run: mvn clean install
-        env:
-          ENV_KEY: ${{ secrets.ENV_KEY }}
 
       # Uploads the Artifact to Github. You will be able to find it on your action workflow run
       - name: Upload Artifact
