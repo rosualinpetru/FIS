@@ -77,7 +77,7 @@ public class EmployeeService {
     }
 
     public List<WebEvent> loadHolidayReqByTl(Account tl) {
-        List<HolidayReq> lst = holidayReqRepository.findAllByAccountReq_Tl(tl);
+        List<HolidayReq> lst = holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentTL);
         List<WebEvent> result = new ArrayList<>();
         String color = "black";
         for (HolidayReq h : lst) {

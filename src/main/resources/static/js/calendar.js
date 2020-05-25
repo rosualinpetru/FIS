@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         navLinks: true, // can click day/week names to navigate views
         eventLimit: true, // allow "more" link when too many events
         displayEventTime:false,
+        height: "parent",
         events: {
             url: '/loadMyTeamsSchedule',
             failure: function () {

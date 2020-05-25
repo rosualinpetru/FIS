@@ -1,0 +1,18 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #17a2b8;
+    height: 100vh;
+    overflow: hidden;
+}
+#calendar{
+    background-color: white;
+    width: 75%;
+    padding: 20px;
+    margin: 30px;
+}
+#requests{
+    background-color: rgba(255,255,255, 0.8);
+    padding: 20px;
+    margin: 30px;
+}
