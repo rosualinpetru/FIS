@@ -35,12 +35,12 @@ public class Account implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "account_req", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "accountReq", cascade = CascadeType.ALL)
     private Set<HolidayReq> sentHolidayReqs= new HashSet<>();
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "account_tl", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "accountTl", cascade = CascadeType.ALL)
     private Set<HolidayReq> receivedHolidayReqs= new HashSet<>();
 
     @EqualsAndHashCode.Exclude
