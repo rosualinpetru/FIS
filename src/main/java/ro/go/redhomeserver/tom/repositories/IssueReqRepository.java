@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface IssueReqRepository extends CrudRepository <IssueReq, Integer> {
   List<IssueReq> findAll();
-
+  void deleteById( int id );
 }
+

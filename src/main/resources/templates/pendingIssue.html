@@ -35,6 +35,7 @@
 
                         <p th:text="${i.getEmplName()}"></p>
                         <p th:text="${i.getDescription()}"></p>
+                        <img class="dlt-req" src="images/check.png" height="50px" width="50px"  th:id="${i.getId()}+'e'">
 
                     </div>
                 </div>
@@ -56,7 +57,18 @@
             $("#"+varId+"d").show();
 
 
+        });
+        $(".dlt-req").click(function(){
+
+            let varId = $(this).attr("id").slice(0,-1);
+            $.post({url: "/deleteIssue", data:{
+                id:varId
+                },success: function(result){
+                    $("#"+varId).remove();
+                    $("#"+varId+"d").remove();
+                }});
         })
+
 
 
     });

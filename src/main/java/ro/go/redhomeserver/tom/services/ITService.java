@@ -103,4 +103,9 @@ public class ITService {
 
     }
 
+    public void deleteIssueReqByID (int id)
+    {
+        issueReqRepository.deleteById(id);
+    }
+
 }
