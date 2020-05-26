@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <title>Pending Issues</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/pendingIssue_style.css" rel="stylesheet" type="text/css">
+    <link rel="icon" href="/images/favicon.png" type="image/icon type">
+
+</head>
+<body>
+<div id="login">
+    <h3 class="text-center text-white pt-5">Pending Issue</h3>
+
+    <div class="container-fluid h-100 p-0 m-0 ">
+        <div class="row h-100 ">
+            <div class="col h-75 ">
+                <div class="requests">
+
+                    <div th:each="i : ${ListPendingIssue}" th:id="${i.getId()}">
+                        <span th:text="'ID'+${i.getId()}+'.'"></span>
+                        <b th:text="${i.getDepName()}+': '"></b>
+                        <i th:text="${i.getEmplName()}"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="requests">
+                    "asddffsfgsgs"
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+</body>
+</html>

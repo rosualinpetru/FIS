@@ -24,7 +24,6 @@ public class ITController {
     private ITService itService;
 
 
-
     @GetMapping("/reportIssue")
     public ModelAndView reportIssue(HttpServletRequest request, RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("reportIssue");
@@ -54,12 +53,11 @@ public class ITController {
     }
 
 
-
     @GetMapping("/createAccount")
     public String createAccount(@ModelAttribute("emplId") int id_empl, @ModelAttribute("tlId") int id_tl, RedirectAttributes ra) {
         try {
             itService.generateAccount(id_empl, id_tl);
-        }catch (SystemException e){
+        } catch (SystemException e) {
             itService.informItAboutError(id_empl);
         }
         ra.addFlashAttribute("upperNotification", "The employee record was added!");
@@ -67,5 +65,15 @@ public class ITController {
 
     }
 
+
+    @GetMapping("/pendingIssue")
+    public ModelAndView pendingIssue() {
+
+        ModelAndView mv= new ModelAndView("pendingIssue");
+        mv.addObject("ListPendingIssue", itService.loadAllPendingIssues());
+        return mv;
+
+
+    }
 
 }
