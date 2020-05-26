@@ -18,7 +18,7 @@
             <div class="col h-75 ">
                 <div class="requests">
 
-                    <div th:each="i : ${ListPendingIssue}" th:id="${i.getId()}">
+                    <div  class="req" th:each="i : ${ListPendingIssue}" th:id="${i.getId()}">
                         <span th:text="'ID'+${i.getId()}+'.'"></span>
                         <b th:text="${i.getDepName()}+': '"></b>
                         <i th:text="${i.getEmplName()}"></i>
@@ -29,15 +29,37 @@
 
             </div>
             <div class="col">
-                <div class="requests">
-                    "asddffsfgsgs"
+                <div class="description">
+
+                    <div  class="desc" th:each="i : ${ListPendingIssue}" th:id="${i.getId()}+'d'" >
+
+                        <p th:text="${i.getEmplName()}"></p>
+                        <p th:text="${i.getDescription()}"></p>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
-
+<script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $(".desc").hide();
+        $(".req").click(function(){
+
+            $(".desc").hide();
+            let varId = $(this).attr("id");
+            $("#"+varId+"d").show();
+
+
+        })
+
+
+    });
+</script>
 </body>
 </html>
