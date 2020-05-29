@@ -3,10 +3,7 @@ package ro.go.redhomeserver.tom.controllers;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.go.redhomeserver.tom.exceptions.EmailUsedException;
@@ -20,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/tomapp")
 public class HRController {
 
     @Autowired
