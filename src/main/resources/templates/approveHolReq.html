@@ -16,8 +16,26 @@
             <div id='calendar'></div>
         </div>
         <div class="col">
-            <div id="requests">
-                "asddffsfgsgs"
+            <div class="row">
+                <div id="requests">
+
+                    <div th:each="i : ${pendingReq}" th:value="${i.getId()}">
+                        <p class="holReq" th:id="${i.getId()}">
+                            <b th:text="${i.getType()} + ':' "></b>
+                            <i th:text="${i.getAccountReq().getEmployee().getName()}"></i>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div id="requestsInfo">
+                    <div class="infoContainer" th:each="i : ${pendingReq}" th:id="${i.getId()} +'d'">
+                        <h1 th:text="${i.getAccountReq().getEmployee().getName()}"></h1>
+                        <p th:text="${i.getDescription()}"></p>
+                        <button th:id="'acc'+${i.getId()}" class="acc">accepta</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -29,5 +47,25 @@
 <script type='text/javascript' src='/webjars/fullcalendar/4.3.1/daygrid/main.js'></script>
 <script type='text/javascript' src='/webjars/fullcalendar/4.3.1/interaction/main.js'></script>
 <script src="/js/calendar.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".infoContainer").hide();
+        $('.holReq').click(
+            function () {
+                let myId = $(this).attr("id");
+                $(".infoContainer").hide();
+                $("#" + myId + 'd').show();
+
+            });
+        $('.acc').click(
+            function () {
+                $.post("acceptReq", {
+                    id: $(this).attr("id").replace('acc', '')
+                },function(){
+                    document.location = '/pendingRequest';
+                })
+            })
+    });
+</script>
 </body>
 </html>

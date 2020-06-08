@@ -11,7 +11,7 @@ body{
     padding: 20px;
     margin: 30px;
 }
-#requests{
+#requests,#requestsInfo{
     background-color: rgba(255,255,255, 0.8);
     padding: 20px;
     margin: 30px;

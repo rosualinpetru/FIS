@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.go.redhomeserver.tom.dtos.WebEvent;
 import ro.go.redhomeserver.tom.models.Account;
+import ro.go.redhomeserver.tom.models.HolidayReq;
 import ro.go.redhomeserver.tom.services.EmployeeService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,8 +58,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/pendingRequest")
-    public ModelAndView pendingRequest() {
+    public ModelAndView pendingRequest(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("approveHolReq");
+        mv.addObject("pendingReq",employeeService.loadPendingReqByTl((Account) request.getSession().getAttribute("active")));
         return mv;
     }
 
@@ -66,6 +68,12 @@ public class EmployeeController {
     @ResponseBody
     public List<WebEvent> loadHolidayReq(HttpServletRequest request) {
         return employeeService.loadHolidayReqByTl((Account) request.getSession().getAttribute("active"));
+    }
+
+    @PostMapping("/acceptReq")
+    @ResponseBody
+    public void acceptReq(@RequestParam String id) {
+        employeeService.acceptReq(Integer.parseInt(id));
     }
 
 }
