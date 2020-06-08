@@ -14,7 +14,6 @@ import java.util.Map;
 
 
 @Controller
-@RequestMapping("/tomapp")
 public class ITController {
 
 

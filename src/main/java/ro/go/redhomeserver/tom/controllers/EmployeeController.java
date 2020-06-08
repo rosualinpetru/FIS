@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/tomapp")
 public class EmployeeController {
 
     @Autowired
