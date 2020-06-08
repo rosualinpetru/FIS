@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.dtos.CredentialsEmail;
 import ro.go.redhomeserver.tom.dtos.PendingIssue;
 import ro.go.redhomeserver.tom.models.Account;
+import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.models.IssueReq;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
+import ro.go.redhomeserver.tom.repositories.DepartmentRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
 import ro.go.redhomeserver.tom.repositories.IssueReqRepository;
 
@@ -31,6 +33,8 @@ public class ITService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private IssueReqRepository issueReqRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     public void reportIssueWithData(Map<String, String> params) {
 
@@ -103,9 +107,34 @@ public class ITService {
 
     }
 
-    public void deleteIssueReqByID (int id)
-    {
+    public void deleteIssueReqByID (int id) {
         issueReqRepository.deleteById(id);
+    }
+    public Iterable<Department> loadDepartments() {
+        return departmentRepository.findAll();
+    }
+
+    public void removeDepartment(int id) {
+
+        String str="The following employees don't have a department: \n";
+        List<Employee> lst= employeeRepository.findAllByDepartment_Id(id);
+        for (Employee e:lst)
+        {
+            str+=e.getName();
+            str+="\n";
+            e.setDepartment(null);
+            employeeRepository.save(e);
+        }
+        issueReqRepository.save(new IssueReq(str,accountRepository.findById(-1)));
+        departmentRepository.deleteById(id);
+
+
+
+    }
+    public void addDepartment(String name) {
+
+        departmentRepository.save(new Department(name));
+
     }
 
 }
