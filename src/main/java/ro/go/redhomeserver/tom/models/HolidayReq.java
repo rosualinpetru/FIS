@@ -32,20 +32,20 @@ public class HolidayReq implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "FK_ID_req")
-    private Account account_req;
+    private Account accountReq;
 
     @ManyToOne
     @JoinColumn(name = "FK_ID_tl")
-    private Account account_tl;
+    private Account accountTl;
 
-    public HolidayReq(RequestType type, RequestStatus status, String description, Date start, Date end, Account account_req, Account account_tl) {
+    public HolidayReq(RequestType type, RequestStatus status, String description, Date start, Date end, Account accountReq, Account accountTl) {
         this.type = type;
         this.status = status;
         this.description = description;
         this.start = start;
         this.end = end;
-        this.account_req = account_req;
-        this.account_tl = account_tl;
+        this.accountReq = accountReq;
+        this.accountTl = accountTl;
     }
 
 }
