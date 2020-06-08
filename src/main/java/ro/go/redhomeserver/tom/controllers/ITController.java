@@ -102,4 +102,18 @@ public class ITController {
         return new ModelAndView("redirect:/manageDepartment");
     }
 
+    @GetMapping("/manageEmployee")
+    public ModelAndView manageEmployee() {
+        ModelAndView mv = new ModelAndView("deleteEmployee");
+        mv.addObject("departments", itService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("/deleteEmployee")
+    public ModelAndView deleteEmployee(@RequestParam("emplID") String id) {
+        itService.removeEmployee(Integer.parseInt(id));
+        return new ModelAndView("redirect:/manageEmployee");
+    }
+
+
 }
