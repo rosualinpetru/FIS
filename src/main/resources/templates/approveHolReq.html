@@ -33,7 +33,8 @@
                     <div class="infoContainer" th:each="i : ${pendingReq}" th:id="${i.getId()} +'d'">
                         <h1 th:text="${i.getAccountReq().getEmployee().getName()}"></h1>
                         <p th:text="${i.getDescription()}"></p>
-                        <button th:id="'acc'+${i.getId()}" class="acc">accepta</button>
+                        <button th:id="'acc'+${i.getId()}" class="res">accept</button>
+                        <button th:id="'dec'+${i.getId()}" class="res">decline</button>
                     </div>
                 </div>
             </div>
@@ -57,10 +58,11 @@
                 $("#" + myId + 'd').show();
 
             });
-        $('.acc').click(
+        $('.res').click(
             function () {
                 $.post("acceptReq", {
-                    id: $(this).attr("id").replace('acc', '')
+                    id: $(this).attr("id").replace('acc', '').replace('dec',''),
+                    act:$(this).attr("id").slice(0,3)
                 },function(){
                     document.location = '/pendingRequest';
                 })

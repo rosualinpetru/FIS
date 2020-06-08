@@ -4,5 +4,6 @@ public enum RequestStatus {
     sentTL,
     accTl,
     sentHR,
-    feedHR
+    feedHR,
+    decline
 }

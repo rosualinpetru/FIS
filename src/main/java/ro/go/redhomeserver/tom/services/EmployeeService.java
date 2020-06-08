@@ -106,10 +106,13 @@ public class EmployeeService {
         return holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentTL);
     }
 
-    public void acceptReq(int id) {
+    public void updateStatusReq(int id, String act) {
         HolidayReq req;
         req = holidayReqRepository.findById(id);
-        req.setStatus(RequestStatus.sentHR);
+        if(act.equals("acc"))
+            req.setStatus(RequestStatus.sentHR);
+        if(act.equals("dec"))
+            req.setStatus(RequestStatus.decline);
         holidayReqRepository.save(req);
     }
 
