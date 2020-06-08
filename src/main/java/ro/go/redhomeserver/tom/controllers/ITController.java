@@ -115,5 +115,17 @@ public class ITController {
         return new ModelAndView("redirect:/manageEmployee");
     }
 
+    @GetMapping("/changeTeamLeader")
+    public ModelAndView changeTL() {
+        ModelAndView mv = new ModelAndView("changeTL");
+        mv.addObject("departments", itService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("/changeTL")
+    public ModelAndView changeTLEmpl(@RequestParam("emplID") String id, @RequestParam("TLID") String id2) {
+        itService.updateTeamLeader(Integer.parseInt(id), Integer.parseInt(id2));
+        return new ModelAndView("redirect:/changeTL");
+    }
 
 }
