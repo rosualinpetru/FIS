@@ -21,7 +21,6 @@ public class ITController {
     private ITService itService;
 
 
-
     @GetMapping("/reportIssue")
     public ModelAndView reportIssue(HttpServletRequest request, RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("reportIssue");
@@ -51,12 +50,11 @@ public class ITController {
     }
 
 
-
     @GetMapping("/createAccount")
     public String createAccount(@ModelAttribute("emplId") int id_empl, @ModelAttribute("tlId") int id_tl, RedirectAttributes ra) {
         try {
             itService.generateAccount(id_empl, id_tl);
-        }catch (SystemException e){
+        } catch (SystemException e) {
             itService.informItAboutError(id_empl);
         }
         ra.addFlashAttribute("upperNotification", "The employee record was added!");
@@ -64,5 +62,70 @@ public class ITController {
 
     }
 
+
+    @GetMapping("/pendingIssue")
+    public ModelAndView pendingIssue() {
+
+        ModelAndView mv = new ModelAndView("pendingIssue");
+        mv.addObject("ListPendingIssue", itService.loadAllPendingIssues());
+        return mv;
+
+
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteIssue")
+    public void deteleIssue(@RequestParam("id") String id) {
+        itService.deleteIssueReqByID(Integer.parseInt(id));
+
+
+    }
+
+    @GetMapping("/manageDepartment")
+
+    public ModelAndView manageDepartment() {
+
+        ModelAndView mv = new ModelAndView("manageDepartment");
+        mv.addObject("departments", itService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("/deleteDepartment")
+    public ModelAndView deleteDepartment(@RequestParam("departmentId") String id) {
+        itService.removeDepartment(Integer.parseInt(id));
+        return new ModelAndView("redirect:/manageDepartment");
+    }
+
+    @PostMapping("/addDepartment")
+    public ModelAndView addDepartment(@RequestParam("departmentName") String name) {
+        itService.addDepartment(name);
+        return new ModelAndView("redirect:/manageDepartment");
+    }
+
+    @GetMapping("/manageEmployee")
+    public ModelAndView manageEmployee() {
+        ModelAndView mv = new ModelAndView("deleteEmployee");
+        mv.addObject("departments", itService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("/deleteEmployee")
+    public ModelAndView deleteEmployee(@RequestParam("emplID") String id) {
+        itService.removeEmployee(Integer.parseInt(id));
+        return new ModelAndView("redirect:/manageEmployee");
+    }
+
+    @GetMapping("/changeTeamLeader")
+    public ModelAndView changeTL() {
+        ModelAndView mv = new ModelAndView("changeTL");
+        mv.addObject("departments", itService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("/changeTL")
+    public ModelAndView changeTLEmpl(@RequestParam("emplID") String id, @RequestParam("TLID") String id2) {
+        itService.updateTeamLeader(Integer.parseInt(id), Integer.parseInt(id2));
+        return new ModelAndView("redirect:/changeTL");
+    }
 
 }

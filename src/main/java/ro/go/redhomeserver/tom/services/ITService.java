@@ -4,20 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.dtos.CredentialsEmail;
+import ro.go.redhomeserver.tom.dtos.PendingIssue;
 import ro.go.redhomeserver.tom.models.Account;
+import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.models.IssueReq;
-import ro.go.redhomeserver.tom.repositories.AccountRepository;
-import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
-import ro.go.redhomeserver.tom.repositories.IssueReqRepository;
+import ro.go.redhomeserver.tom.repositories.*;
 
 import javax.transaction.SystemException;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ITService {
@@ -30,10 +30,14 @@ public class ITService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private IssueReqRepository issueReqRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
+    @Autowired
+    private HolidayReqRepository holidayReqRepository;
 
     public void reportIssueWithData(Map<String, String> params) {
 
-        issueReqRepository.save(new IssueReq(params.get("description" ),accountRepository.findById(Integer.parseInt(params.get("myId")))));   // to save the issue req in the data base
+        issueReqRepository.save(new IssueReq(params.get("description"), accountRepository.findById(Integer.parseInt(params.get("myId")))));   // to save the issue req in the data base
 
     }
 
@@ -66,14 +70,13 @@ public class ITService {
         int index = (emp.getName()).indexOf(" ");
         String name = emp.getName();
         username = (name.substring(index + 1, index + 2) + name.substring(0, index)).toLowerCase();
-        if(accountRepository.findByUsername(username)!=null) {
+        if (accountRepository.findByUsername(username) != null) {
             int i = 1;
             String aux = username;
-            do
-            {
+            do {
                 username = aux + i;
                 i++;
-            } while(accountRepository.findByUsername(username)!=null);
+            } while (accountRepository.findByUsername(username) != null);
 
         }
         Account acc = new Account(username, hashedPassword, salt, emp, tl_acc);
@@ -90,6 +93,61 @@ public class ITService {
 
     public void informItAboutError(int id_empl) {
         issueReqRepository.save(new IssueReq("The user with id: " + id_empl + "doesn't have an account due to some system problems!", null));
+    }
+
+    public List<PendingIssue> loadAllPendingIssues() {
+
+        Comparator<IssueReq> compareByIssueReq = Comparator.comparingInt(i -> i.getAccount().getEmployee().getDepartment().getId());
+
+
+        List<IssueReq> lst = issueReqRepository.findAll();
+        lst.sort(compareByIssueReq);
+        return lst.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList());
+
+    }
+
+    public void deleteIssueReqByID(int id) {
+        issueReqRepository.deleteById(id);
+    }
+
+    public Iterable<Department> loadDepartments() {
+        return departmentRepository.findAll();
+    }
+
+    public void removeDepartment(int id) {
+
+        String str = "The following employees don't have a department: \n";
+        List<Employee> lst = employeeRepository.findAllByDepartment_Id(id);
+        for (Employee e : lst) {
+            str += e.getName();
+            str += "\n";
+            e.setDepartment(null);
+            employeeRepository.save(e);
+        }
+        issueReqRepository.save(new IssueReq(str, accountRepository.findById(-1)));
+        departmentRepository.deleteById(id);
+
+
+    }
+
+    public void addDepartment(String name) {
+
+        departmentRepository.save(new Department(name));
+
+    }
+
+    public void removeEmployee(int id) {
+        Account acc = employeeRepository.findById(id).getAccount();
+        employeeRepository.deleteById(id);
+        accountRepository.delete(acc);
+
+
+    }
+
+    public void updateTeamLeader(int id, int id2) {
+        Account acc = employeeRepository.findById(id).getAccount();
+        acc.setTl(employeeRepository.findById(id2).getAccount());
+        accountRepository.save(acc);
     }
 
 }
