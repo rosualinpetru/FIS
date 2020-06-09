@@ -30,7 +30,7 @@ public class PasswordController {
 
     @PostMapping("/resetPassword")
     public ModelAndView resetPassword(@RequestParam("username") String username, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("auth");
+        ModelAndView mv = new ModelAndView("log-in");
         mv.addObject("upperNotification", "Check your email address!");
         try {
             Account acc = authService.findAccountByUsername(username);

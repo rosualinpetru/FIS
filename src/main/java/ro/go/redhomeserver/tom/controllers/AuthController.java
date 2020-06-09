@@ -22,12 +22,12 @@ public class AuthController {
         if(request.getSession().getAttribute("active")!=null)
             return "redirect:/";
 
-        return "auth";
+        return "log-in";
     }
 
     @PostMapping("/auth")
     public ModelAndView authenticate(@RequestParam Map<String, String> authData, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("auth");
+        ModelAndView mv = new ModelAndView("log-in");
         mv.addObject("user", authData.get("username"));
         try {
             Account acc = authService.findAccountByUsername(authData.get("username"));
