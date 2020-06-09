@@ -1,6 +1,9 @@
 package ro.go.redhomeserver.tom.models;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
 
@@ -13,10 +16,10 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity(name = "HolidayRequest")
-@Table(name = "holiday_req")
-public class HolidayReq implements Serializable {
+@Table(name = "holiday_request")
+public class HolidayRequest implements Serializable {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Enumerated(EnumType.ORDINAL)
@@ -26,26 +29,25 @@ public class HolidayReq implements Serializable {
     private RequestStatus status;
 
     private String description;
-
     private Date start;
     private Date end;
 
     @ManyToOne
-    @JoinColumn(name = "FK_ID_req")
-    private Account accountReq;
+    @JoinColumn(name = "FK_requester")
+    private Account requester;
 
     @ManyToOne
-    @JoinColumn(name = "FK_ID_tl")
-    private Account accountTl;
+    @JoinColumn(name = "FK_delegate")
+    private Account delegate;
 
-    public HolidayReq(RequestType type, RequestStatus status, String description, Date start, Date end, Account accountReq, Account accountTl) {
+    public HolidayRequest(RequestType type, RequestStatus status, String description, Date start, Date end, Account requester, Account delegate) {
         this.type = type;
         this.status = status;
         this.description = description;
         this.start = start;
         this.end = end;
-        this.accountReq = accountReq;
-        this.accountTl = accountTl;
+        this.requester = requester;
+        this.delegate = delegate;
     }
 
 }

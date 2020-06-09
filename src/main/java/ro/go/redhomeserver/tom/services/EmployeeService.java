@@ -2,55 +2,54 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
-import ro.go.redhomeserver.tom.dtos.WebEvent;
 import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.models.HolidayReq;
+import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
-import ro.go.redhomeserver.tom.repositories.HolidayReqRepository;
+import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EmployeeService {
 
-    @Autowired
-    private HolidayReqRepository holidayReqRepository;
+    private final HolidayRequestRepository holidayRequestRepository;
+
+    private final AccountRepository accountRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    public EmployeeService(HolidayRequestRepository holidayRequestRepository, AccountRepository accountRepository) {
+        this.holidayRequestRepository = holidayRequestRepository;
+        this.accountRepository = accountRepository;
+    }
 
-    public List<Account> loadDelegates(Account acc_current) {
-        List<Account> myTeam = accountRepository.findAllByTl(acc_current);
+    public List<Account> loadPossibleDelegates(Account account) {
+        List<Account> myTeam = accountRepository.findAllByTeamLeader(account);
         if (myTeam.isEmpty()) return null;
         else {
-            List<Account> colleges;
-            if (acc_current.getTl() == null) {
-                colleges = accountRepository.findAllByTlIsNullAndEmployee_Department(acc_current.getEmployee().getDepartment());
-                colleges.remove(acc_current);
-                if (colleges.size() != 0)
-                    return colleges;
+            List<Account> colleagues;
+            if (account.getTeamLeader() == null) {
+                colleagues = accountRepository.findAllByTeamLeaderIsNullAndEmployee_Department(account.getEmployee().getDepartment());
+                colleagues.remove(account);
+                if (colleagues.size() != 0)
+                    return colleagues;
                 else return myTeam;
             } else {
-                colleges = accountRepository.findAllByTl(acc_current.getTl());
-                colleges.remove(acc_current);
-                colleges.add(acc_current.getTl());
-                return colleges;
+                colleagues = accountRepository.findAllByTeamLeader(account.getTeamLeader());
+                colleagues.remove(account);
+                colleagues.add(account.getTeamLeader());
+                return colleagues;
             }
         }
-
     }
 
 
-    public void addRequestRecord(Account account_req, Map<String, String> params) {
+    public void addHolidayRequest(Account account, Map<String, String> params) {
         Date start_date;
         Date end_date;
         try {
@@ -62,26 +61,27 @@ public class EmployeeService {
             end_date = new Date();
         }
 
-        HolidayReq newHolidayReq = new HolidayReq(
-                RequestType.valueOf(params.get("requestTypeId")),
-                RequestStatus.sentTL,
-                params.get("description"),
-                start_date,
-                end_date,
-                account_req,
-                accountRepository.findById(Integer.parseInt(params.get("delegateId")))
-        );
-
-        holidayReqRepository.save(newHolidayReq);
-
+        Optional<Account> delegateOptional = accountRepository.findById(Integer.parseInt(params.get("delegateId")));
+        if (delegateOptional.isPresent()) {
+            HolidayRequest newHolidayRequest = new HolidayRequest(
+                    RequestType.valueOf(params.get("requestTypeId")),
+                    RequestStatus.sentTL,
+                    params.get("description"),
+                    start_date,
+                    end_date,
+                    account,
+                    delegateOptional.get()
+            );
+            holidayRequestRepository.save(newHolidayRequest);
+        }
     }
 
-    public List<WebEvent> loadHolidayReqByTl(Account tl) {
-        List<HolidayReq> lst = holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentHR);
-        lst.addAll(holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.feedHR));
-        List<WebEvent> result = new ArrayList<>();
+    public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendar(Account account) {
+        List<HolidayRequest> list = holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentHR);
+        list.addAll(holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.feedHR));
+        List<CalendarEvent> result = new ArrayList<>();
         String color = "black";
-        for (HolidayReq h : lst) {
+        for (HolidayRequest h : list) {
             switch (h.getType()) {
                 case Fam:
                     color = "#E27D60";
@@ -97,23 +97,25 @@ public class EmployeeService {
                     break;
 
             }
-            result.add(new WebEvent(h.getId(), h.getAccountReq().getEmployee().getName(), h.getStart(), h.getEnd(), color));
+            result.add(new CalendarEvent(h.getId(), h.getRequester().getEmployee().getName(), h.getStart(), h.getEnd(), color));
         }
         return result;
     }
 
-    public List <HolidayReq> loadPendingReqByTl(Account tl) {
-        return holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentTL);
+    public List<HolidayRequest> loadPendingHolidayRequestsForATeamLeader(Account account) {
+        return holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentTL);
     }
 
-    public void updateStatusReq(int id, String act) {
-        HolidayReq req;
-        req = holidayReqRepository.findById(id);
-        if(act.equals("acc"))
-            req.setStatus(RequestStatus.sentHR);
-        if(act.equals("dec"))
-            req.setStatus(RequestStatus.decline);
-        holidayReqRepository.save(req);
+    public void updateStatusOfHolidayRequest(int holidayRequestId, String action) {
+        Optional<HolidayRequest> requestOptional = holidayRequestRepository.findById(holidayRequestId);
+        if (requestOptional.isPresent()) {
+            HolidayRequest request = requestOptional.get();
+            if (action.equals("acc"))
+                request.setStatus(RequestStatus.sentHR);
+            if (action.equals("dec"))
+                request.setStatus(RequestStatus.decline);
+            holidayRequestRepository.save(request);
+        }
     }
 
 }

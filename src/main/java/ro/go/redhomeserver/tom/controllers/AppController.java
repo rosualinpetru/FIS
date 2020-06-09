@@ -5,44 +5,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.services.AppRefreshService;
-
+import ro.go.redhomeserver.tom.services.ClearDataService;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class AppController {
 
+    private final ClearDataService clearDataService;
+
     @Autowired
-    private AppRefreshService appRefreshService;
+    public AppController(ClearDataService clearDataService) {
+        this.clearDataService = clearDataService;
+    }
 
     @GetMapping("/")
     public ModelAndView index(HttpServletRequest request, RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("index");
-        appRefreshService.refreshData();
-        if(request.getSession().getAttribute("active")==null) {
-            mv = new ModelAndView("redirect:/auth");
-            return mv;
-        }
-
-        return mv;
+        // Update database
+        clearDataService.clearData();
+        if (request.getSession().getAttribute("active") == null)
+            return new ModelAndView("log-in");
+        return new ModelAndView("index");
     }
-    
-    @GetMapping("/calendar")
-    public String calendar() {
-        return "calendar";
-    }
-
-    @GetMapping("/maintainApp")
-    public String maintainApp() {
-        return "maintainApp";
-    }
-
-
-    @GetMapping("/reqStatus")
-    public String reqStatus() {
-        return "reqStatus";
-    }
-
-
-
 }

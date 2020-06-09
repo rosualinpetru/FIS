@@ -24,44 +24,45 @@ public class Account implements Serializable {
     private String password;
     private String salt;
 
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<IssueRequest> issueRequests = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HolidayRequest> sentHolidayRequests = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "delegate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HolidayRequest> delegatedHolidayRequests = new HashSet<>();
+
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ResetPasswordRequest> resetPasswordRequests = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "teamLeader", cascade = CascadeType.ALL)
+    private Set<Account> members = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "FK_teamLeader")
+    private Account teamLeader;
+
     @OneToOne
     @JoinColumn(name = "FK_employee")
     private Employee employee;
 
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private Set<IssueReq> issueReqs= new HashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "accountReq", cascade = CascadeType.ALL)
-    private Set<HolidayReq> sentHolidayReqs= new HashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "accountTl", cascade = CascadeType.ALL)
-    private Set<HolidayReq> receivedHolidayReqs= new HashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "tl", cascade = CascadeType.ALL)
-    private Set<Account> members = new HashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private Set<ResetPassReq> resetPassReqs = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "FK_tl")
-    private Account tl;
-
-    public Account(String username, String password, String salt, Employee employee, Account tl) {
+    public Account(String username, String password, String salt, Employee employee, Account teamLeader) {
         this.username = username;
         this.password = password;
         this.salt = salt;
         this.employee = employee;
-        this.tl = tl;
+        this.teamLeader = teamLeader;
     }
 }

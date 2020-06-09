@@ -10,8 +10,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity(name = "IssueRequest")
-@Table(name = "issue_req")
-public class IssueReq implements Serializable {
+@Table(name = "issue_request")
+public class IssueRequest implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
@@ -22,7 +22,7 @@ public class IssueReq implements Serializable {
     @JoinColumn(name = "FK_account")
     private Account account;
 
-    public IssueReq(String description, Account account) {
+    public IssueRequest(String description, Account account) {
         this.description = description;
         this.account = account;
     }

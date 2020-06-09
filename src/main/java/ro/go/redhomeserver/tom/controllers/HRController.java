@@ -6,9 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.exceptions.EmailUsedException;
+import ro.go.redhomeserver.tom.exceptions.UsedEmailException;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
-import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.services.HRService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +18,12 @@ import java.util.stream.Collectors;
 @Controller
 public class HRController {
 
-    @Autowired
-    HRService hrService;
+    private final HRService hrService;
 
+    @Autowired
+    public HRController(HRService hrService) {
+        this.hrService = hrService;
+    }
 
     @GetMapping("/signUp")
     public ModelAndView signUp(HttpServletRequest request, RedirectAttributes ra) {
@@ -40,7 +42,7 @@ public class HRController {
     @GetMapping("/updateSignUpForm")
     @ResponseBody
     public List<Pair<Integer, String>> getEventCount(@RequestParam("departmentId") int departmentId) {
-        return hrService.loadEmployeesOfDepartmentId(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
+        return hrService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
     }
 
 
@@ -53,12 +55,12 @@ public class HRController {
             return mv;
         }
         try {
-            hrService.validateFormData(params);
-            int empl_id = hrService.addEmployeeRecord(params);
+            hrService.checkIfEmailIsAvailable(params);
+            int empl_id = hrService.addEmployee(params);
             mv = new ModelAndView("redirect:/createAccount");
             ra.addFlashAttribute("emplId", empl_id);
             ra.addFlashAttribute("tlId", params.get("tlId"));
-        } catch (EmailUsedException e) {
+        } catch (UsedEmailException e) {
             mv.addObject("departments", hrService.loadDepartments());
             mv.addObject("error", "The email is already used!");
         } catch (SignUpException e) {

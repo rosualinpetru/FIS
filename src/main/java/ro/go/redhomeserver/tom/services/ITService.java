@@ -8,8 +8,11 @@ import ro.go.redhomeserver.tom.dtos.PendingIssue;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.models.IssueReq;
-import ro.go.redhomeserver.tom.repositories.*;
+import ro.go.redhomeserver.tom.models.IssueRequest;
+import ro.go.redhomeserver.tom.repositories.AccountRepository;
+import ro.go.redhomeserver.tom.repositories.DepartmentRepository;
+import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
+import ro.go.redhomeserver.tom.repositories.IssueRequestRepository;
 
 import javax.transaction.SystemException;
 import javax.xml.bind.DatatypeConverter;
@@ -22,28 +25,26 @@ import java.util.stream.Collectors;
 @Service
 public class ITService {
 
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private IssueReqRepository issueReqRepository;
-    @Autowired
-    private DepartmentRepository departmentRepository;
-    @Autowired
-    private HolidayReqRepository holidayReqRepository;
+    private final AccountRepository accountRepository;
+    private final EmailService emailService;
+    private final EmployeeRepository employeeRepository;
+    private final IssueRequestRepository issueRequestRepository;
+    private final DepartmentRepository departmentRepository;
 
-    public void reportIssueWithData(Map<String, String> params) {
-
-        issueReqRepository.save(new IssueReq(params.get("description"), accountRepository.findById(Integer.parseInt(params.get("myId")))));   // to save the issue req in the data base
-
+    @Autowired
+    public ITService(AccountRepository accountRepository, EmailService emailService, EmployeeRepository employeeRepository, IssueRequestRepository issueRequestRepository, DepartmentRepository departmentRepository) {
+        this.accountRepository = accountRepository;
+        this.emailService = emailService;
+        this.employeeRepository = employeeRepository;
+        this.issueRequestRepository = issueRequestRepository;
+        this.departmentRepository = departmentRepository;
     }
 
-    public void generateAccount(int id_empl, int id_tl) throws SystemException {
-        Employee emp = employeeRepository.findById(id_empl);
-        Account tl_acc = accountRepository.findByEmployee_Id(id_tl);
+    public void generateAccount(int employeeId, int teamLeaderId) throws SystemException {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        Optional<Account> teamLeaderOptional = accountRepository.findByEmployee_Id(teamLeaderId);
+        if (!employeeOptional.isPresent() || !teamLeaderOptional.isPresent())
+            throw new SystemException();
 
         String username;
         String password;
@@ -67,87 +68,85 @@ public class ITService {
             throw new SystemException();
         }
 
-        int index = (emp.getName()).indexOf(" ");
-        String name = emp.getName();
+        int index = (employeeOptional.get().getName()).indexOf(" ");
+        String name = employeeOptional.get().getName();
         username = (name.substring(index + 1, index + 2) + name.substring(0, index)).toLowerCase();
-        if (accountRepository.findByUsername(username) != null) {
+        if (accountRepository.findByUsername(username).isPresent()) {
             int i = 1;
             String aux = username;
             do {
                 username = aux + i;
                 i++;
-            } while (accountRepository.findByUsername(username) != null);
+            } while (accountRepository.findByUsername(username).isPresent());
 
         }
-        Account acc = new Account(username, hashedPassword, salt, emp, tl_acc);
+
+        Account acc = new Account(username, hashedPassword, salt, employeeOptional.get(), teamLeaderOptional.get());
         CredentialsEmail data = new CredentialsEmail(acc, "Account data", username, passwordToSend);
 
         try {
-
-            emailService.prepareAndSend(data);
+            emailService.sendEmail(data);
             accountRepository.save(acc);
         } catch (MailException | NullPointerException e) {
             throw new SystemException();
         }
     }
 
-    public void informItAboutError(int id_empl) {
-        issueReqRepository.save(new IssueReq("The user with id: " + id_empl + "doesn't have an account due to some system problems!", null));
-    }
-
-    public List<PendingIssue> loadAllPendingIssues() {
-
-        Comparator<IssueReq> compareByIssueReq = Comparator.comparingInt(i -> i.getAccount().getEmployee().getDepartment().getId());
-
-
-        List<IssueReq> lst = issueReqRepository.findAll();
-        lst.sort(compareByIssueReq);
-        return lst.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList());
-
-    }
-
-    public void deleteIssueReqByID(int id) {
-        issueReqRepository.deleteById(id);
+    public void addDepartment(String name) {
+        departmentRepository.save(new Department(name));
     }
 
     public Iterable<Department> loadDepartments() {
         return departmentRepository.findAll();
     }
 
-    public void removeDepartment(int id) {
+    public void informItAboutSystemError(int employeeId) {
+        issueRequestRepository.save(new IssueRequest("The user with id: " + employeeId + "doesn't have an account due to some system problems!", null));
+    }
 
-        String str = "The following employees don't have a department: \n";
-        List<Employee> lst = employeeRepository.findAllByDepartment_Id(id);
+    public void removeDepartment(int departmentId) {
+        StringBuilder str = new StringBuilder("The following employees don't have a department: \n");
+        List<Employee> lst = employeeRepository.findAllByDepartment_Id(departmentId);
         for (Employee e : lst) {
-            str += e.getName();
-            str += "\n";
+            str.append(e.getName());
+            str.append("\n");
             e.setDepartment(null);
             employeeRepository.save(e);
         }
-        issueReqRepository.save(new IssueReq(str, accountRepository.findById(-1)));
-        departmentRepository.deleteById(id);
-
-
+        issueRequestRepository.save(new IssueRequest(str.toString(), null));
+        departmentRepository.deleteById(departmentId);
     }
 
-    public void addDepartment(String name) {
-
-        departmentRepository.save(new Department(name));
-
+    public void addIssueRequest(Map<String, String> params) {
+        Optional<Account> accountOptional = accountRepository.findById(Integer.parseInt(params.get("myId")));
+        accountOptional.ifPresent(account -> issueRequestRepository.save(new IssueRequest(params.get("description"), account)));
     }
 
-    public void removeEmployee(int id) {
-        Account acc = employeeRepository.findById(id).getAccount();
-        employeeRepository.deleteById(id);
-        accountRepository.delete(acc);
-
-
+    public List<PendingIssue> loadAllPendingIssueRequests() {
+        Comparator<IssueRequest> compareByIssueReq = Comparator.comparingInt(i -> i.getAccount().getEmployee().getDepartment().getId());
+        List<IssueRequest> lst = (List<IssueRequest>) issueRequestRepository.findAll();
+        lst.sort(compareByIssueReq);
+        return lst.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList());
     }
 
-    public void updateTeamLeader(int id, int id2) {
-        Account acc = employeeRepository.findById(id).getAccount();
-        acc.setTl(employeeRepository.findById(id2).getAccount());
-        accountRepository.save(acc);
+    public void deleteIssueRequestById(int issueRequestId) {
+        issueRequestRepository.deleteById(issueRequestId);
     }
 
+    public void removeEmployee(int employeeId) {
+        Optional<Employee> accountOptional = employeeRepository.findById(employeeId);
+        if (accountOptional.isPresent()) {
+            employeeRepository.deleteById(employeeId);
+        }
+    }
+
+    public void updateTeamLeader(int employeeId1, int employeeId2) {
+        Optional<Employee> employeeOptional1 = employeeRepository.findById(employeeId1);
+        Optional<Employee> employeeOptional2 = employeeRepository.findById(employeeId2);
+        if (employeeOptional1.isPresent() && employeeOptional2.isPresent()) {
+            Account account = employeeOptional1.get().getAccount();
+            account.setTeamLeader(employeeOptional2.get().getAccount());
+            accountRepository.save(account);
+        }
+    }
 }

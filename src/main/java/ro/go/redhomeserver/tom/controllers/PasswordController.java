@@ -8,7 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ro.go.redhomeserver.tom.exceptions.*;
 import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.services.AuthService;
+import ro.go.redhomeserver.tom.services.LogInService;
 import ro.go.redhomeserver.tom.services.PasswordService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class PasswordController {
 
     @Autowired
-    private AuthService authService;
+    private LogInService logInService;
 
     @Autowired
     private PasswordService passwordService;
@@ -33,9 +33,9 @@ public class PasswordController {
         ModelAndView mv = new ModelAndView("log-in");
         mv.addObject("upperNotification", "Check your email address!");
         try {
-            Account acc = authService.findAccountByUsername(username);
+            Account acc = logInService.searchForUser(username);
             String hostLink = request.getScheme() + "://" + request.getServerName();
-            passwordService.makeResetRequest(acc, hostLink);
+            passwordService.addResetRequest(acc, hostLink);
         } catch (UserNotFoundException e) {
             mv.addObject("upperNotification", "User Not Found!");
         } catch (SystemException e) {
@@ -78,7 +78,7 @@ public class PasswordController {
             return mv;
         } catch (WeakPasswordException e) {
             mv.addObject("error", "The password is too weak!");
-        } catch (PasswordMismatchException e) {
+        } catch (PasswordVerificationException e) {
             mv.addObject("error", "The password does not match!");
         } catch (SignUpException | SystemException e) {
             mv.addObject("error", "We're having some system issues! Try again later!");

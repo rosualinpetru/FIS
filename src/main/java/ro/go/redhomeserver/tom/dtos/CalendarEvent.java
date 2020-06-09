@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-public class WebEvent implements Serializable {
+public class CalendarEvent implements Serializable {
     private int id;
     private String title;
     private Date start;

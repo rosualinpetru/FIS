@@ -21,7 +21,7 @@
                     <div  class="req" th:each="i : ${ListPendingIssue}" th:id="${i.getId()}">
                         <span th:text="'ID'+${i.getId()}+'.'"></span>
                         <b th:text="${i.getDepName()}+': '"></b>
-                        <i th:text="${i.getEmplName()}"></i>
+                        <i th:text="${i.getName()}"></i>
 
                     </div>
 
@@ -33,7 +33,7 @@
 
                     <div  class="desc" th:each="i : ${ListPendingIssue}" th:id="${i.getId()}+'d'" >
 
-                        <p th:text="${i.getEmplName()}"></p>
+                        <p th:text="${i.getName()}"></p>
                         <p th:text="${i.getDescription()}"></p>
                         <img class="dlt-req" src="images/check.png" height="50px" width="50px"  th:id="${i.getId()}+'e'">
 

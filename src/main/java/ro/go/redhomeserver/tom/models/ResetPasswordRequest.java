@@ -10,19 +10,19 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Entity(name = "ResetPassReq")
-@Table(name = "reset_pass_req")
-public class ResetPassReq {
+@Table(name = "reset_password_request")
+public class ResetPasswordRequest {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "FK_account_id")
+    @JoinColumn(name = "FK_account")
     private Account account;
     private String token;
     private Date expirationDate;
 
-    public ResetPassReq(Account account, String token, Date expirationDate) {
+    public ResetPasswordRequest(Account account, String token, Date expirationDate) {
         this.account = account;
         this.token = token;
         this.expirationDate = expirationDate;

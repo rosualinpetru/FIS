@@ -15,11 +15,12 @@ import java.util.Map;
 
 @Controller
 public class ITController {
-
+    private final ITService itService;
 
     @Autowired
-    private ITService itService;
-
+    public ITController(ITService itService) {
+        this.itService = itService;
+    }
 
     @GetMapping("/reportIssue")
     public ModelAndView reportIssue(HttpServletRequest request, RedirectAttributes ra) {
@@ -44,7 +45,7 @@ public class ITController {
             return mv;
 
         }
-        itService.reportIssueWithData(params);
+        itService.addIssueRequest(params);
         ra.addFlashAttribute("upperNotification", "Issue reported!");
         return mv;
     }
@@ -55,7 +56,7 @@ public class ITController {
         try {
             itService.generateAccount(id_empl, id_tl);
         } catch (SystemException e) {
-            itService.informItAboutError(id_empl);
+            itService.informItAboutSystemError(id_empl);
         }
         ra.addFlashAttribute("upperNotification", "The employee record was added!");
         return "redirect:/";
@@ -67,7 +68,7 @@ public class ITController {
     public ModelAndView pendingIssue() {
 
         ModelAndView mv = new ModelAndView("pendingIssue");
-        mv.addObject("ListPendingIssue", itService.loadAllPendingIssues());
+        mv.addObject("ListPendingIssue", itService.loadAllPendingIssueRequests());
         return mv;
 
 
@@ -76,7 +77,7 @@ public class ITController {
     @ResponseBody
     @PostMapping("/deleteIssue")
     public void deteleIssue(@RequestParam("id") String id) {
-        itService.deleteIssueReqByID(Integer.parseInt(id));
+        itService.deleteIssueRequestById(Integer.parseInt(id));
 
 
     }

@@ -35,7 +35,7 @@
         <div class="col p-5">
             <div th:if='${upperNotification != ""}' th:text="${upperNotification}"
                  class="alert alert-warning my-3 d-none" role="alert"></div>
-            <form id="log-in__auth-form" class="w-50 p-3 mx-auto mt-5" th:action="@{/auth}" method="post">
+            <form id="log-in__auth-form" class="w-50 p-3 mx-auto mt-5" th:action="@{/log-in}" method="post">
                 <div class="w-100 text-center">
                     <img th:src="@{images/favicon.png}" class="w-25 pb-2" alt="TOM">
                 </div>
@@ -57,7 +57,7 @@
                     <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
                 </div>
             </form>
-            <form id="log-in__reset-pass-form" class="w-50 p-3 mx-auto mt-5 d-none" th:action="@{/resetPassword}" method="post">
+            <form id="log-in__reset-pass-form" class="w-50 p-3 mx-auto mt-5 d-none" th:action="@{/reset-password}" method="post">
                 <div class="w-100 text-center">
                     <img th:src="@{images/favicon.png}" class="w-25 pb-2" alt="TOM">
                 </div>
