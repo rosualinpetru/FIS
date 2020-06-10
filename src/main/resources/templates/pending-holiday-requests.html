@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Holiday Requests</title>
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/fullcalendar/4.3.1/core/main.css}" rel="stylesheet" type="text/css"/>
+    <link th:href='@{/webjars/fullcalendar/4.3.1/daygrid/main.css}' rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href='@{/css/pending-holiday-requests.css}' rel="stylesheet" type="text/css"/>
+    <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
+</head>
+<body id="requests" class="bg-dark h-100 invisible">
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col h-75">
+            <div id='requests__calendar' class="bg-secondary text-light mx-auto my-5 p-3 w-75 border border-info"></div>
+        </div>
+        <div class="col bg-secondary p-5 m-0">
+            <div class="w-100 h-100 text-light" th:if="${pendingHolidayRequests.isEmpty()}"><h1>No pending requests</h1></div>
+            <div id="requests__pending" class="border border-dark p-0" th:if="${!pendingHolidayRequests.isEmpty()}" >
+                <div class="row m-0">
+                    <h4 class="col-2 m-2 text-center">
+                        See More
+                    </h4>
+                    <h4 class="col m-2 text-center">
+                        Name
+                    </h4>
+                    <h4 class="col m-2 text-center">
+                        Start
+                    </h4>
+                    <h4 class="col m-2 text-center">
+                        End
+                    </h4>
+                    <h4 class="col m-2 text-center">
+                        Delegate
+                    </h4>
+                </div>
+                <div th:each="i : ${pendingHolidayRequests}" th:id="${i.getId()}" class="requests__pending__entry">
+                    <hr class="border border-dark m-3">
+                    <div class="row m-0" th:value="${i.getId()}">
+                        <div class="col-2 m-0 text-center">
+                            <button type="button" class="btn btn-info btn-circle" th:text="${i.getType()}"></button>
+                        </div>
+                        <div class="col m-0 text-center">
+                            <h5 class="text-light">
+                                <b class="text-black-50"></b>
+                                <i th:text="${i.getRequester().getEmployee().getName()}"></i>
+                            </h5>
+                        </div>
+                        <div class="col m-0 text-center">
+                            <h5 class="text-light"
+                                th:text="${i.getStart().getDay()}+'. '+${i.getStart().getMonth()}+'. '+${i.getStart().getYear()+1900}"></h5>
+                        </div>
+                        <div class="col m-0 text-center">
+                            <h5 class="text-light"
+                                th:text="${i.getEnd().getDay()}+'. '+${i.getEnd().getMonth()}+'. '+${i.getEnd().getYear()+1900}"></h5>
+                        </div>
+                        <div class="col m-0 text-center">
+                            <h5 class="text-light" th:text="${i.getDelegate().getEmployee().getName()}"></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:each="i : ${pendingHolidayRequests}" th:id="${i.getId()}+'modal'" class="modal fade bg-dark" tabindex="-1"
+     role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h5 class="modal-title text-light">
+                    <b th:text="${i.getType()} + ':' "></b>
+                    <i th:id="${i.getId()}" th:text="${i.getRequester().getEmployee().getName()}"></i>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-light">
+                <div class="mt-3 mb-5">
+                    <b>Description </b>
+                    <p class="px-3" th:text="${i.getDescription()}"></p>
+                </div>
+                <div>
+                    <p th:text="'Period: ' + ${i.getStart().getDay()} + '.' + ${i.getStart().getMonth()} + '.' + ${i.getStart().getYear()+1900} + ' - ' + ${i.getEnd().getDay()} + '.' + ${i.getEnd().getMonth()} + '.' + ${i.getEnd().getYear()+1900}"></p>
+                    <p th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger update" th:id="'dec'+${i.getId()}">Decline</button>
+                <button type="button" class="btn btn-success update" th:id="'acc'+${i.getId()}">Accept</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/core/main.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/daygrid/main.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/interaction/main.js}"></script>
+<script th:src="@{/js/populate-calendar.js}"></script>
+<script th:src="@{/js/pending-holiday-requests.js}"></script>
+</body>
+</html>

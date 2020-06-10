@@ -5,15 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.services.DepartmentService;
 import ro.go.redhomeserver.tom.services.EmployeeService;
 import ro.go.redhomeserver.tom.services.ITService;
 import ro.go.redhomeserver.tom.services.IssueRequestService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.SystemException;
-import java.util.Map;
 
 
 @Controller
@@ -43,34 +40,6 @@ public class ITController {
 
     }
 
-    @GetMapping("/reportIssue")
-    public ModelAndView reportIssue(HttpServletRequest request, RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("reportIssue");
-        Account acc = (Account) request.getSession().getAttribute("active");
-        if (acc == null) {
-            mv = new ModelAndView("redirect:/log-in");
-            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
-            return mv;
-        }
-        mv.addObject("myID", acc.getId());
-        return mv;
-    }
-
-    @PostMapping("/reportIssue")
-    public ModelAndView reportIssue(@RequestParam Map<String, String> params, RedirectAttributes ra, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("redirect:/");
-        Account acc = (Account) request.getSession().getAttribute("active");
-        if (acc == null) {
-            mv = new ModelAndView("redirect:/log-in");
-            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
-            return mv;
-
-        }
-        issueRequestService.addIssueRequest(params);
-        ra.addFlashAttribute("upperNotification", "Issue reported!");
-        return mv;
-    }
-
 
     @GetMapping("/pendingIssue")
     public ModelAndView pendingIssue() {
@@ -89,7 +58,6 @@ public class ITController {
 
 
     }
-
     @GetMapping("/manageDepartment")
 
     public ModelAndView manageDepartment() {

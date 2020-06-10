@@ -3,6 +3,7 @@ package ro.go.redhomeserver.tom.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.dtos.PendingIssue;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.IssueRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
@@ -26,9 +27,13 @@ public class IssueRequestService {
         this.issueRequestRepository = issueRequestRepository;
     }
 
-    public void addIssueRequest(Map<String, String> params) {
-        Optional<Account> accountOptional = accountRepository.findById(Integer.parseInt(params.get("myId")));
-        accountOptional.ifPresent(account -> issueRequestRepository.save(new IssueRequest(params.get("description"), account)));
+    public void addIssueRequest(String username, Map<String, String> params) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if(accountOptional.isPresent()) {
+            issueRequestRepository.save(new IssueRequest(params.get("description"), accountOptional.get()));
+        } else {
+            throw new UserNotFoundException();
+        }
     }
 
     public List<PendingIssue> loadAllPendingIssueRequests() {

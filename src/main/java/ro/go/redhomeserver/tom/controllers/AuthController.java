@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @GetMapping("/log-in")
-    public ModelAndView logInGet(Model model) {
+    public ModelAndView logIn() {
         ModelAndView mv = new  ModelAndView("log-in");
         mv.addObject("upperNotification", "");
         if (isUserAuthenticated())

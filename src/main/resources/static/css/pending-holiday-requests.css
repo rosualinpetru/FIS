@@ -1,0 +1,9 @@
+.fc-today {
+    background-color: gray !important;
+}
+.fc-day-top {
+    border: 1px solid white !important;
+}
+.requests__pending__entry:hover {
+    cursor: pointer;
+}

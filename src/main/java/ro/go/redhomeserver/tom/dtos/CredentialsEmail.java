@@ -11,6 +11,6 @@ public class CredentialsEmail extends EmailData {
 
         context.setVariable("username", username);
         context.setVariable("password", password);
-        context.setVariable("templateName", "credentialsEmailTemplate");
+        context.setVariable("templateName", "credentials-email");
     }
 }
