@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,14 +30,6 @@ public class HRService {
         this.departmentRepository = departmentRepository;
     }
 
-    public Iterable<Department> loadDepartments() {
-        return departmentRepository.findAll();
-    }
-
-    public List<Employee> loadEmployeesOfDepartmentById(int departmentId) {
-        return employeeRepository.findAllByDepartment_Id(departmentId);
-    }
-
     public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
         if (employeeRepository.findByEmail(params.get("email")).isPresent())
             throw new UsedEmailException();
@@ -48,7 +39,7 @@ public class HRService {
         Date date;
         try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            date = format.parse(params.get("date"));
+            date = format.parse(params.get("emp-date"));
         } catch (ParseException e) {
             date = new Date();
         }

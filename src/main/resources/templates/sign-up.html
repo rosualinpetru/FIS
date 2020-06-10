@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
+</head>
+<body class="bg-dark">
+<div class="container bg-secondary w-50 my-2 p-0 rounded border border-info">
+    <div class="row no-gutters">
+        <div class="col">
+            <form id="sign-up__form" class="form" th:action="@{/sign-up}" method="post">
+                <div class="px-3 pt-3 text-center">
+                    <div class="w-50 m-auto">
+                        <img class="w-25" th:src="@{images/favicon.png}" src="" alt="TOM">
+                    </div>
+                </div>
+                <div class="m-1 px-3 pb-3">
+                    <div class="w-75 m-auto">
+                        <hr class="border border-light">
+                        <h3 class="text-center text-light py-3"><b>Sign Up</b></h3>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__name-field" class="text-light">Name: (First name Last name)</label><br>
+                            <input type="text" name="name" id="sign-up__form__name-field" class="form-control"
+                                   pattern="^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__address-field" class="text-light">Address:</label><br>
+                            <input type="text" name="address" id="sign-up__form__address-field" class="form-control" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__email-field" class="text-light">Email:</label><br>
+                            <input type="text" name="email" id="sign-up__form__email-field" class="form-control"
+                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__phone-field" class="text-light">Phone:</label><br>
+                            <input type="tel" name="phone" id="sign-up__form__phone-field" class="form-control"
+                                   pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__salary-field" class="text-light">Salary:</label><br>
+                            <input type="text" name="salary" id="sign-up__form__salary-field" class="form-control"
+                                   pattern="[1-9]{1}[0-9]{1,}" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__emp-date-field" class="text-light">Employment date:</label>
+                            <input type="date" name="emp-date" id="sign-up__form__emp-date-field" class="form-control" required>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__department-field" class="text-light">Choose department:</label><br>
+                            <select name="departmentId" id="sign-up__form__department-field" class="custom-select" required>
+                                <option value="" th:text="'--- Select a department ---'"></option>
+                                <option th:each="i : ${departments}" th:value="${i.getId()}"
+                                        th:text="${i.getName()}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-2">
+                            <label for="sign-up__form__team-leader-field" class="text-light">Choose Leader:</label><br>
+                            <select name="teamLeaderId" id="sign-up__form__team-leader-field" class="custom-select" required>
+                                <option value=""> --- Select a department first ---</option>
+                            </select>
+                        </div>
+                        <div class="alert alert-danger mt-2 d-none w-75 mx-auto" th:if='${error != ""}'
+                             th:text="${error}" role="alert">
+                        </div>
+                        <div class="form-group w-75 mx-auto mt-3">
+                            <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{js/alert-handler.js}"></script>
+<script th:src="@{js/sign-up.js}"></script>
+</body>
+</html>

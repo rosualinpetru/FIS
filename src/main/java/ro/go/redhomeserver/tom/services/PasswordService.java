@@ -11,10 +11,7 @@ import ro.go.redhomeserver.tom.models.ResetPasswordRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.ResetPasswordRequestRepository;
 
-import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -36,7 +33,7 @@ public class PasswordService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Account searchForUser(String username) throws UserNotFoundException {
+    private Account searchForUser(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (!accountOptional.isPresent())
             throw new UserNotFoundException();
@@ -51,23 +48,23 @@ public class PasswordService {
         }
     }
 
-    public void addResetRequest(Account acc, String hostLink) throws SystemException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
-
-        ResetPasswordRequest req = new ResetPasswordRequest(acc, UUID.randomUUID().toString(), calendar.getTime());
+    public void addResetRequest(String username, String hostLink) throws SystemException, UserNotFoundException {
         try {
+            Account acc = searchForUser(username);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.HOUR_OF_DAY, 1);
+
+            ResetPasswordRequest req = new ResetPasswordRequest(acc, UUID.randomUUID().toString(), calendar.getTime());
             ResetPasswordEmail data = new ResetPasswordEmail(acc, hostLink + "/validate-password-reset-request?token=" + req.getToken());
             emailService.sendEmail(data);
             resetPasswordRequestRepository.save(req);
         } catch (MailException e) {
             throw new SystemException();
         }
-
     }
 
-    public int identifyAccount(String token) throws InvalidTokenException {
+    public int identifyAccountUsingToken(String token) throws InvalidTokenException {
         Date now = new Date();
         Optional<ResetPasswordRequest> requestOptional = resetPasswordRequestRepository.findByToken(token);
         if(!requestOptional.isPresent() || requestOptional.get().getExpirationDate().compareTo(now) < 0)

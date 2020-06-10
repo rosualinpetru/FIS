@@ -1,21 +1,14 @@
 $(document).ready(function () {
-
-    $(".alert:not(:empty)").removeClass("d-none");
-
-    setTimeout(function () {
-        $(".alert").fadeOut();
-    }, 3000);
-
-    $("#tl").prop('disabled', true);
-    $('#department').change(
+    $("#sign-up__form__team-leader-field").prop('disabled', true);
+    $('#sign-up__form__department-field').change(
         function () {
             if($(this).children("option:selected").val() === "") {
-                $('#tl').html('<option value=""> --- Select a department first  ---</option>');
-                $("#tl").prop('disabled', true);
+                $('#sign-up__form__team-leader-field').html('<option value=""> --- Select a department first  ---</option>');
+                $("#sign-up__form__team-leader-field").prop('disabled', true);
             }
             else{
-            $("#tl").prop('disabled', true);
-            $.getJSON("/updateSignUpForm", {
+            $("#sign-up__form__team-leader-field").prop('disabled', true);
+            $.getJSON("/update-sign-up-form", {
                 departmentId: $(this).val(),
                 ajax: 'true'
             }, function (data) {
@@ -26,8 +19,8 @@ $(document).ready(function () {
                         + data[i].value1 + '</option>';
                 }
                 html += '</option>';
-                $('#tl').html(html);
-                $("#tl").prop('disabled', false);
+                $('#sign-up__form__team-leader-field').html(html);
+                $("#sign-up__form__team-leader-field").prop('disabled', false);
             });
             }
         });

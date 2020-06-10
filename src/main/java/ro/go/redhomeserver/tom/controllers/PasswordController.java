@@ -28,9 +28,8 @@ public class PasswordController {
         RedirectView rv = new RedirectView("/log-in");
         ra.addFlashAttribute("upperNotification", "Check your email address!");
         try {
-            Account acc = passwordService.searchForUser(username);
             String hostLink = request.getScheme() + "://" + request.getServerName()+":8080";
-            passwordService.addResetRequest(acc, hostLink);
+            passwordService.addResetRequest(username, hostLink);
         } catch (UserNotFoundException e) {
             ra.addFlashAttribute("upperNotification", "User not found!");
         } catch (SystemException e) {
@@ -44,7 +43,7 @@ public class PasswordController {
         RedirectView rv;
         try {
             rv = new RedirectView("/set-new-password");
-            int id = passwordService.identifyAccount(token);
+            int id = passwordService.identifyAccountUsingToken(token);
             ra.addFlashAttribute("userId", id);
         } catch (InvalidTokenException e) {
             rv = new RedirectView("/log-in");

@@ -6,8 +6,10 @@ import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
 import ro.go.redhomeserver.tom.models.Account;
+import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
+import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
 import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
 import java.text.DateFormat;
@@ -19,13 +21,15 @@ import java.util.*;
 public class EmployeeService {
 
     private final HolidayRequestRepository holidayRequestRepository;
-
     private final AccountRepository accountRepository;
+    private final EmployeeRepository employeeRepository;
+
 
     @Autowired
-    public EmployeeService(HolidayRequestRepository holidayRequestRepository, AccountRepository accountRepository) {
+    public EmployeeService(HolidayRequestRepository holidayRequestRepository, AccountRepository accountRepository, EmployeeRepository employeeRepository) {
         this.holidayRequestRepository = holidayRequestRepository;
         this.accountRepository = accountRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public List<Account> loadPossibleDelegates(Account account) {
@@ -118,4 +122,20 @@ public class EmployeeService {
         }
     }
 
+    public void removeEmployee(int employeeId) {
+        Optional<Employee> accountOptional = employeeRepository.findById(employeeId);
+        if (accountOptional.isPresent()) {
+            employeeRepository.deleteById(employeeId);
+        }
+    }
+
+    public void updateTeamLeader(int employeeId1, int employeeId2) {
+        Optional<Employee> employeeOptional1 = employeeRepository.findById(employeeId1);
+        Optional<Employee> employeeOptional2 = employeeRepository.findById(employeeId2);
+        if (employeeOptional1.isPresent() && employeeOptional2.isPresent()) {
+            Account account = employeeOptional1.get().getAccount();
+            account.setTeamLeader(employeeOptional2.get().getAccount());
+            accountRepository.save(account);
+        }
+    }
 }
