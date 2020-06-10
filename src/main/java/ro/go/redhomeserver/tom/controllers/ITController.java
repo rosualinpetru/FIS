@@ -104,11 +104,17 @@ public class ITController {
         return new RedirectView("/change-team-leader");
     }
 
-    @GetMapping("/update-delete-employee-form")
+    @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})
     @ResponseBody
     public List<Pair<Integer, String>> getEmployeesOfDepartment(@RequestParam("departmentId") int departmentId, Authentication authentication) {
         List<Employee> allOfDepartmentButMe = departmentService.loadEmployeesOfDepartmentById(departmentId);
         allOfDepartmentButMe.remove(employeeService.findEmployeeByUsername(authentication.getName()));
         return allOfDepartmentButMe.stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
     }
+    @GetMapping({"/update-sign-up-form", "/update-change-team-leader-form"})
+    @ResponseBody
+    public List<Pair<Integer, String>> getEmployeesOfDepartment(@RequestParam("departmentId") int departmentId) {
+        return departmentService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
+    }
+
 }

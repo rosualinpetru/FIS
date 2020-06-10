@@ -52,10 +52,4 @@ public class HRController {
         }
         return mv;
     }
-
-    @GetMapping("/update-sign-up-form")
-    @ResponseBody
-    public List<Pair<Integer, String>> getEmployeesOfDepartment(@RequestParam("departmentId") int departmentId) {
-        return departmentService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
-    }
 }
