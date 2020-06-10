@@ -9,9 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableEncryptableProperties
 public class ToMApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ToMApplication.class, args);
     }
-
 }

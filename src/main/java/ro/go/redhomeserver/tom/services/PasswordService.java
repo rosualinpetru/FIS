@@ -33,6 +33,13 @@ public class PasswordService {
         this.resetPasswordRequestRepository = resetPasswordRequestRepository;
     }
 
+    public Account searchForUser(String username) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if (!accountOptional.isPresent())
+            throw new UserNotFoundException();
+        return accountOptional.get();
+    }
+
     public void addResetRequest(Account acc, String hostLink) throws SystemException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -40,7 +47,7 @@ public class PasswordService {
 
         ResetPasswordRequest req = new ResetPasswordRequest(acc, UUID.randomUUID().toString(), calendar.getTime());
         try {
-            ResetPasswordEmail data = new ResetPasswordEmail(acc, hostLink + "/validateReset?token=" + req.getToken());
+            ResetPasswordEmail data = new ResetPasswordEmail(acc, hostLink + "/validate-password-reset-request?token=" + req.getToken());
             emailService.sendEmail(data);
             resetPasswordRequestRepository.save(req);
         } catch (MailException e) {
