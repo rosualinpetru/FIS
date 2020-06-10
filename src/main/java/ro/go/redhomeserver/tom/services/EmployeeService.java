@@ -56,9 +56,7 @@ public class EmployeeService {
         } else {
             return null;
         }
-
     }
-
 
     public void addHolidayRequest(String username, Map<String, String> params) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
@@ -171,5 +169,10 @@ public class EmployeeService {
             account.setTeamLeader(employeeOptional2.get().getAccount());
             accountRepository.save(account);
         }
+    }
+
+    public Employee findEmployeeByUsername(String username) {
+        Optional<Employee> employeeOptional = employeeRepository.findByAccount_Username(username);
+        return employeeOptional.orElse(null);
     }
 }

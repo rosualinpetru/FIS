@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
     List<Employee> findAllByDepartment_Id(int department);
     Optional<Employee> findByEmail(String email);
+    Optional<Employee> findByAccount_Username(String username);
 }
