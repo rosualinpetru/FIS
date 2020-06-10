@@ -6,6 +6,4 @@ import ro.go.redhomeserver.tom.models.Department;
 
 @Repository
 public interface DepartmentRepository extends CrudRepository<Department, Integer> {
-    Department findById(int id);
-    void deleteById(int id);
 }

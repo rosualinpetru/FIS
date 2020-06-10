@@ -2,86 +2,119 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
-import ro.go.redhomeserver.tom.dtos.WebEvent;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.models.HolidayReq;
+import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
-import ro.go.redhomeserver.tom.repositories.HolidayReqRepository;
+import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
+import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EmployeeService {
 
-    @Autowired
-    private HolidayReqRepository holidayReqRepository;
+    private final HolidayRequestRepository holidayRequestRepository;
+    private final AccountRepository accountRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    public EmployeeService(HolidayRequestRepository holidayRequestRepository, AccountRepository accountRepository, EmployeeRepository employeeRepository) {
+        this.holidayRequestRepository = holidayRequestRepository;
+        this.accountRepository = accountRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
-    public List<Account> loadDelegates(Account acc_current) {
-        List<Account> myTeam = accountRepository.findAllByTl(acc_current);
-        if (myTeam.isEmpty()) return null;
-        else {
-            List<Account> colleges;
-            if (acc_current.getTl() == null) {
-                colleges = accountRepository.findAllByTlIsNullAndEmployee_Department(acc_current.getEmployee().getDepartment());
-                colleges.remove(acc_current);
-                if (colleges.size() != 0)
-                    return colleges;
-                else return myTeam;
-            } else {
-                colleges = accountRepository.findAllByTl(acc_current.getTl());
-                colleges.remove(acc_current);
-                colleges.add(acc_current.getTl());
-                return colleges;
+    public List<Account> loadPossibleDelegates(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            List<Account> myTeam = accountRepository.findAllByTeamLeader(account);
+            if (myTeam.isEmpty()) return null;
+            else {
+                List<Account> colleagues;
+                if (account.getTeamLeader() == null) {
+                    colleagues = accountRepository.findAllByTeamLeaderIsNullAndEmployee_Department(account.getEmployee().getDepartment());
+                    colleagues.remove(account);
+                    if (colleagues.size() != 0)
+                        return colleagues;
+                    else return myTeam;
+                } else {
+                    colleagues = accountRepository.findAllByTeamLeader(account.getTeamLeader());
+                    colleagues.remove(account);
+                    colleagues.add(account.getTeamLeader());
+                    return colleagues;
+                }
             }
+        } else {
+            return null;
         }
-
     }
 
+    public void addHolidayRequest(String username, Map<String, String> params) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if (accountOptional.isPresent()) {
+            Date start_date;
+            Date end_date;
+            try {
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                start_date = format.parse(params.get("startDate"));
+                end_date = format.parse(params.get("endDate"));
+            } catch (ParseException e) {
+                start_date = new Date();
+                end_date = new Date();
+            }
 
-    public void addRequestRecord(Account account_req, Map<String, String> params) {
-        Date start_date;
-        Date end_date;
-        try {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            start_date = format.parse(params.get("start_date"));
-            end_date = format.parse(params.get("end_date"));
-        } catch (ParseException e) {
-            start_date = new Date();
-            end_date = new Date();
+            Optional<Account> delegateOptional = accountRepository.findById(Integer.parseInt(params.get("delegateId")));
+            if (delegateOptional.isPresent()) {
+                HolidayRequest newHolidayRequest = new HolidayRequest(
+                        RequestType.valueOf(params.get("requestTypeId")),
+                        RequestStatus.sentTL,
+                        params.get("description"),
+                        start_date,
+                        end_date,
+                        accountOptional.get(),
+                        delegateOptional.get()
+                );
+                if (newHolidayRequest.getRequester().getTeamLeader() == null) {
+                    newHolidayRequest.setStatus(RequestStatus.sentHR);
+                }
+                holidayRequestRepository.save(newHolidayRequest);
+            }
+        } else {
+            throw new UserNotFoundException();
         }
-
-        HolidayReq newHolidayReq = new HolidayReq(
-                RequestType.valueOf(params.get("requestTypeId")),
-                RequestStatus.sentTL,
-                params.get("description"),
-                start_date,
-                end_date,
-                account_req,
-                accountRepository.findById(Integer.parseInt(params.get("delegateId")))
-        );
-
-        holidayReqRepository.save(newHolidayReq);
-
     }
 
-    public List<WebEvent> loadHolidayReqByTl(Account tl) {
-        List<HolidayReq> lst = holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentHR);
-        lst.addAll(holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.feedHR));
-        List<WebEvent> result = new ArrayList<>();
+    public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendar(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            List<CalendarEvent> result;
+
+            List<HolidayRequest> list = holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentHR);
+            list.addAll(holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.feedHR));
+            result = foreachHolidayRequestExtractCalendarEvent(list, "");
+
+            list = holidayRequestRepository.findAllByRequesterAndStatus(account, RequestStatus.feedHR);
+            list.addAll(holidayRequestRepository.findAllByRequesterAndStatus(account, RequestStatus.sentHR));
+
+            result.addAll(foreachHolidayRequestExtractCalendarEvent(list, "ME"));
+            return result;
+        } else return null;
+    }
+
+    private List<CalendarEvent> foreachHolidayRequestExtractCalendarEvent(List<HolidayRequest> list, String name) {
+        List<CalendarEvent> result = new ArrayList<>();
         String color = "black";
-        for (HolidayReq h : lst) {
+        for (HolidayRequest h : list) {
             switch (h.getType()) {
                 case Fam:
                     color = "#E27D60";
@@ -97,23 +130,49 @@ public class EmployeeService {
                     break;
 
             }
-            result.add(new WebEvent(h.getId(), h.getAccountReq().getEmployee().getName(), h.getStart(), h.getEnd(), color));
+            if (name.equals(""))
+                name = h.getRequester().getEmployee().getName();
+            result.add(new CalendarEvent(h.getId(), name, h.getStart(), h.getEnd(), color));
         }
         return result;
     }
 
-    public List <HolidayReq> loadPendingReqByTl(Account tl) {
-        return holidayReqRepository.findAllByAccountReq_TlAndStatus(tl, RequestStatus.sentTL);
+    public List<HolidayRequest> loadPendingHolidayRequestsForATeamLeader(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        return accountOptional.map(account -> holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentTL)).orElse(null);
     }
 
-    public void updateStatusReq(int id, String act) {
-        HolidayReq req;
-        req = holidayReqRepository.findById(id);
-        if(act.equals("acc"))
-            req.setStatus(RequestStatus.sentHR);
-        if(act.equals("dec"))
-            req.setStatus(RequestStatus.decline);
-        holidayReqRepository.save(req);
+    public void updateStatusOfHolidayRequest(int holidayRequestId, String action) {
+        Optional<HolidayRequest> requestOptional = holidayRequestRepository.findById(holidayRequestId);
+        if (requestOptional.isPresent()) {
+            HolidayRequest request = requestOptional.get();
+            if (action.equals("acc"))
+                request.setStatus(RequestStatus.sentHR);
+            if (action.equals("dec"))
+                request.setStatus(RequestStatus.decline);
+            holidayRequestRepository.save(request);
+        }
     }
 
+    public void removeEmployee(int employeeId) {
+        Optional<Employee> accountOptional = employeeRepository.findById(employeeId);
+        if (accountOptional.isPresent()) {
+            employeeRepository.deleteById(employeeId);
+        }
+    }
+
+    public void updateTeamLeader(int employeeId1, int employeeId2) {
+        Optional<Employee> employeeOptional1 = employeeRepository.findById(employeeId1);
+        Optional<Employee> employeeOptional2 = employeeRepository.findById(employeeId2);
+        if (employeeOptional1.isPresent() && employeeOptional2.isPresent()) {
+            Account account = employeeOptional1.get().getAccount();
+            account.setTeamLeader(employeeOptional2.get().getAccount());
+            accountRepository.save(account);
+        }
+    }
+
+    public Employee findEmployeeByUsername(String username) {
+        Optional<Employee> employeeOptional = employeeRepository.findByAccount_Username(username);
+        return employeeOptional.orElse(null);
+    }
 }

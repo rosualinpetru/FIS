@@ -1,47 +1,49 @@
 package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import ro.go.redhomeserver.tom.exceptions.*;
-import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.services.AuthService;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import ro.go.redhomeserver.tom.services.ClearDataService;
+import ro.go.redhomeserver.tom.services.PasswordService;
 
 @Controller
 public class AuthController {
 
+    private final ClearDataService clearDataService;
+    private final PasswordService passwordService;
     @Autowired
-    private AuthService authService;
-
-    @GetMapping("/auth")
-    public String auth(HttpServletRequest request) {
-        if(request.getSession().getAttribute("active")!=null)
-            return "redirect:/";
-
-        return "auth";
+    public AuthController(ClearDataService clearDataService, PasswordService passwordService) {
+        this.clearDataService = clearDataService;
+        this.passwordService = passwordService;
     }
 
-    @PostMapping("/auth")
-    public ModelAndView authenticate(@RequestParam Map<String, String> authData, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("auth");
-        mv.addObject("user", authData.get("username"));
-        try {
-            Account acc = authService.findAccountByUsername(authData.get("username"));
-            authService.checkCredentials(acc, authData.get("password"));
-            request.getSession().setAttribute("active", acc);
+    public boolean isUserAuthenticated() {
+        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated() && !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken);
+    }
+
+    @GetMapping("/")
+    public ModelAndView index() {
+        clearDataService.clearData();
+        return new ModelAndView("index");
+    }
+
+    @GetMapping("/log-in")
+    public ModelAndView logIn() {
+        ModelAndView mv = new  ModelAndView("log-in");
+        mv.addObject("upperNotification", "");
+        if (isUserAuthenticated())
             return new ModelAndView("redirect:/");
-        } catch (UserNotFoundException e) {
-            mv.addObject("error", "User not found!");
-        } catch (PasswordMatchException e) {
-            mv.addObject("error", "Wrong password!");
-        } catch (SystemException e) {
-            mv.addObject("error", "We're having some system issues! Try again later!");
-        }
         return mv;
     }
 
+    @GetMapping("/get-salt")
+    @ResponseBody
+    public String getSaltOfUser(@RequestParam("username") String username) {
+        return passwordService.getSaltOfUser(username);
+    }
 }

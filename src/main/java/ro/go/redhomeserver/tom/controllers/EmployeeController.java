@@ -1,80 +1,87 @@
 package ro.go.redhomeserver.tom.controllers;
 
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.dtos.WebEvent;
-import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.models.HolidayReq;
+import org.springframework.web.servlet.view.RedirectView;
+import ro.go.redhomeserver.tom.dtos.CalendarEvent;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.services.EmployeeService;
+import ro.go.redhomeserver.tom.services.IssueRequestService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class EmployeeController {
 
+    private final EmployeeService employeeService;
+    private final IssueRequestService issueRequestService;
+
     @Autowired
-    EmployeeService employeeService;
+    public EmployeeController(EmployeeService employeeService, IssueRequestService issueRequestService) {
+        this.employeeService = employeeService;
+        this.issueRequestService = issueRequestService;
+    }
 
+    @GetMapping("/request-holiday")
+    public ModelAndView requestHoliday(Authentication authentication) {
+        ModelAndView mv = new ModelAndView("request-holiday");
+        mv.addObject("delegates", employeeService.loadPossibleDelegates(authentication.getName()));
+        return mv;
+    }
 
-    @GetMapping("/holidayReq")
-    public ModelAndView holidayReq(HttpServletRequest request, RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("holidayReq");
-        if (request.getSession().getAttribute("active") == null) {
-            mv = new ModelAndView("redirect:/auth");
-            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
-            return mv;
+    @PostMapping("/request-holiday")
+    public RedirectView requestHoliday(@RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
+        RedirectView rv = new RedirectView("/");
+        try {
+            employeeService.addHolidayRequest(authentication.getName(), params);
+            ra.addFlashAttribute("upperNotification", "Your request was sent to your team leader!");
+        } catch (UserNotFoundException e) {
+            ra.addFlashAttribute("upperNotification", "There was an error in the system! The request was not sent!");
         }
-
-        mv.addObject("delegates", employeeService.loadDelegates(((Account) request.getSession().getAttribute("active"))));
-
-        return mv;
+        return rv;
     }
 
-    @PostMapping("/holidayReq")
-    public ModelAndView resolveHolidayReq(@RequestParam Map<String, String> params, HttpServletRequest request, RedirectAttributes ra) {
+    @GetMapping("/report-issue")
+    public ModelAndView reportIssue() {
+        return new ModelAndView("report-issue");
+    }
 
-        ModelAndView mv;
-        if (request.getSession().getAttribute("active") == null) {
-            mv = new ModelAndView("redirect:/auth");
-            ra.addFlashAttribute("upperNotification", "Please log in again (Session expired)!");
-            return mv;
+    @PostMapping("/report-issue")
+    public RedirectView reportIssue(@RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
+        RedirectView rv = new RedirectView("/");
+        try {
+            issueRequestService.addIssueRequest(authentication.getName(), params);
+            ra.addFlashAttribute("upperNotification", "Issue reported!");
+        } catch (UserNotFoundException e) {
+            ra.addFlashAttribute("upperNotification", "There was an error in the system! The request was not sent!");
         }
-
-        employeeService.addRequestRecord((Account) request.getSession().getAttribute("active"), params);
-        mv = new ModelAndView("redirect:/");
-
-        return mv;
-
+        return rv;
     }
 
-    @GetMapping("/pendingRequest")
-    public ModelAndView pendingRequest(HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("approveHolReq");
-        mv.addObject("pendingReq",employeeService.loadPendingReqByTl((Account) request.getSession().getAttribute("active")));
+    @GetMapping("/pending-holiday-requests")
+    public ModelAndView pendingHolidayRequests(Authentication authentication) {
+        ModelAndView mv = new ModelAndView("pending-holiday-requests");
+        mv.addObject("pendingHolidayRequests", employeeService.loadPendingHolidayRequestsForATeamLeader(authentication.getName()));
         return mv;
     }
 
-    @GetMapping("/loadMyTeamsSchedule")
+    @GetMapping("/team-schedule")
     @ResponseBody
-    public List<WebEvent> loadHolidayReq(HttpServletRequest request) {
-        return employeeService.loadHolidayReqByTl((Account) request.getSession().getAttribute("active"));
+    public List<CalendarEvent> teamSchedule(Authentication authentication) {
+        return employeeService.loadHolidayRequestsOfTeamLeaderForCalendar(authentication.getName());
     }
 
-    @PostMapping("/acceptReq")
+    @PostMapping("/update-holiday-request")
     @ResponseBody
-    public void updateStatusReq(@RequestParam String id,@RequestParam String act) {
-        employeeService.updateStatusReq(Integer.parseInt(id),act);
+    public void updateHolidayRequest(@RequestParam String holidayRequestId, @RequestParam String action) {
+        employeeService.updateStatusOfHolidayRequest(Integer.parseInt(holidayRequestId), action);
     }
-
 }

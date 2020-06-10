@@ -7,8 +7,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ro.go.redhomeserver.tom.exceptions.*;
-import ro.go.redhomeserver.tom.models.Account;
-import ro.go.redhomeserver.tom.services.AuthService;
 import ro.go.redhomeserver.tom.services.PasswordService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,70 +15,64 @@ import java.util.Map;
 @Controller
 public class PasswordController {
 
-    @Autowired
-    private AuthService authService;
+    private final PasswordService passwordService;
 
     @Autowired
-    private PasswordService passwordService;
-
-    @GetMapping("/resetPassword")
-    public String niceTry() {
-        return "redirect:/auth";
+    public PasswordController(PasswordService passwordService) {
+        this.passwordService = passwordService;
     }
 
-    @PostMapping("/resetPassword")
-    public ModelAndView resetPassword(@RequestParam("username") String username, HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("auth");
-        mv.addObject("upperNotification", "Check your email address!");
+    @PostMapping("/reset-password")
+    public RedirectView resetPassword(@RequestParam("username") String username, HttpServletRequest request, RedirectAttributes ra) {
+        RedirectView rv = new RedirectView("/log-in");
+        ra.addFlashAttribute("upperNotification", "Check your email address!");
         try {
-            Account acc = authService.findAccountByUsername(username);
-            String hostLink = request.getScheme() + "://" + request.getServerName();
-            passwordService.makeResetRequest(acc, hostLink);
+            String hostLink = request.getScheme() + "://" + request.getServerName()+":8080";
+            passwordService.addResetRequest(username, hostLink);
         } catch (UserNotFoundException e) {
-            mv.addObject("upperNotification", "User Not Found!");
+            ra.addFlashAttribute("upperNotification", "User not found!");
         } catch (SystemException e) {
-            mv.addObject("upperNotification", "There was a problem in sending the reset email!");
+            ra.addFlashAttribute("upperNotification", "There was a problem in sending the reset email!");
         }
-        return mv;
+        return rv;
     }
 
-
-    @GetMapping("/validateReset")
-    public RedirectView validateReset(@RequestParam("token") String token, RedirectAttributes ra) {
+    @GetMapping("/validate-password-reset-request")
+    public RedirectView validatePasswordResetRequest(@RequestParam("token") String token, RedirectAttributes ra) {
         RedirectView rv;
         try {
-            rv = new RedirectView("/setPassword");
-            int id = passwordService.identifyAccount(token);
+            rv = new RedirectView("/set-new-password");
+            int id = passwordService.identifyAccountUsingToken(token);
             ra.addFlashAttribute("userId", id);
         } catch (InvalidTokenException e) {
-            rv = new RedirectView("/auth");
+            rv = new RedirectView("/log-in");
             ra.addFlashAttribute("upperNotification", "The token expired or is invalid!");
         }
         return rv;
     }
 
-    @GetMapping("/setPassword")
-    public ModelAndView loadResetRequest(@ModelAttribute("userId") int id) {
-        ModelAndView mv = new ModelAndView("resetPassword");
+    @GetMapping("/set-new-password")
+    public ModelAndView setNewPassword(@ModelAttribute("userId") int id) {
+        ModelAndView mv = new ModelAndView("reset-password");
         mv.addObject("userId", id);
         return mv;
     }
 
-    @PostMapping("/setPassword")
-    public ModelAndView handleResetRequest(@RequestParam Map<String, String> data, @ModelAttribute("userId") int id, RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("resetPassword");
+    @PostMapping("/set-new-password")
+    public ModelAndView setNewPassword(@RequestParam Map<String, String> data, @ModelAttribute("userId") int id, RedirectAttributes ra) {
+        ModelAndView mv = new ModelAndView("reset-password");
         mv.addObject("userId", id);
         try {
             passwordService.validatePassword(data.get("password"), data.get("passwordVerification"));
             passwordService.updateAccountPasswordById(Integer.parseInt(data.get("userId")), data.get("password"));
-            mv = new ModelAndView("redirect:/auth");
+            mv = new ModelAndView("redirect:/log-in");
             ra.addFlashAttribute("upperNotification", "Password updated!");
             return mv;
         } catch (WeakPasswordException e) {
             mv.addObject("error", "The password is too weak!");
-        } catch (PasswordMismatchException e) {
+        } catch (PasswordVerificationException e) {
             mv.addObject("error", "The password does not match!");
-        } catch (SignUpException | SystemException e) {
+        } catch (SignUpException e) {
             mv.addObject("error", "We're having some system issues! Try again later!");
         }
         return mv;

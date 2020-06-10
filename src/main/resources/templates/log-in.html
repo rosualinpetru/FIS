@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Authenticate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
+</head>
+<body class="bg-dark h-100">
+<div class="container-fluid h-100 m-0 p-0">
+    <div class="row h-100 no-gutters">
+        <div class="col-lg">
+            <div id="log-in__hero-shot" class="carousel slide h-100 w-100" data-ride="carousel" data-interval="5000">
+                <div class="carousel-inner h-100 w-100">
+                    <div class="carousel-item active h-100 w-100">
+                        <img class="d-block h-100 w-100" th:src="@{/images/log-in-hero-shot-1.jpg}" src=""
+                             alt="First slide">
+                    </div>
+                    <div class="carousel-item h-100 w-100">
+                        <img class="d-block h-100 w-100" th:src="@{/images/log-in-hero-shot-2.jpg}" src=""
+                             alt="Second slide">
+                    </div>
+                    <div class="carousel-item h-100 w-100">
+                        <img class="d-block h-100 w-100" th:src="@{/images/log-in-hero-shot-3.jpg}" src=""
+                             alt="Third slide">
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#log-in__hero-shot" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#log-in__hero-shot" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <div class="col p-5">
+            <form id="log-in__auth-form" class="w-75 p-5 mx-auto mt-5 border border-info" th:action="@{/log-in}" method="post">
+                <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+                     th:text="${upperNotification}" role="alert"></div>
+                <div class="alert alert-warning my-3 d-none" th:if='${param.logout}' role="alert">You have been logged out!</div>
+                <div class="w-100 text-center">
+                    <img class="w-25 pb-2" th:src="@{images/favicon.png}" src="" alt="TOM">
+                </div>
+                <hr class="border border-light">
+                <h3 class="text-center text-light my-5">Log In</h3>
+                <div class="form-group">
+                    <label for="log-in__auth-form__username" class="text-light">Username:</label><br>
+                    <input type="text" name="username" id="log-in__auth-form__username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="log-in__auth-form__password--holder" class="text-light">Password:</label><br>
+                    <input type="password" name="password--holder" id="log-in__auth-form__password--holder" class="form-control" required>
+                </div>
+                <div id="log-in__auth-form__reset-link" class="text-right my-3">
+                    <a href="#" class="text-info">Forgot your password?</a>
+                </div>
+                <input type="hidden" name="password" id="log-in__auth-form__password">
+                <div th:if="${param.error}" class="alert alert-danger mt-2 d-none" role="alert">
+                    Bad credentials!
+                </div>
+                <div class="form-group mt-3">
+                    <input type="submit" id="log-in__auth-form__submit" class="btn btn-info btn-md" value="submit">
+                </div>
+            </form>
+            <form id="log-in__reset-pass-form" class="w-75 p-5 mx-auto mt-5 border border-info d-none" th:action="@{/reset-password}" method="post">
+                <div class="w-100 text-center">
+                    <img class="w-25 pb-2" th:src="@{images/favicon.png}" src="" alt="TOM">
+                </div>
+                <hr class="border border-light">
+                <h3 class="text-center text-light pb-5 pt-2">Reset Password</h3>
+                <div class="form-group">
+                    <label for="log-in__reset-pass-form__username" class="text-white">Username:</label><br>
+                    <input type="text" name="username" id="log-in__reset-pass-form__username" class="form-control" required>
+                </div>
+                <div id="log-in__auth-form__auth-link" class="text-right">
+                    <a href="#" class="text-info">Back to login!</a>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{js/alert-handler.js}"></script>
+<script th:src="@{js/log-in.js}"></script>
+</body>
+</html>
