@@ -16,7 +16,8 @@
             <div id='requests__calendar' class="bg-secondary text-light mx-auto my-5 p-3 w-75 border border-info"></div>
         </div>
         <div class="col bg-secondary p-5 m-0">
-            <div class="w-100 h-100 text-light" th:if="${pendingHolidayRequests.isEmpty()}"><h1>No pending requests</h1></div>
+            <div class="w-100 h-100 text-light" th:if="${pendingHolidayRequests.isEmpty()}"><h1 class="text-center">No
+                pending requests!</h1></div>
             <div id="requests__pending" class="border border-dark p-0" th:if="${!pendingHolidayRequests.isEmpty()}" >
                 <div class="row m-0">
                     <h4 class="col-2 m-2 text-center">
@@ -35,11 +36,12 @@
                         Delegate
                     </h4>
                 </div>
-                <div th:each="i : ${pendingHolidayRequests}" th:id="${i.getId()}" class="requests__pending__entry">
+                <div th:each="i : ${pendingHolidayRequests}">
                     <hr class="border border-dark m-3">
-                    <div class="row m-0" th:value="${i.getId()}">
+                    <div class="row m-0">
                         <div class="col-2 m-0 text-center">
-                            <button type="button" class="btn btn-info btn-circle" th:text="${i.getType()}"></button>
+                            <button type="button" class="btn btn-info btn-circle requests__pending__entry"
+                                    th:id="${i.getId()}" th:text="${i.getType()}"></button>
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light">
@@ -71,7 +73,7 @@
             <div class="modal-header">
                 <h5 class="modal-title text-light">
                     <b th:text="${i.getType()} + ':' "></b>
-                    <i th:id="${i.getId()}" th:text="${i.getRequester().getEmployee().getName()}"></i>
+                    <i th:text="${i.getRequester().getEmployee().getName()}"></i>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

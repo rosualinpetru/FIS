@@ -9,10 +9,7 @@ import ro.go.redhomeserver.tom.models.IssueRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.IssueRequestRepository;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,9 +35,17 @@ public class IssueRequestService {
 
     public List<PendingIssue> loadAllPendingIssueRequests() {
         Comparator<IssueRequest> compareByIssueReq = Comparator.comparingInt(i -> i.getAccount().getEmployee().getDepartment().getId());
-        List<IssueRequest> lst = (List<IssueRequest>) issueRequestRepository.findAll();
-        lst.sort(compareByIssueReq);
-        return lst.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList());
+        List<IssueRequest> withoutNull = (List<IssueRequest>) issueRequestRepository.findAll();
+        List<IssueRequest> onlyNull = (List<IssueRequest>) issueRequestRepository.findAll();
+
+        withoutNull.removeIf(issueRequest -> issueRequest.getAccount()==null);
+        onlyNull.removeIf(issueRequest -> issueRequest.getAccount()!=null);
+
+        withoutNull.sort(Comparator.nullsFirst(compareByIssueReq));
+
+        List<PendingIssue> result = onlyNull.stream().map((s -> new PendingIssue(s.getId(), "IT", "IT-SERVICE", s.getDescription()))).collect(Collectors.toList());
+        result.addAll(withoutNull.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList()));
+        return result;
     }
 
     public void deleteIssueRequestById(int issueRequestId) {

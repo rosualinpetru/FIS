@@ -13,10 +13,6 @@ import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
 import ro.go.redhomeserver.tom.repositories.IssueRequestRepository;
 
 import javax.transaction.SystemException;
-import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service

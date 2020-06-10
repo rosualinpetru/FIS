@@ -1,6 +1,5 @@
 package ro.go.redhomeserver.tom.controllers;
 
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +10,7 @@ import ro.go.redhomeserver.tom.exceptions.SignUpException;
 import ro.go.redhomeserver.tom.services.DepartmentService;
 import ro.go.redhomeserver.tom.services.HRService;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class HRController {
