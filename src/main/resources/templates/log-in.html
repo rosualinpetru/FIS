@@ -37,9 +37,10 @@
             </div>
         </div>
         <div class="col p-5">
-            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
-                 th:text="${upperNotification}" role="alert"></div>
             <form id="log-in__auth-form" class="w-75 p-5 mx-auto mt-5 border border-info" th:action="@{/log-in}" method="post">
+                <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+                     th:text="${upperNotification}" role="alert"></div>
+                <div class="alert alert-warning my-3 d-none" th:if='${param.logout}' role="alert">You have been logged out!</div>
                 <div class="w-100 text-center">
                     <img class="w-25 pb-2" th:src="@{images/favicon.png}" src="" alt="TOM">
                 </div>
@@ -50,17 +51,18 @@
                     <input type="text" name="username" id="log-in__auth-form__username" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="log-in__auth-form__password" class="text-light">Password:</label><br>
-                    <input type="password" name="password" id="log-in__auth-form__password" class="form-control" required>
+                    <label for="log-in__auth-form__password--holder" class="text-light">Password:</label><br>
+                    <input type="password" name="password--holder" id="log-in__auth-form__password--holder" class="form-control" required>
                 </div>
                 <div id="log-in__auth-form__reset-link" class="text-right my-3">
                     <a href="#" class="text-info">Forgot your password?</a>
                 </div>
+                <input type="hidden" name="password" id="log-in__auth-form__password">
                 <div th:if="${param.error}" class="alert alert-danger mt-2 d-none" role="alert">
                     Bad credentials!
                 </div>
                 <div class="form-group mt-3">
-                    <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+                    <input type="submit" id="log-in__auth-form__submit" class="btn btn-info btn-md" value="submit">
                 </div>
             </form>
             <form id="log-in__reset-pass-form" class="w-75 p-5 mx-auto mt-5 border border-info d-none" th:action="@{/reset-password}" method="post">

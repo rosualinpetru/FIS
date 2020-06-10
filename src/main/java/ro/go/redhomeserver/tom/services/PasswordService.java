@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.dtos.ResetPasswordEmail;
 import ro.go.redhomeserver.tom.exceptions.*;
@@ -25,12 +26,14 @@ public class PasswordService {
     private final AccountRepository accountRepository;
     private final EmailService emailService;
     private final ResetPasswordRequestRepository resetPasswordRequestRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PasswordService(AccountRepository accountRepository, EmailService emailService, ResetPasswordRequestRepository resetPasswordRequestRepository) {
+    public PasswordService(AccountRepository accountRepository, EmailService emailService, ResetPasswordRequestRepository resetPasswordRequestRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.emailService = emailService;
         this.resetPasswordRequestRepository = resetPasswordRequestRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Account searchForUser(String username) throws UserNotFoundException {
@@ -38,6 +41,14 @@ public class PasswordService {
         if (!accountOptional.isPresent())
             throw new UserNotFoundException();
         return accountOptional.get();
+    }
+
+    public String getSaltOfUser(String username) {
+        try {
+            return this.searchForUser(username).getSalt();
+        } catch (UserNotFoundException e) {
+            return "";
+        }
     }
 
     public void addResetRequest(Account acc, String hostLink) throws SystemException {
@@ -87,21 +98,19 @@ public class PasswordService {
             throw new WeakPasswordException();
     }
 
-    public void updateAccountPasswordById(int id, String password) throws SystemException {
+    public void updateAccountPasswordById(int id, String password) throws SignUpException {
         try {
             Optional<Account> accountOptional = accountRepository.findById(id);
             if(!accountOptional.isPresent()) {
-                throw new NullPointerException();
+                throw new UserNotFoundException();
             }
             Account account = accountOptional.get();
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
             String saltedPass = password+account.getSalt();
-            account.setPassword(DatatypeConverter.printHexBinary(md.digest(saltedPass.getBytes(StandardCharsets.UTF_8))));
+            account.setPassword(passwordEncoder.encode(saltedPass));
             accountRepository.save(account);
             resetPasswordRequestRepository.deleteAllByAccount(account);
-        } catch (NoSuchAlgorithmException | NullPointerException e) {
-            throw new SystemException();
+        } catch (UserNotFoundException e) {
+            throw new SignUpException();
         }
     }
-
 }

@@ -10,6 +10,6 @@ public class ResetPasswordEmail extends EmailData{
         super(to, "Reset Password");
         context.setVariable("username", to.getUsername());
         context.setVariable("link", link);
-        context.setVariable("templateName", "resetPasswordEmailTemplate");
+        context.setVariable("templateName", "reset-password-email");
     }
 }
