@@ -1,0 +1,52 @@
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 23px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+.list-group a {
+    text-decoration: none;
+    color: black;
+}
+
+.list-group a:hover {
+    background-color: #b5babe!important;
+}
+
+.index__menu-toggler {
+    position: relative;
+    top: -30px;
+    z-index: 2;
+}
+
+.index__menu {
+    position: relative;
+    top: -20px;
+    z-index: 1;
+}
+
+.index__alert, .index__content{
+    transition: height 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+.index__alert--up {
+    height: 10%;
+}
+
+.index__content--up {
+    height: 90%;
+}

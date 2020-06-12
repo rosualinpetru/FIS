@@ -38,15 +38,17 @@ public class DepartmentService {
     }
 
     public void removeDepartment(int departmentId) {
-        StringBuilder str = new StringBuilder("The following employees don't have a department: \n");
         List<Employee> lst = employeeRepository.findAllByDepartment_Id(departmentId);
-        for (Employee e : lst) {
-            str.append(e.getName());
-            str.append("\n");
-            e.setDepartment(null);
-            employeeRepository.save(e);
+        if (!lst.isEmpty()) {
+            StringBuilder str = new StringBuilder("The following employees don't have a department: \n");
+            for (Employee e : lst) {
+                str.append(e.getName());
+                str.append("\n");
+                e.setDepartment(null);
+                employeeRepository.save(e);
+            }
+            issueRequestRepository.save(new IssueRequest(str.toString(), null));
         }
-        issueRequestRepository.save(new IssueRequest(str.toString(), null));
         departmentRepository.deleteById(departmentId);
     }
 }

@@ -20,6 +20,8 @@ public class TOMUserDetails implements UserDetails {
         this.password = account.getPassword();
         authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(account.getEmployee().getDepartment().getName()));
+        if(account.getId() == 1)
+            authorityList.add(new SimpleGrantedAuthority("ADMIN"));
     }
 
     @Override
