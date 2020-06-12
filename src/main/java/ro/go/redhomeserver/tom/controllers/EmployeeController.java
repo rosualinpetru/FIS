@@ -81,7 +81,7 @@ public class EmployeeController {
 
     @PostMapping("/update-holiday-request")
     @ResponseBody
-    public void updateHolidayRequest(@RequestParam String holidayRequestId, @RequestParam String action) {
+    public void updateHolidayRequest(@RequestParam("id") String holidayRequestId, @RequestParam("act") String action) {
         employeeService.updateStatusOfHolidayRequest(Integer.parseInt(holidayRequestId), action);
     }
 }

@@ -13,7 +13,7 @@ $(document).ready(function () {
                 id: $(this).attr("id").replace('acc', '').replace('dec', ''),
                 act: $(this).attr("id").slice(0, 3)
             }, function () {
-                document.location = '/pending-holiday-requests';
+                document.location = '/tom/pending-holiday-requests';
             })
         })
 });

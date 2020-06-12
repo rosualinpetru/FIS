@@ -8,6 +8,7 @@
     <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/index.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
@@ -23,8 +24,15 @@
         <div class="col-6 mx-auto text-center">
             <div class="card text-white bg-secondary rounded p-2 text-left">
                 <div class="card-body">
-                    <h3 class="card-title" th:text="${employee.getName()}"></h3>
-                    <div class="card text-white bg-secondary border border-dark m-2 mt-4">
+                    <div class="row no-gutters card-title m-0">
+                        <div class="col-9">
+                            <h3 class="m-2" th:text="${employee.getName()}"></h3>
+                        </div>
+                        <div class="col-3 text-right">
+                            <img class="w-50" th:src="@{images/favicon.png}" src="" alt="TOM">
+                        </div>
+                    </div>
+                    <div class="card text-white bg-secondary border border-dark m-2 mt-3">
                         <div class="card-body">
                             <ul>
                                 <li>
@@ -48,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-danger btn-default btn-circle btn-xl index__menu-toggler"
+            <button type="button" class="btn btn-info btn-default btn-circle btn-xl index__menu-toggler"
                     data-toggle="collapse" data-target="#multiCollapseExample2" aria-controls="multiCollapseExample2"
                     aria-expanded="false"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
             <div class="collapse multi-collapse index__menu w-75 mx-auto text-left" id="multiCollapseExample2">
