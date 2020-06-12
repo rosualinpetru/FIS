@@ -36,7 +36,7 @@ public class ITController {
 
     @GetMapping("/create-account")
     public RedirectView createAccount(@ModelAttribute("employeeId") int employeeId, @ModelAttribute("teamLeaderId") int teamLeaderId, RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/");
+        RedirectView rv = new RedirectView("/tom/");
         try {
             itService.generateAccount(employeeId, teamLeaderId);
         } catch (SystemException e) {
@@ -69,13 +69,13 @@ public class ITController {
     @PostMapping("/add-department")
     public RedirectView addDepartment(@RequestParam("departmentName") String departmentName) {
         departmentService.addDepartment(departmentName);
-        return new RedirectView("/manage-department");
+        return new RedirectView("/tom/manage-department");
     }
 
     @PostMapping("/delete-department")
     public RedirectView deleteDepartment(@RequestParam("departmentId") String departmentId) {
         departmentService.removeDepartment(Integer.parseInt(departmentId));
-        return new RedirectView("/manage-department");
+        return new RedirectView("/tom/manage-department");
     }
 
     @GetMapping("/delete-employee")
@@ -88,7 +88,7 @@ public class ITController {
     @PostMapping("/delete-employee")
     public RedirectView deleteEmployee(@RequestParam("employeeId") String employeeId) {
         employeeService.removeEmployee(Integer.parseInt(employeeId));
-        return new RedirectView("/delete-employee");
+        return new RedirectView("/tom/delete-employee");
     }
 
     @GetMapping("/change-team-leader")
@@ -101,7 +101,7 @@ public class ITController {
     @PostMapping("/change-team-leader")
     public RedirectView changeTeamLeader(@RequestParam("employeeId") String employeeId, @RequestParam("teamLeaderId") String teamLeaderId) {
         employeeService.updateTeamLeader(Integer.parseInt(employeeId), Integer.parseInt(teamLeaderId));
-        return new RedirectView("/change-team-leader");
+        return new RedirectView("/tom/change-team-leader");
     }
 
     @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})

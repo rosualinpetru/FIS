@@ -8,7 +8,7 @@ $(document).ready(function () {
             }
             else{
             $("#sign-up__form__team-leader-field").prop('disabled', true);
-            $.getJSON("/update-sign-up-form", {
+            $.getJSON("/tom/update-sign-up-form", {
                 departmentId: $(this).val(),
                 ajax: 'true'
             }, function (data) {

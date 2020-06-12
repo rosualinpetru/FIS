@@ -39,7 +39,7 @@ public class EmployeeController {
 
     @PostMapping("/request-holiday")
     public RedirectView requestHoliday(@RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/");
+        RedirectView rv = new RedirectView("/tom/");
         try {
             employeeService.addHolidayRequest(authentication.getName(), params);
             ra.addFlashAttribute("upperNotification", "Your request was sent to your team leader!");
@@ -56,7 +56,7 @@ public class EmployeeController {
 
     @PostMapping("/report-issue")
     public RedirectView reportIssue(@RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/");
+        RedirectView rv = new RedirectView("/tom/");
         try {
             issueRequestService.addIssueRequest(authentication.getName(), params);
             ra.addFlashAttribute("upperNotification", "Issue reported!");

@@ -9,7 +9,7 @@ $(document).ready(function () {
 
     $(".update").click(
         function () {
-            $.post("update-holiday-request", {
+            $.post("/tom/update-holiday-request", {
                 id: $(this).attr("id").replace('acc', '').replace('dec', ''),
                 act: $(this).attr("id").slice(0, 3)
             }, function () {

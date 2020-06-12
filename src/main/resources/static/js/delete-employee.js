@@ -9,7 +9,7 @@ $(document).ready(function () {
             }
             else{
                 $("#delete-employee__employee-id").prop('disabled', true);
-                $.getJSON("/update-delete-employee-form", {
+                $.getJSON("/tom/update-delete-employee-form", {
                     departmentId: $(this).val(),
                     ajax: 'true'
                 }, function (data) {
