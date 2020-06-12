@@ -4,13 +4,17 @@
     <title>Report an Issue</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
 
 <body class="bg-dark">
+<a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg m-5 text-light position-fixed"><i
+        class="fa fa-power-off"></i></a>
 <div class="container bg-secondary w-50 my-5 p-0 rounded border border-info">
     <div class="row no-gutters">
         <div class="col">

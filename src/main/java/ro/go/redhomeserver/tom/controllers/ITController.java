@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.controllers;
 
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,6 @@ import ro.go.redhomeserver.tom.services.IssueRequestService;
 import javax.transaction.SystemException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Controller
 public class ITController {
@@ -53,12 +53,6 @@ public class ITController {
         return mv;
     }
 
-    @PostMapping("/delete-issue")
-    @ResponseBody
-    public void deleteIssue(@RequestParam("issueId") String issueId) {
-       issueRequestService.deleteIssueRequestById(Integer.parseInt(issueId));
-    }
-
     @GetMapping("/manage-department")
     public ModelAndView manageDepartment() {
         ModelAndView mv = new ModelAndView("manage-department");
@@ -91,6 +85,7 @@ public class ITController {
         return new RedirectView("/tom/delete-employee");
     }
 
+
     @GetMapping("/change-team-leader")
     public ModelAndView changeTeamLeader() {
         ModelAndView mv = new ModelAndView("change-team-leader");
@@ -117,4 +112,9 @@ public class ITController {
         return departmentService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
     }
 
+    @PostMapping("/delete-issue")
+    @ResponseBody
+    public void deleteIssue(@RequestParam("issueId") String issueId) {
+        issueRequestService.deleteIssueRequestById(Integer.parseInt(issueId));
+    }
 }

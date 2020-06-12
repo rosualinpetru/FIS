@@ -9,10 +9,13 @@
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/index.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
 <body class="bg-dark h-100">
+<a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg m-5 text-light position-fixed"><i
+        class="fa fa-power-off"></i></a>
 <div class="container h-100">
     <div class="row h-25 align-items-center index__alert">
         <div class="col-4 mx-auto align-items-center">
@@ -57,22 +60,25 @@
                 </div>
             </div>
             <button type="button" class="btn btn-info btn-default btn-circle btn-xl index__menu-toggler"
-                    data-toggle="collapse" data-target="#multiCollapseExample2" aria-controls="multiCollapseExample2"
+                    data-toggle="collapse" data-target="#index__menu" aria-controls="index__menu"
                     aria-expanded="false"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-            <div class="collapse multi-collapse index__menu w-75 mx-auto text-left" id="multiCollapseExample2">
+            <div class="collapse multi-collapse index__menu w-75 mx-auto text-left" id="index__menu">
                 <div class="list-group">
                     <a th:href="@{/request-holiday}" class="list-group-item">Request a holiday</a>
                     <a th:href="@{/not-mapped-yet}" class="list-group-item">My requests status</a>
                     <a th:if="${iAmTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
                         schedule</a>
-                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add employee</a>
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
+                        employee</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/pending-holiday-requests-hr}"
                        class="list-group-item">Holiday requests of company</a>
-                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/pending-holiday-requests-hr}"
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-schedule}"
                        class="list-group-item">Whole company schedule</a>
-                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}" class="list-group-item">Pending
+                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
+                       class="list-group-item">Pending
                         issue requests</a>
-                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/manage-department}" class="list-group-item">Manage
+                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/manage-department}"
+                       class="list-group-item">Manage
                         departments</a>
                     <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/delete-employee}" class="list-group-item">Manage
                         employee</a>

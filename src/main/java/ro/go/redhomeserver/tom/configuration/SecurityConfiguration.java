@@ -9,19 +9,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ro.go.redhomeserver.tom.services.TOMUserDetailService;
+
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final TOMUserDetailService userDetailsService;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
-    public SecurityConfiguration(TOMUserDetailService userDetailsService) {
+    public SecurityConfiguration(TOMUserDetailService userDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler, AccessDeniedHandler accessDeniedHandler) {
         this.userDetailsService = userDetailsService;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -35,11 +41,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/images/**", "/webjars/**", "/js/**", "/css/**").permitAll()
                 .antMatchers("/log-in", "/get-salt", "/reset-password", "/validate-password-reset-request", "/set-new-password").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/sign-up", "/pending-holiday-requests-hr", "/company-schedule").access("hasAuthority('ACTIVATED') and (hasAuthority('HR') or hasAuthority('ADMIN'))")
+                .antMatchers("/create-account", "/pending-issues", "/manage-department", "/add-department", "/delete-department", "/delete-employee", "/change-team-leader", "/delete-issue").access("hasAuthority('ACTIVATED') and (hasAuthority('IT') or hasAuthority('ADMIN'))")
+                .anyRequest().hasAuthority("ACTIVATED")
                 .and()
                 .formLogin()
                 .loginPage("/log-in")
                 .loginProcessingUrl("/log-in")
+                .successHandler(authenticationSuccessHandler)
+                .and()
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .logout()
                 .logoutUrl("/log-out")

@@ -110,4 +110,13 @@ public class PasswordService {
             throw new SignUpException();
         }
     }
+
+    public void activateMyAccount(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if(accountOptional.isPresent()) {
+            Account account =  accountOptional.get();
+            account.setActivated(true);
+            accountRepository.save(account);
+        }
+    }
 }
