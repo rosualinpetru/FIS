@@ -14,7 +14,7 @@ $(document).ready(function () {
                 $("#change-team-leader__form__employee-id").prop('disabled', true);
                 $("#change-team-leader__form__team-leader-id").prop('disabled', true);
 
-                $.getJSON("/update-change-team-leader-form", {
+                $.getJSON("/tom/update-change-team-leader-form", {
                     departmentId: $(this).val(),
                     ajax: 'true'
                 }, function (data) {
@@ -29,7 +29,7 @@ $(document).ready(function () {
                     $("#change-team-leader__form__employee-id").prop('disabled', false);
                 });
 
-                $.getJSON("/update-change-team-leader-form-without-me", {
+                $.getJSON("/tom/update-change-team-leader-form-without-me", {
                     departmentId: $(this).val(),
                     ajax: 'true'
                 }, function (data) {

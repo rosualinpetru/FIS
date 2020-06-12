@@ -8,10 +8,10 @@ $(document).ready(function () {
 
     $(".update").click(
         function () {
-            $.post("/delete-issue", {
+            $.post("/tom/delete-issue", {
                 issueId: $(this).attr("id").replace('issueId', ''),
             }, function () {
-                document.location = '/pending-issues';
+                document.location = '/tom/pending-issues';
             })
         })
 });

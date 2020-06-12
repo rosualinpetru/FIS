@@ -36,7 +36,7 @@ public class Account implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "delegate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "delegate", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HolidayRequest> delegatedHolidayRequests = new HashSet<>();
 
 

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         displayEventTime: false,
         height: "parent",
         events: {
-            url: '/team-schedule',
+            url: '/tom/team-schedule',
             failure: function () {
                 document.getElementById('script-warning').style.display = 'block'
             }
