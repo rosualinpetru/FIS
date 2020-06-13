@@ -2,24 +2,31 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Holiday Requests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/webjars/fullcalendar/4.3.1/core/main.css}" rel="stylesheet" type="text/css"/>
     <link th:href='@{/webjars/fullcalendar/4.3.1/daygrid/main.css}' rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
     <link th:href='@{/css/pending-holiday-requests.css}' rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
 <body id="requests" class="bg-dark h-100 invisible">
+<a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg m-5 text-light position-fixed"><i
+        class="fa fa-power-off"></i></a>
 <div class="container-fluid h-100">
     <div class="row h-100">
         <div class="col h-75">
             <div id='requests__calendar' class="bg-secondary text-light mx-auto my-5 p-3 w-75 border border-info"></div>
         </div>
-        <div class="col bg-secondary p-5 m-0">
+        <div class="col bg-dark p-5 m-0">
             <div class="w-100 h-100 text-light" th:if="${pendingHolidayRequests.isEmpty()}"><h1 class="text-center">No
                 pending requests!</h1></div>
-            <div id="requests__pending" class="border border-dark p-0" th:if="${!pendingHolidayRequests.isEmpty()}" >
-                <div class="row m-0">
+            <div id="requests__pending" class="border border-secondary p-0" th:if="${!pendingHolidayRequests.isEmpty()}" >
+                <div class="row m-0 text-info">
                     <h4 class="col-2 m-2 text-center">
                         See More
                     </h4>
@@ -37,7 +44,7 @@
                     </h4>
                 </div>
                 <div th:each="i : ${pendingHolidayRequests}">
-                    <hr class="border border-dark m-3">
+                    <hr class="border border-secondary m-3">
                     <div class="row m-0">
                         <div class="col-2 m-0 text-center">
                             <button type="button" class="btn btn-info btn-circle requests__pending__entry"

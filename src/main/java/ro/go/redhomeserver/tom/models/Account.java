@@ -23,6 +23,7 @@ public class Account implements Serializable {
     private String username;
     private String password;
     private String salt;
+    private boolean activated = false;
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore

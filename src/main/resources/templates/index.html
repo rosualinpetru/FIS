@@ -1,10 +1,97 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="en">
 <head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${employee.getName()}"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/index.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
-<body>
-<p th:if=' ${upperNotification != null}' th:text='${upperNotification}'></p>
+<body class="bg-dark h-100">
+<a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg m-5 text-light position-fixed"><i
+        class="fa fa-power-off"></i></a>
+<div class="container h-100">
+    <div class="row h-25 align-items-center index__alert">
+        <div class="col-4 mx-auto align-items-center">
+            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+                 th:text="${upperNotification}" role="alert"></div>
+        </div>
+    </div>
+    <div class="row index__content">
+        <div class="col-6 mx-auto text-center">
+            <div class="card text-white bg-secondary rounded p-2 text-left">
+                <div class="card-body">
+                    <div class="row no-gutters card-title m-0">
+                        <div class="col-9">
+                            <h3 class="m-2" th:text="${employee.getName()}"></h3>
+                        </div>
+                        <div class="col-3 text-right">
+                            <img class="w-50" th:src="@{images/favicon.png}" src="" alt="TOM">
+                        </div>
+                    </div>
+                    <div class="card text-white bg-secondary border border-dark m-2 mt-3">
+                        <div class="card-body">
+                            <ul>
+                                <li>
+                                    Department: <span th:text="${employee.getDepartment().getName()}"></span>
+                                </li>
+                                <li th:if="${employee.getAccount().getTeamLeader()!=null}">
+                                    Team Leader: <span
+                                        th:text="${employee.getAccount().getTeamLeader().getEmployee().getName()}"></span>
+                                </li>
+                                <li>
+                                    Email: <span th:text="${employee.getEmail()}"></span>
+                                </li>
+                                <li>
+                                    Phone: <span th:text="${employee.getTel()}"></span>
+                                </li>
+                                <li>
+                                    Address: <span th:text="${employee.getAddress()}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-info btn-default btn-circle btn-xl index__menu-toggler"
+                    data-toggle="collapse" data-target="#index__menu" aria-controls="index__menu"
+                    aria-expanded="false"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+            <div class="collapse multi-collapse index__menu w-75 mx-auto text-left" id="index__menu">
+                <div class="list-group">
+                    <a th:href="@{/request-holiday}" class="list-group-item">Request a holiday</a>
+                    <a th:href="@{/not-mapped-yet}" class="list-group-item">My requests status</a>
+                    <a th:if="${iAmTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
+                        schedule</a>
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
+                        employee</a>
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/pending-holiday-requests-hr}"
+                       class="list-group-item">Holiday requests of company</a>
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-schedule}"
+                       class="list-group-item">Whole company schedule</a>
+                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
+                       class="list-group-item">Pending
+                        issue requests</a>
+                    <a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/manage-department}"
+                       class="list-group-item">Manage
+                        departments</a>
+                    <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/delete-employee}" class="list-group-item">Manage
+                        employee</a>
+                    <a th:href="@{/report-issue}" class="list-group-item">Report an issue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{js/alert-handler.js}"></script>
+<script th:src="@{js/index.js}"></script>
 </body>
 </html>

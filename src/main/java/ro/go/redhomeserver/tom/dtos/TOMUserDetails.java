@@ -11,15 +11,23 @@ import java.util.List;
 
 public class TOMUserDetails implements UserDetails {
 
+    private final int id;
     private final String username;
     private final String password;
     private final List<GrantedAuthority> authorityList;
+    private final boolean activated;
 
     public TOMUserDetails(Account account) {
+        this.id = account.getId();
         this.username = account.getUsername();
         this.password = account.getPassword();
         authorityList = new ArrayList<>();
+        this.activated = account.isActivated();
         authorityList.add(new SimpleGrantedAuthority(account.getEmployee().getDepartment().getName()));
+        if(activated)
+            authorityList.add(new SimpleGrantedAuthority("ACTIVATED"));
+        if(account.getTeamLeader() == null)
+            authorityList.add(new SimpleGrantedAuthority("ADMIN"));
     }
 
     @Override
@@ -56,4 +64,13 @@ public class TOMUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public int getId() {
+        return id;
+    }
+
 }
