@@ -77,7 +77,7 @@
                     <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
                        class="list-group-item">Pending
                         issue requests</a>
-                    <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/manage-department}"
+                    <a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/manage-department}"
                        class="list-group-item">Manage
                         departments</a>
                     <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/delete-employee}" class="list-group-item">Manage
