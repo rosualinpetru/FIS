@@ -26,7 +26,7 @@ public class TOMUserDetails implements UserDetails {
         authorityList.add(new SimpleGrantedAuthority(account.getEmployee().getDepartment().getName()));
         if(activated)
             authorityList.add(new SimpleGrantedAuthority("ACTIVATED"));
-        if(account.getId() == 1)
+        if(account.getTeamLeader() == null)
             authorityList.add(new SimpleGrantedAuthority("ADMIN"));
     }
 
