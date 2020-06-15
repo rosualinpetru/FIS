@@ -1,4 +1,11 @@
 $(document).ready(function () {
+
+    $(".alert:not(:empty)").removeClass("d-none");
+
+    setTimeout(function () {
+        $(".alert").fadeOut();
+    }, 3000);
+    
     $(".index__menu-toggler").click(function () {
         let doc = $("html");
         doc.css("overflow", "hidden");

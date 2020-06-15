@@ -51,5 +51,4 @@ public class IssueRequestService {
     public void deleteIssueRequestById(String issueRequestId) {
         issueRequestRepository.deleteById(issueRequestId);
     }
-
 }

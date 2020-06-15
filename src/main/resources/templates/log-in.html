@@ -39,7 +39,7 @@
         </div>
         <div class="col p-5">
             <form id="log-in__auth-form" class="w-75 p-5 mx-auto mt-5 border border-info" th:action="@{/log-in}" method="post">
-                <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+                <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != null}'
                      th:text="${upperNotification}" role="alert"></div>
                 <div class="alert alert-warning my-3 d-none" th:if='${param.logout}' role="alert">You have been logged out!</div>
                 <div class="w-100 text-center">
@@ -88,7 +88,6 @@
 </div>
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<script th:src="@{js/alert-handler.js}"></script>
 <script th:src="@{js/log-in.js}"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById("company-schedule__calendar");
 
     document.getElementById("company-schedule__employee-id").addEventListener("change",function () {
+        calendarEl.classList.remove("d-none");
         calendarEl.innerHTML = "";
         const e = document.getElementById("company-schedule__employee-id");
         const calendar = new FullCalendar.Calendar(calendarEl, {

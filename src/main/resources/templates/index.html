@@ -19,7 +19,7 @@
 <div class="container h-100">
     <div class="row h-25 align-items-center index__alert">
         <div class="col-4 mx-auto align-items-center">
-            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != null}'
                  th:text="${upperNotification}" role="alert"></div>
         </div>
     </div>
@@ -69,7 +69,7 @@
                 <div class="list-group">
                     <a th:href="@{/request-holiday}" class="list-group-item">Request a holiday</a>
                     <a th:href="@{/not-mapped-yet}" class="list-group-item">My requests status</a>
-                    <a th:if="${iAmTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
+                    <a th:if="${isTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
                         schedule</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
                         employee</a>
@@ -94,7 +94,6 @@
 
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<script th:src="@{js/alert-handler.js}"></script>
 <script th:src="@{js/index.js}"></script>
 </body>
 </html>
