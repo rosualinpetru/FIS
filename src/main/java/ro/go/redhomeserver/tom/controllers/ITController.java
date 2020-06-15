@@ -97,7 +97,7 @@ public class ITController {
         return new RedirectView("/tom/change-team-leader");
     }
 
-    @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})
+    @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me", "update-company-schedule-form"})
     @ResponseBody
     public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId, Authentication authentication) {
         List<Employee> allOfDepartmentButMe = departmentService.loadEmployeesOfDepartmentById(departmentId);

@@ -1,15 +1,19 @@
 package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.exceptions.UsedEmailException;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.services.DepartmentService;
 import ro.go.redhomeserver.tom.services.HRService;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -44,6 +48,13 @@ public class HRController {
             mv.addObject("departments", departmentService.loadDepartments());
             mv.addObject("error", e.getMessage());
         }
+        return mv;
+    }
+
+    @GetMapping("/company-schedule")
+    public ModelAndView companySchedule() {
+        ModelAndView mv = new ModelAndView("company-schedule");
+        mv.addObject("departments", departmentService.loadDepartments());
         return mv;
     }
 }

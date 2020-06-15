@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Company Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/webjars/fullcalendar/4.3.1/core/main.css}" rel="stylesheet" type="text/css"/>
+    <link th:href='@{/webjars/fullcalendar/4.3.1/daygrid/main.css}' rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
+    <link th:href='@{/css/pending-holiday-requests.css}' rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
+</head>
+<body id="company-schedule" class="bg-dark h-100 invisible">
+<a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg m-5 text-light position-fixed"><i
+        class="fa fa-power-off"></i></a>
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col h-75">
+            <div id='company-schedule__calendar' class="bg-secondary text-light mx-auto my-5 p-3 w-75 border border-info"></div>
+        </div>
+        <div class="col bg-dark p-5 m-0">
+            <div class="px-3 pt-3 text-center">
+                <div class="w-50 m-auto">
+                    <img class="w-25" th:src="@{images/favicon.png}" src="" alt="TOM">
+                </div>
+            </div>
+            <div class="m-1 px-3 pb-3">
+                <div class="w-75 m-auto">
+                    <hr class="border border-light">
+                    <h3 class="text-center text-light py-3"><b>Delete Employee</b></h3>
+                    <div class="form-group w-75 mx-auto my-2">
+                        <label for="company-schedule__department" class="text-info">Department</label><br>
+                        <select name="departmentId" id="company-schedule__department" class="custom-select" required>
+                            <option value="" th:text="'--- Select a department ---'"></option>
+                            <option th:each="i : ${departments}" th:value="${i.getId()}"
+                                    th:text="${i.getName()}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group w-75 mx-auto my-2">
+                        <label for="company-schedule__employee-id" class="text-info">Employee:</label><br>
+                        <select name="employeeId" id="company-schedule__employee-id" class="custom-select" required>
+                            <option value=""> --- Select a department first ---</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/core/main.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/daygrid/main.js}"></script>
+<script th:src="@{/webjars/fullcalendar/4.3.1/interaction/main.js}"></script>
+<script th:src="@{/js/company-schedule.js}"></script>
+<script th:src="@{/js/company-calendar.js}"></script>
+</body>
+</html>

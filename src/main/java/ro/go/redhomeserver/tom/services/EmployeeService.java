@@ -223,4 +223,9 @@ public class EmployeeService {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         return accountOptional.filter(account -> !accountRepository.findAllByTeamLeader(account).isEmpty()).isPresent();
     }
+
+    public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendarById(String employeeId) throws UserNotFoundException {
+        Optional<Employee> employeeOptional =employeeRepository.findById(employeeId);
+        return loadHolidayRequestsOfTeamLeaderForCalendar(employeeOptional.get().getAccount().getUsername());
+    }
 }
