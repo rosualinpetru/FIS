@@ -7,6 +7,7 @@ import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
 import ro.go.redhomeserver.tom.exceptions.FileStorageException;
+import ro.go.redhomeserver.tom.exceptions.NotEnoughDaysException;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
@@ -61,7 +62,7 @@ public class EmployeeService {
             throw new UserNotFoundException("User " + username + " was not found!");
     }
 
-    public void addHolidayRequest(String username, Map<String, String> params, MultipartFile file) throws FileStorageException {
+    public void addHolidayRequest(String username, Map<String, String> params, MultipartFile file) throws FileStorageException, NotEnoughDaysException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (accountOptional.isPresent()) {
             Date start_date;
@@ -94,6 +95,33 @@ public class EmployeeService {
             if (newHolidayRequest.getRequester().getTeamLeader() == null) {
                 newHolidayRequest.setStatus(RequestStatus.accTl);
             }
+
+            if (newHolidayRequest.getType() == RequestType.Rel) {
+                Calendar startCal = Calendar.getInstance();
+                startCal.setTime(newHolidayRequest.getStart());
+
+                Calendar endCal = Calendar.getInstance();
+                endCal.setTime(newHolidayRequest.getEnd());
+
+                int workDays = 0;
+
+                if (startCal.getTimeInMillis() != endCal.getTimeInMillis()) {
+                    do {
+                        if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+                            ++workDays;
+                        }
+                        startCal.add(Calendar.DAY_OF_MONTH, 1);
+                    } while (startCal.getTimeInMillis() < endCal.getTimeInMillis());
+                }
+                Account account = newHolidayRequest.getRequester();
+                int remainingDays = account.getRemainingDays();
+                if(remainingDays-workDays<0){
+                    throw new NotEnoughDaysException("Sorry! Not enough vacation days");
+                }
+                account.setRemainingDays(remainingDays-workDays);
+                accountRepository.save(account);
+            }
+
             holidayRequestRepository.save(newHolidayRequest);
 
             if (RequestType.valueOf(params.get("requestTypeId")) == RequestType.Med) {
@@ -161,8 +189,10 @@ public class EmployeeService {
             HolidayRequest request = requestOptional.get();
             if (action.equals("acc"))
                 request.setStatus(RequestStatus.accTl);
+
             if (action.equals("dec"))
                 request.setStatus(RequestStatus.decTL);
+
             holidayRequestRepository.save(request);
         }
     }

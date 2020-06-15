@@ -1,6 +1,7 @@
 .list-group a {
     text-decoration: none;
     color: black;
+    padding: .5rem 1.25rem;
 }
 
 .list-group a:hover {

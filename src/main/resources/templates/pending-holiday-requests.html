@@ -65,7 +65,8 @@
                                 th:text="${i.getEnd().getDay()}+'. '+${i.getEnd().getMonth()}+'. '+${i.getEnd().getYear()+1900}"></h5>
                         </div>
                         <div class="col m-0 text-center">
-                            <h5 class="text-light" th:text="${i.getDelegate().getEmployee().getName()}"></h5>
+                            <h5 class="text-light" th:if="${i.getDelegate()!=null}" th:text="${i.getDelegate().getEmployee().getName()}"></h5>
+                            <h5 class="text-light" th:if="${i.getDelegate()==null}">Not necessary</h5>
                         </div>
                     </div>
                 </div>
@@ -93,7 +94,11 @@
                 </div>
                 <div>
                     <p th:text="'Period: ' + ${i.getStart().getDay()} + '.' + ${i.getStart().getMonth()} + '.' + ${i.getStart().getYear()+1900} + ' - ' + ${i.getEnd().getDay()} + '.' + ${i.getEnd().getMonth()} + '.' + ${i.getEnd().getYear()+1900}"></p>
-                    <p th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
+                    <p th:if="${i.getDelegate()!=null}" th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
+                    <p th:if="${i.getDelegate()==null}">Not necessary</p>
+                </div>
+                <div th:if="${i.getType() == 0}">
+                    <a th:href="@{/download-file(holidayRequestId=${i.getId()})}" th:id="'file'+${i.getId()}" class="file-link">Download file!</a>
                 </div>
             </div>
             <div class="modal-footer">
