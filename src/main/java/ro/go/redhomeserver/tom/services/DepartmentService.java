@@ -29,7 +29,7 @@ public class DepartmentService {
         return departmentRepository.findAll();
     }
 
-    public List<Employee> loadEmployeesOfDepartmentById(int departmentId) {
+    public List<Employee> loadEmployeesOfDepartmentById(String departmentId) {
         return employeeRepository.findAllByDepartment_Id(departmentId);
     }
 
@@ -37,7 +37,7 @@ public class DepartmentService {
         departmentRepository.save(new Department(name));
     }
 
-    public void removeDepartment(int departmentId) {
+    public void removeDepartment(String departmentId) {
         List<Employee> lst = employeeRepository.findAllByDepartment_Id(departmentId);
         if (!lst.isEmpty()) {
             StringBuilder str = new StringBuilder("The following employees don't have a department: \n");

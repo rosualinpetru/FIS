@@ -5,13 +5,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ro.go.redhomeserver.tom.models.Account;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class TOMUserDetails implements UserDetails {
-
-    private final int id;
+public class TOMUserDetails implements UserDetails, Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+    private final String id;
     private final String username;
     private final String password;
     private final List<GrantedAuthority> authorityList;
@@ -69,7 +70,7 @@ public class TOMUserDetails implements UserDetails {
         return activated;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

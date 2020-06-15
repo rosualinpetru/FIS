@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import ro.go.redhomeserver.tom.dtos.TOMUserDetails;
 import ro.go.redhomeserver.tom.services.ClearDataService;
 import ro.go.redhomeserver.tom.services.EmployeeService;
 import ro.go.redhomeserver.tom.services.PasswordService;

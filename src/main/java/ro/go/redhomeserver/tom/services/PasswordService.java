@@ -36,7 +36,7 @@ public class PasswordService {
     private Account searchForUser(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (!accountOptional.isPresent())
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User " + username + " was not found!");
         return accountOptional.get();
     }
 
@@ -60,22 +60,22 @@ public class PasswordService {
             emailService.sendEmail(data);
             resetPasswordRequestRepository.save(req);
         } catch (MailException e) {
-            throw new SystemException();
+            throw new SystemException("There was an error in sending the email!");
         }
     }
 
-    public int identifyAccountUsingToken(String token) throws InvalidTokenException {
+    public String identifyAccountUsingToken(String token) throws InvalidTokenException {
         Date now = new Date();
         Optional<ResetPasswordRequest> requestOptional = resetPasswordRequestRepository.findByToken(token);
         if(!requestOptional.isPresent() || requestOptional.get().getExpirationDate().compareTo(now) < 0)
-            throw new InvalidTokenException();
+            throw new InvalidTokenException("The token expired or is invalid!");
 
         return requestOptional.get().getAccount().getId();
     }
 
     public void validatePassword(String password, String verification) throws SignUpException {
         if(!password.equals(verification))
-            throw new PasswordVerificationException();
+            throw new PasswordVerificationException("The password does not match!");
 
         int iPasswordScore = 0;
 
@@ -92,14 +92,14 @@ public class PasswordService {
             iPasswordScore += 2;
 
         if( password.length() < 8 || iPasswordScore < 4)
-            throw new WeakPasswordException();
+            throw new WeakPasswordException("The password is too weak!");
     }
 
-    public void updateAccountPasswordById(int id, String password) throws SignUpException {
+    public void updateAccountPasswordById(String id, String password) throws SignUpException {
         try {
             Optional<Account> accountOptional = accountRepository.findById(id);
             if(!accountOptional.isPresent()) {
-                throw new UserNotFoundException();
+                throw new UserNotFoundException("User was not found!");
             }
             Account account = accountOptional.get();
             String saltedPass = password+account.getSalt();
@@ -107,16 +107,21 @@ public class PasswordService {
             accountRepository.save(account);
             resetPasswordRequestRepository.deleteAllByAccount(account);
         } catch (UserNotFoundException e) {
-            throw new SignUpException();
+            throw new SignUpException("There was an error in the sign up process!");
         }
     }
 
-    public void activateMyAccount(String username) {
-        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+    public void activateMyAccount(String userId) {
+        Optional<Account> accountOptional = accountRepository.findById(userId);
         if(accountOptional.isPresent()) {
             Account account =  accountOptional.get();
             account.setActivated(true);
             accountRepository.save(account);
         }
+    }
+
+    public boolean isUserActivated(String userId) {
+        Optional<Account> accountOptional = accountRepository.findById(userId);
+        return accountOptional.map(Account::isActivated).orElse(false);
     }
 }

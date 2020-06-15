@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
-    List<Employee> findAllByDepartment_Id(int department);
+public interface EmployeeRepository extends CrudRepository<Employee, String> {
+    List<Employee> findAllByDepartment_Id(String department);
     Optional<Employee> findByEmail(String email);
     Optional<Employee> findByAccount_Username(String username);
 }

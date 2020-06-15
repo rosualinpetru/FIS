@@ -29,12 +29,12 @@ public class IssueRequestService {
         if(accountOptional.isPresent()) {
             issueRequestRepository.save(new IssueRequest(params.get("description"), accountOptional.get()));
         } else {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User " + username + " was not found!");
         }
     }
 
     public List<PendingIssue> loadAllPendingIssueRequests() {
-        Comparator<IssueRequest> compareByIssueReq = Comparator.comparingInt(i -> i.getAccount().getEmployee().getDepartment().getId());
+        Comparator<IssueRequest> compareByIssueReq = Comparator.comparing(i -> i.getAccount().getEmployee().getDepartment().getId());
         List<IssueRequest> withoutNull = (List<IssueRequest>) issueRequestRepository.findAll();
         List<IssueRequest> onlyNull = (List<IssueRequest>) issueRequestRepository.findAll();
 
@@ -48,7 +48,7 @@ public class IssueRequestService {
         return result;
     }
 
-    public void deleteIssueRequestById(int issueRequestId) {
+    public void deleteIssueRequestById(String issueRequestId) {
         issueRequestRepository.deleteById(issueRequestId);
     }
 

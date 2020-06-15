@@ -6,13 +6,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import ro.go.redhomeserver.tom.dtos.TOMUserDetails;
 import ro.go.redhomeserver.tom.exceptions.*;
 import ro.go.redhomeserver.tom.services.PasswordService;
 
@@ -38,10 +39,8 @@ public class PasswordController {
         try {
             String hostLink = request.getScheme() + "://" + request.getServerName()+":8181/tom";
             passwordService.addResetRequest(username, hostLink);
-        } catch (UserNotFoundException e) {
-            ra.addFlashAttribute("upperNotification", "User not found!");
-        } catch (SystemException e) {
-            ra.addFlashAttribute("upperNotification", "There was a problem in sending the reset email!");
+        } catch (UserNotFoundException | SystemException e) {
+            ra.addFlashAttribute("upperNotification", e.getMessage());
         }
         return rv;
     }
@@ -51,45 +50,45 @@ public class PasswordController {
         RedirectView rv;
         try {
             rv = new RedirectView("/tom/set-new-password");
-            int id = passwordService.identifyAccountUsingToken(token);
+            String id = passwordService.identifyAccountUsingToken(token);
             ra.addFlashAttribute("userId", id);
         } catch (InvalidTokenException e) {
             rv = new RedirectView("/tom/log-in");
-            ra.addFlashAttribute("upperNotification", "The token expired or is invalid!");
+            ra.addFlashAttribute("upperNotification", e.getMessage());
         }
         return rv;
     }
 
     @GetMapping("/set-new-password")
-    public ModelAndView setNewPassword(@ModelAttribute("userId") int id) {
+    public ModelAndView setNewPassword(@ModelAttribute("userId") String id) {
         ModelAndView mv = new ModelAndView("reset-password");
         mv.addObject("userId", id);
         return mv;
     }
 
     @PostMapping("/set-new-password")
-    public ModelAndView setNewPassword(@RequestParam Map<String, String> data, @ModelAttribute("userId") int id, RedirectAttributes ra, Authentication authentication) {
+    public ModelAndView setNewPassword(@RequestParam Map<String, String> data, @ModelAttribute("userId") String id, RedirectAttributes ra, Authentication authentication) {
         ModelAndView mv = new ModelAndView("reset-password");
         mv.addObject("userId", id);
-        if(!((TOMUserDetails)authentication.getPrincipal()).isActivated()) {
+
+        if (authentication != null) {
             List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authentication.getAuthorities());
             updatedAuthorities.add(new SimpleGrantedAuthority("ACTIVATED"));
             Authentication newAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), updatedAuthorities);
-            passwordService.activateMyAccount(authentication.getName());
             SecurityContextHolder.getContext().setAuthentication(newAuth);
         }
+
+        if (!passwordService.isUserActivated(id))
+            passwordService.activateMyAccount(id);
+
         try {
             passwordService.validatePassword(data.get("password"), data.get("passwordVerification"));
-            passwordService.updateAccountPasswordById(Integer.parseInt(data.get("userId")), data.get("password"));
+            passwordService.updateAccountPasswordById(data.get("userId"), data.get("password"));
             mv = new ModelAndView("redirect:/log-in");
             ra.addFlashAttribute("upperNotification", "Password updated!");
             return mv;
-        } catch (WeakPasswordException e) {
-            mv.addObject("error", "The password is too weak!");
-        } catch (PasswordVerificationException e) {
-            mv.addObject("error", "The password does not match!");
         } catch (SignUpException e) {
-            mv.addObject("error", "We're having some system issues! Try again later!");
+            mv.addObject("error", e.getMessage());
         }
         return mv;
     }

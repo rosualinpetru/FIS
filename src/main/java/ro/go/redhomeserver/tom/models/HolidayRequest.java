@@ -1,9 +1,11 @@
 package ro.go.redhomeserver.tom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import ro.go.redhomeserver.tom.dtos.RequestStatus;
 import ro.go.redhomeserver.tom.dtos.RequestType;
 
@@ -18,9 +20,12 @@ import java.util.Date;
 @Entity(name = "HolidayRequest")
 @Table(name = "holiday_request")
 public class HolidayRequest implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
 
     @Enumerated(EnumType.ORDINAL)
     private RequestType type;
@@ -31,6 +36,11 @@ public class HolidayRequest implements Serializable {
     private String description;
     private Date start;
     private Date end;
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToOne(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UploadedFile uploadedFile;
 
     @ManyToOne
     @JoinColumn(name = "FK_requester")
