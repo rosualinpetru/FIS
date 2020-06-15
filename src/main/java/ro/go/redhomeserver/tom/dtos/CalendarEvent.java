@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 public class CalendarEvent implements Serializable {
-    private int id;
+    private String id;
     private String title;
     private Date start;
     private Date end;

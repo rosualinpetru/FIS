@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,9 +15,12 @@ import java.util.Date;
 @Entity(name = "Employee")
 @Table(name = "employee")
 public class Employee implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
 
     private String name;
     private String address;

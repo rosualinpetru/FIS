@@ -40,12 +40,9 @@ public class HRController {
             mv = new ModelAndView("redirect:/create-account");
             ra.addFlashAttribute("employeeId", hrService.addEmployee(params));
             ra.addFlashAttribute("teamLeaderId", params.get("teamLeaderId"));
-        } catch (UsedEmailException e) {
-            mv.addObject("departments", departmentService.loadDepartments());
-            mv.addObject("error", "The email is already used!");
         } catch (SignUpException e) {
             mv.addObject("departments", departmentService.loadDepartments());
-            mv.addObject("error", "An error has occurred!");
+            mv.addObject("error", e.getMessage());
         }
         return mv;
     }

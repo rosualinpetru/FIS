@@ -2,7 +2,6 @@ package ro.go.redhomeserver.tom.controllers;
 
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +34,7 @@ public class ITController {
     }
 
     @GetMapping("/create-account")
-    public RedirectView createAccount(@ModelAttribute("employeeId") int employeeId, @ModelAttribute("teamLeaderId") int teamLeaderId, RedirectAttributes ra) {
+    public RedirectView createAccount(@ModelAttribute("employeeId") String employeeId, @ModelAttribute("teamLeaderId") String teamLeaderId, RedirectAttributes ra) {
         RedirectView rv = new RedirectView("/tom/");
         try {
             itService.generateAccount(employeeId, teamLeaderId);
@@ -68,7 +67,7 @@ public class ITController {
 
     @PostMapping("/delete-department")
     public RedirectView deleteDepartment(@RequestParam("departmentId") String departmentId) {
-        departmentService.removeDepartment(Integer.parseInt(departmentId));
+        departmentService.removeDepartment(departmentId);
         return new RedirectView("/tom/manage-department");
     }
 
@@ -81,10 +80,9 @@ public class ITController {
 
     @PostMapping("/delete-employee")
     public RedirectView deleteEmployee(@RequestParam("employeeId") String employeeId) {
-        employeeService.removeEmployee(Integer.parseInt(employeeId));
+        employeeService.removeEmployee(employeeId);
         return new RedirectView("/tom/delete-employee");
     }
-
 
     @GetMapping("/change-team-leader")
     public ModelAndView changeTeamLeader() {
@@ -95,26 +93,27 @@ public class ITController {
 
     @PostMapping("/change-team-leader")
     public RedirectView changeTeamLeader(@RequestParam("employeeId") String employeeId, @RequestParam("teamLeaderId") String teamLeaderId) {
-        employeeService.updateTeamLeader(Integer.parseInt(employeeId), Integer.parseInt(teamLeaderId));
+        employeeService.updateTeamLeader(employeeId, teamLeaderId);
         return new RedirectView("/tom/change-team-leader");
     }
 
     @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})
     @ResponseBody
-    public List<Pair<Integer, String>> getEmployeesOfDepartment(@RequestParam("departmentId") int departmentId, Authentication authentication) {
+    public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId, Authentication authentication) {
         List<Employee> allOfDepartmentButMe = departmentService.loadEmployeesOfDepartmentById(departmentId);
         allOfDepartmentButMe.remove(employeeService.findEmployeeByUsername(authentication.getName()));
         return allOfDepartmentButMe.stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
     }
+
     @GetMapping({"/update-sign-up-form", "/update-change-team-leader-form"})
     @ResponseBody
-    public List<Pair<Integer, String>> getEmployeesOfDepartment(@RequestParam("departmentId") int departmentId) {
+    public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId) {
         return departmentService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
     }
 
     @PostMapping("/delete-issue")
     @ResponseBody
     public void deleteIssue(@RequestParam("issueId") String issueId) {
-        issueRequestService.deleteIssueRequestById(Integer.parseInt(issueId));
+        issueRequestService.deleteIssueRequestById(issueId);
     }
 }

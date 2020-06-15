@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountRepository extends CrudRepository<Account, Integer> {
+public interface AccountRepository extends CrudRepository<Account, String> {
     Optional<Account> findByUsername(String username);
-    Optional<Account> findByEmployee_Id(int id);
+    Optional<Account> findByEmployee_Id(String id);
     List <Account> findAllByTeamLeader(Account tl);
     List <Account> findAllByTeamLeaderIsNullAndEmployee_Department(Department department);
 }

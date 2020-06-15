@@ -19,7 +19,7 @@
 <div class="container bg-secondary w-50 my-5 p-0 rounded border border-info">
     <div class="row no-gutters">
         <div class="col">
-            <form id="request-holiday__form" class="form" th:action="@{/request-holiday}" method="post">
+            <form id="request-holiday__form" class="form" th:action="@{/request-holiday}" enctype="multipart/form-data" method="post">
                 <div class="px-3 pt-3 text-center">
                     <div class="w-50 m-auto">
                         <img class="w-25" th:src="@{images/favicon.png}" src="" alt="TOM">
@@ -30,33 +30,50 @@
                         <hr class="border border-light">
                         <h3 class="text-center text-light py-3"><b>Holiday Request</b></h3>
                         <div class="form-group w-75 mx-auto my-2">
-                            <label for="description" class="text-light">Description</label>
-                            <textarea class="form-control" id="description" rows="6" name="description" required></textarea>
+                            <label for="request-holiday__form__description" class="text-light">Description</label>
+                            <textarea class="form-control" id="request-holiday__form__description" rows="6"
+                                      name="description" required></textarea>
                         </div>
                         <div class="form-group w-75 mx-auto my-2">
-                            <label for="start_date" class="text-light">Start date:</label>
-                            <input type="date" class="form-control" name="startDate" id="start_date" required>
+                            <label for="request-holiday__form__start_date" class="text-light">Start date:</label>
+                            <input type="date" class="form-control" name="startDate"
+                                   id="request-holiday__form__start_date" required>
                         </div>
                         <div class="form-group w-75 mx-auto my-2">
                             <label for="end_date" class="text-light">End date:</label>
                             <input type="date" class="form-control" name="endDate" id="end_date" required>
                         </div>
                         <div class="form-group w-75 mx-auto my-2">
-                            <label for="requestType" class="text-light">Choose request type :</label><br>
-                            <select name="requestTypeId" id="requestType" class="custom-select" required>
+                            <label for="request-holiday__form__request-type" class="text-light">Choose request type
+                                :</label><br>
+                            <select name="requestTypeId" id="request-holiday__form__request-type" class="custom-select"
+                                    required>
                                 <option value="" th:text="'--- Select a  request type ---'"></option>
                                 <option th:each="requestType : ${T(ro.go.redhomeserver.tom.dtos.RequestType).values()}"
                                         th:value="${requestType}" th:text="${requestType.displayValue}">
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group w-75 mx-auto my-2">
-                            <label for="delegate" class="text-light">Choose delegate:</label><br>
-                            <select name="delegateId" id="delegate" class="custom-select" required>
+                        <div th:if="${delegates!=null}" class="form-group w-75 mx-auto my-2">
+                            <label for="request-holiday__form__delegate" class="text-light">Choose delegate:</label><br>
+                            <select name="delegateId" id="request-holiday__form__delegate" class="custom-select"
+                                    required>
                                 <option value="" th:text="'--- Select a delegate ---'"></option>
                                 <option th:each="i : ${delegates}" th:value="${i.getId()}"
                                         th:text="${i.getEmployee().getName()}"></option>
                             </select>
+                        </div>
+                        <div class="form-group w-75 mx-auto my-3 d-none" id="request-holiday__form__file-group">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <label class="custom-file-label" for="request-holiday__form__file">Choose file (PDF only-10MB)</label>
+                                    <input type="file" name="file" class="custom-file-input"
+                                           id="request-holiday__form__file" accept="application/pdf" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger mt-2 d-none w-75 mx-auto" th:if='${error != ""}'
+                             th:text="${error}" role="alert">
                         </div>
                         <div class="form-group w-75 mx-auto mt-3">
                             <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
@@ -70,5 +87,7 @@
 </div>
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{js/alert-handler.js}"></script>
+<script th:src="@{js/request-holiday.js}"></script>
 </body>
 </html>

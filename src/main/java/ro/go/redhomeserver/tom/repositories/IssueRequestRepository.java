@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ro.go.redhomeserver.tom.models.IssueRequest;
 
 @Repository
-public interface IssueRequestRepository extends CrudRepository <IssueRequest, Integer> {
+public interface IssueRequestRepository extends CrudRepository <IssueRequest, String> {
 }

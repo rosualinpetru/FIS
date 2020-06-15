@@ -32,10 +32,10 @@ public class HRService {
 
     public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
         if (employeeRepository.findByEmail(params.get("email")).isPresent())
-            throw new UsedEmailException();
+            throw new UsedEmailException("The email is already used!");
     }
 
-    public int addEmployee(Map<String, String> params) throws MissingDepartmentException {
+    public String addEmployee(Map<String, String> params) throws MissingDepartmentException {
         Date date;
         try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -44,7 +44,7 @@ public class HRService {
             date = new Date();
         }
 
-        Optional<Department> departmentOptional = departmentRepository.findById(Integer.parseInt(params.get("departmentId")));
+        Optional<Department> departmentOptional = departmentRepository.findById(params.get("departmentId"));
         if (departmentOptional.isPresent()) {
             Employee newEmployee = new Employee(
                     params.get("name"),
@@ -58,6 +58,6 @@ public class HRService {
             employeeRepository.save(newEmployee);
             return newEmployee.getId();
         }
-        throw new MissingDepartmentException();
+        throw new MissingDepartmentException("Department could not be found!");
     }
 }

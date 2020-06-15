@@ -54,6 +54,9 @@
                                 <li>
                                     Address: <span th:text="${employee.getAddress()}"></span>
                                 </li>
+                                <li>
+                                    Days left: <span th:text="${employee.getAccount().getRemainingDays()}"></span>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -77,10 +80,10 @@
                     <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
                        class="list-group-item">Pending
                         issue requests</a>
-                    <a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/manage-department}"
+                    <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/manage-department}"
                        class="list-group-item">Manage
                         departments</a>
-                    <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/delete-employee}" class="list-group-item">Manage
+                    <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/delete-employee}" class="list-group-item">Manage
                         employee</a>
                     <a th:href="@{/report-issue}" class="list-group-item">Report an issue</a>
                 </div>
