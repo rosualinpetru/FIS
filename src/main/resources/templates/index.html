@@ -74,7 +74,7 @@
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
                         employee</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/pending-holiday-requests-hr}"
-                       class="list-group-item">Holiday requests of company</a>
+                       class="list-group-item">Whole company requests</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-schedule}"
                        class="list-group-item">Whole company schedule</a>
                     <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
@@ -85,6 +85,7 @@
                         departments</a>
                     <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/delete-employee}" class="list-group-item">Manage
                         employee</a>
+                    <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/change-team-leader}" class="list-group-item">Manage teams</a>
                     <a th:href="@{/report-issue}" class="list-group-item">Report an issue</a>
                 </div>
             </div>

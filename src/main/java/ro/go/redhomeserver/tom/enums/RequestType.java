@@ -1,4 +1,4 @@
-package ro.go.redhomeserver.tom.dtos;
+package ro.go.redhomeserver.tom.enums;
 
 public enum RequestType {
     Med("Medical"),

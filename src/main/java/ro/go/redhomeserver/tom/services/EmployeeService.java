@@ -2,23 +2,11 @@ package ro.go.redhomeserver.tom.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import ro.go.redhomeserver.tom.dtos.CalendarEvent;
-import ro.go.redhomeserver.tom.dtos.RequestStatus;
-import ro.go.redhomeserver.tom.dtos.RequestType;
-import ro.go.redhomeserver.tom.exceptions.FileStorageException;
-import ro.go.redhomeserver.tom.exceptions.NotEnoughDaysException;
-import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
-import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service

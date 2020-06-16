@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import ro.go.redhomeserver.tom.dtos.RequestStatus;
-import ro.go.redhomeserver.tom.dtos.RequestType;
+import ro.go.redhomeserver.tom.enums.RequestStatus;
+import ro.go.redhomeserver.tom.enums.RequestType;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ro.go.redhomeserver.tom.dtos.CredentialsEmail;
+import ro.go.redhomeserver.tom.emails.CredentialsEmail;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.models.IssueRequest;

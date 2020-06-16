@@ -7,13 +7,16 @@ import ro.go.redhomeserver.tom.exceptions.SignUpException;
 import ro.go.redhomeserver.tom.exceptions.UsedEmailException;
 import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.models.Employee;
+import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.repositories.DepartmentRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
+import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,11 +26,13 @@ public class HRService {
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
+    private final HolidayRequestRepository holidayRequestRepository;
 
     @Autowired
-    public HRService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
+    public HRService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, HolidayRequestRepository holidayRequestRepository) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
+        this.holidayRequestRepository = holidayRequestRepository;
     }
 
     public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
@@ -60,4 +65,9 @@ public class HRService {
         }
         throw new MissingDepartmentException("Department could not be found!");
     }
+
+    public List<HolidayRequest> loadRequestsOfDepartment(String departmentId) {
+        return holidayRequestRepository.findAllByRequester_Employee_Department_Id(departmentId);
+    }
+
 }

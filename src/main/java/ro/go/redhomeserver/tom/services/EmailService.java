@@ -7,7 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import ro.go.redhomeserver.tom.dtos.EmailData;
+import ro.go.redhomeserver.tom.emails.EmailData;
 
 @Service
 public class EmailService {
