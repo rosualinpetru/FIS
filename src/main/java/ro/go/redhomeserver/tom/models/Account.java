@@ -36,6 +36,11 @@ public class Account implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Feedback> givenFeedback = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HolidayRequest> sentHolidayRequests = new HashSet<>();
 
@@ -43,7 +48,6 @@ public class Account implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "delegate", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HolidayRequest> delegatedHolidayRequests = new HashSet<>();
-
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore

@@ -11,7 +11,7 @@
     <link th:href="@{/css/form-select.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
-<body id="requests" class="bg-dark h-100">
+<body id="feedback" class="bg-dark h-100">
 <div class="position-fixed" style="z-index: 1000">
     <a th:href="@{/}" class="btn btn-info btn-default btn-circle btn-lg my-5 ml-5 mr-3 text-light"><i
             class="fa fa-arrow-left"></i></a>
@@ -98,19 +98,21 @@
                     <p th:text="'Period: ' + ${i.getStart().getDay()} + '.' + ${i.getStart().getMonth()} + '.' + ${i.getStart().getYear()+1900} + ' - ' + ${i.getEnd().getDay()} + '.' + ${i.getEnd().getMonth()} + '.' + ${i.getEnd().getYear()+1900}"></p>
                     <p th:if="${i.getDelegate()!=null}"
                        th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
-                    <p th:if="${i.getDelegate()==null}">Not necessary</p>
+                    <p th:if="${i.getDelegate()==null}">Delegate: Not necessary</p>
+                    <p th:text="'Remainingdays: '${i.getRequester().getRemainingDays()}"></p>
                 </div>
                 <div th:if="${i.getType().getDisplayValue() == 'Medical'}">Medical:
                     <a th:href="@{/download-file(holidayRequestId=${i.getId()})}" th:id="'file'+${i.getId()}"
                        class="file-link text-info">Download file!</a>
                 </div>
                 <hr class="border border-light">
-                <form th:id="'feedback__form'+${i.getId()}" class="form" th:action="@{/feedbback}" method="post">
+                <form th:id="'feedback__form'+${i.getId()}" class="form feedback_form" th:action="@{/feedback}" method="post">
                     <div class="form-group w-75 mx-auto my-2">
                         <label for="description" class="text-light">Feedback</label><br>
                         <textarea class="form-control" name="description" id="description" rows="10"
                                   cols="50"></textarea>
                     </div>
+                    <input type="hidden" name="requestId" th:value="${i.getId()}">
                     <div class="form-group w-75 mx-auto mt-3">
                         <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
                     </div>

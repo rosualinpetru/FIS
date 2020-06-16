@@ -68,24 +68,9 @@ public class HolidayService {
             }
 
             if (newHolidayRequest.getType() == RequestType.Rel) {
-                Calendar startCal = Calendar.getInstance();
-                startCal.setTime(newHolidayRequest.getStart());
-
-                Calendar endCal = Calendar.getInstance();
-                endCal.setTime(newHolidayRequest.getEnd());
-
-                int workDays = 0;
-
-                if (startCal.getTimeInMillis() != endCal.getTimeInMillis()) {
-                    do {
-                        if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-                            ++workDays;
-                        }
-                        startCal.add(Calendar.DAY_OF_MONTH, 1);
-                    } while (startCal.getTimeInMillis() < endCal.getTimeInMillis());
-                }
                 Account account = newHolidayRequest.getRequester();
                 int remainingDays = account.getRemainingDays();
+                int workDays = newHolidayRequest.getWorkingDays();
                 if (remainingDays - workDays < 0) {
                     throw new NotEnoughDaysException("Sorry! Not enough vacation days");
                 }
@@ -106,7 +91,6 @@ public class HolidayService {
         }
     }
 
-
     public List<HolidayRequest> loadPendingHolidayRequestsForATeamLeader(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         return accountOptional.map(account -> holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentTL)).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " was not found!"));
@@ -119,8 +103,12 @@ public class HolidayService {
             if (action.equals("acc"))
                 request.setStatus(RequestStatus.accTl);
 
-            if (action.equals("dec"))
+            if (action.equals("dec")) {
                 request.setStatus(RequestStatus.decTL);
+                Account account = request.getRequester();
+                account.setRemainingDays(account.getRemainingDays()+request.getWorkingDays());
+                accountRepository.save(account);
+            }
 
             holidayRequestRepository.save(request);
         }
