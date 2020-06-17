@@ -1,11 +1,14 @@
 package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
+import ro.go.redhomeserver.tom.services.FeedbackService;
 import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.HRService;
 
@@ -16,11 +19,13 @@ public class HRController {
 
     private final HRService hrService;
     private final FormService formService;
+    private final FeedbackService feedbackService;
 
     @Autowired
-    public HRController(HRService hrService, FormService formService) {
+    public HRController(HRService hrService, FormService formService, FeedbackService feedbackService) {
         this.hrService = hrService;
         this.formService = formService;
+        this.feedbackService = feedbackService;
     }
 
     @GetMapping("/sign-up")
@@ -53,12 +58,18 @@ public class HRController {
         return mv;
     }
 
-    @GetMapping("/pending-holiday-requests-hr")
+    @GetMapping("/company-requests-feedback")
     public ModelAndView pendingHolidayRequestsHr(@RequestParam(name = "departmentId", required = false) String departmentId) {
-        ModelAndView mv = new ModelAndView("pending-holiday-requests-hr");
+        ModelAndView mv = new ModelAndView("company-requests-feedback");
         mv.addObject("requests", hrService.loadRequestsOfDepartment(departmentId));
         mv.addObject("selectedDepartment", departmentId);
         mv.addObject("departments", formService.loadDepartments());
         return mv;
+    }
+
+    @PostMapping("feedback")
+    public RedirectView feedback(@RequestParam Map<String, String> params, Authentication authentication) {
+        feedbackService.addFeedback(params.get("requestId"), params.get("description"), authentication.getName());
+        return new RedirectView("/tom/company-requests");
     }
 }

@@ -32,4 +32,10 @@ public class Feedback implements Serializable {
     @ManyToOne
     @JoinColumn(name = "FK_reporter")
     private Account reporter;
+
+    public Feedback(HolidayRequest request, String description, Account reporter) {
+        this.reporter = reporter;
+        this.description = description;
+        this.request = request;
+    }
 }

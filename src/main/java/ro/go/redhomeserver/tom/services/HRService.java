@@ -69,5 +69,4 @@ public class HRService {
     public List<HolidayRequest> loadRequestsOfDepartment(String departmentId) {
         return holidayRequestRepository.findAllByRequester_Employee_Department_Id(departmentId);
     }
-
 }

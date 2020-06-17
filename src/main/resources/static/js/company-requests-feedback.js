@@ -8,6 +8,6 @@ $(document).ready(function () {
     $("#feedback__department").change(
         function () {
             if($(this).val()!=="")
-                window.location = "/tom/pending-holiday-requests-hr?departmentId="+$(this).val();
+                window.location = "/tom/company-requests-feedback?departmentId="+$(this).val();
         })
 });

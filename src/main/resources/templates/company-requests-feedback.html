@@ -99,7 +99,7 @@
                     <p th:if="${i.getDelegate()!=null}"
                        th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
                     <p th:if="${i.getDelegate()==null}">Delegate: Not necessary</p>
-                    <p th:text="'Remainingdays: '${i.getRequester().getRemainingDays()}"></p>
+                    <p th:text="'Remainingdays: '+${i.getRequester().getRemainingDays()}"></p>
                 </div>
                 <div th:if="${i.getType().getDisplayValue() == 'Medical'}">Medical:
                     <a th:href="@{/download-file(holidayRequestId=${i.getId()})}" th:id="'file'+${i.getId()}"
@@ -126,6 +126,6 @@
 </div>
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<script th:src="@{/js/pending-holiday-requests-hr.js}"></script>
+<script th:src="@{/js/company-requests-feedback.js}"></script>
 </body>
 </html>
