@@ -1,80 +1,52 @@
 package ro.go.redhomeserver.tom.controllers;
 
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.services.DepartmentService;
 import ro.go.redhomeserver.tom.services.EmployeeService;
+import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.ITService;
-import ro.go.redhomeserver.tom.services.IssueRequestService;
 
-import javax.transaction.SystemException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class ITController {
+
     private final ITService itService;
-    private final IssueRequestService issueRequestService;
-    private final DepartmentService departmentService;
+    private final FormService formService;
     private final EmployeeService employeeService;
 
     @Autowired
-    public ITController(ITService itService, IssueRequestService issueRequestService, DepartmentService departmentService, EmployeeService employeeService) {
+    public ITController(ITService itService, FormService formService, EmployeeService employeeService) {
         this.itService = itService;
-        this.issueRequestService = issueRequestService;
-        this.departmentService = departmentService;
+        this.formService = formService;
         this.employeeService = employeeService;
-    }
-
-    @GetMapping("/create-account")
-    public RedirectView createAccount(@ModelAttribute("employeeId") String employeeId, @ModelAttribute("teamLeaderId") String teamLeaderId, RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/tom/");
-        try {
-            itService.generateAccount(employeeId, teamLeaderId);
-        } catch (SystemException e) {
-            itService.informItAboutSystemError(employeeId);
-        }
-        ra.addFlashAttribute("upperNotification", "The employee record was added!");
-        return rv;
-    }
-
-    @GetMapping("/pending-issues")
-    public ModelAndView pendingIssues() {
-        ModelAndView mv = new ModelAndView("pending-issues");
-        mv.addObject("pendingIssues", issueRequestService.loadAllPendingIssueRequests());
-        return mv;
     }
 
     @GetMapping("/manage-department")
     public ModelAndView manageDepartment() {
         ModelAndView mv = new ModelAndView("manage-department");
-        mv.addObject("departments", departmentService.loadDepartments());
+        mv.addObject("departments", formService.loadDepartments());
         return mv;
     }
 
     @PostMapping("/add-department")
     public RedirectView addDepartment(@RequestParam("departmentName") String departmentName) {
-        departmentService.addDepartment(departmentName);
+        itService.addDepartment(departmentName);
         return new RedirectView("/tom/manage-department");
     }
 
     @PostMapping("/delete-department")
     public RedirectView deleteDepartment(@RequestParam("departmentId") String departmentId) {
-        departmentService.removeDepartment(departmentId);
+        itService.removeDepartment(departmentId);
         return new RedirectView("/tom/manage-department");
     }
 
     @GetMapping("/delete-employee")
     public ModelAndView manageEmployee() {
         ModelAndView mv = new ModelAndView("delete-employee");
-        mv.addObject("departments", departmentService.loadDepartments());
+        mv.addObject("departments", formService.loadDepartments());
         return mv;
     }
 
@@ -87,7 +59,7 @@ public class ITController {
     @GetMapping("/change-team-leader")
     public ModelAndView changeTeamLeader() {
         ModelAndView mv = new ModelAndView("change-team-leader");
-        mv.addObject("departments", departmentService.loadDepartments());
+        mv.addObject("departments", formService.loadDepartments());
         return mv;
     }
 
@@ -95,25 +67,5 @@ public class ITController {
     public RedirectView changeTeamLeader(@RequestParam("employeeId") String employeeId, @RequestParam("teamLeaderId") String teamLeaderId) {
         employeeService.updateTeamLeader(employeeId, teamLeaderId);
         return new RedirectView("/tom/change-team-leader");
-    }
-
-    @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})
-    @ResponseBody
-    public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId, Authentication authentication) {
-        List<Employee> allOfDepartmentButMe = departmentService.loadEmployeesOfDepartmentById(departmentId);
-        allOfDepartmentButMe.remove(employeeService.findEmployeeByUsername(authentication.getName()));
-        return allOfDepartmentButMe.stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
-    }
-
-    @GetMapping({"/update-sign-up-form", "/update-change-team-leader-form"})
-    @ResponseBody
-    public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId) {
-        return departmentService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getName())).collect(Collectors.toList());
-    }
-
-    @PostMapping("/delete-issue")
-    @ResponseBody
-    public void deleteIssue(@RequestParam("issueId") String issueId) {
-        issueRequestService.deleteIssueRequestById(issueId);
     }
 }

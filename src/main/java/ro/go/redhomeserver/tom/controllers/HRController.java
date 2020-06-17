@@ -1,13 +1,15 @@
 package ro.go.redhomeserver.tom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.exceptions.UsedEmailException;
+import org.springframework.web.servlet.view.RedirectView;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
-import ro.go.redhomeserver.tom.services.DepartmentService;
+import ro.go.redhomeserver.tom.services.FeedbackService;
+import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.HRService;
 
 import java.util.Map;
@@ -16,19 +18,21 @@ import java.util.Map;
 public class HRController {
 
     private final HRService hrService;
-    private final DepartmentService departmentService;
+    private final FormService formService;
+    private final FeedbackService feedbackService;
 
     @Autowired
-    public HRController(HRService hrService, DepartmentService departmentService) {
+    public HRController(HRService hrService, FormService formService, FeedbackService feedbackService) {
         this.hrService = hrService;
-        this.departmentService = departmentService;
+        this.formService = formService;
+        this.feedbackService = feedbackService;
     }
 
     @GetMapping("/sign-up")
     public ModelAndView signUp() {
         ModelAndView mv = new ModelAndView("sign-up");
-        mv.addObject("departments", departmentService.loadDepartments());
-        mv.addObject("error", "");
+        mv.addObject("departments", formService.loadDepartments());
+        mv.addObject("error", null);
         return mv;
     }
 
@@ -41,9 +45,31 @@ public class HRController {
             ra.addFlashAttribute("employeeId", hrService.addEmployee(params));
             ra.addFlashAttribute("teamLeaderId", params.get("teamLeaderId"));
         } catch (SignUpException e) {
-            mv.addObject("departments", departmentService.loadDepartments());
+            mv.addObject("departments", formService.loadDepartments());
             mv.addObject("error", e.getMessage());
         }
         return mv;
+    }
+
+    @GetMapping("/company-schedule")
+    public ModelAndView companySchedule() {
+        ModelAndView mv = new ModelAndView("company-schedule");
+        mv.addObject("departments", formService.loadDepartments());
+        return mv;
+    }
+
+    @GetMapping("/company-requests-feedback")
+    public ModelAndView pendingHolidayRequestsHr(@RequestParam(name = "departmentId", required = false) String departmentId) {
+        ModelAndView mv = new ModelAndView("company-requests-feedback");
+        mv.addObject("requests", hrService.loadRequestsOfDepartment(departmentId));
+        mv.addObject("selectedDepartment", departmentId);
+        mv.addObject("departments", formService.loadDepartments());
+        return mv;
+    }
+
+    @PostMapping("feedback")
+    public RedirectView feedback(@RequestParam Map<String, String> params, Authentication authentication) {
+        feedbackService.addFeedback(params.get("requestId"), params.get("description"), authentication.getName());
+        return new RedirectView("/tom/company-requests");
     }
 }

@@ -1,4 +1,4 @@
-package ro.go.redhomeserver.tom.dtos;
+package ro.go.redhomeserver.tom.emails;
 
 import lombok.Getter;
 import org.thymeleaf.context.Context;

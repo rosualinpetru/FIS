@@ -1,6 +1,7 @@
-package ro.go.redhomeserver.tom.dtos;
+package ro.go.redhomeserver.tom.emails;
 
 import lombok.Getter;
+import ro.go.redhomeserver.tom.emails.EmailData;
 import ro.go.redhomeserver.tom.models.Account;
 
 @Getter

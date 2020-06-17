@@ -15,39 +15,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
-import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.exceptions.FileStorageException;
 import ro.go.redhomeserver.tom.exceptions.NotEnoughDaysException;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.UploadedFile;
-import ro.go.redhomeserver.tom.services.EmployeeService;
-import ro.go.redhomeserver.tom.services.IssueRequestService;
-import ro.go.redhomeserver.tom.services.UploadedFileService;
+import ro.go.redhomeserver.tom.services.FormService;
+import ro.go.redhomeserver.tom.services.HolidayService;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
-public class EmployeeController {
+public class HolidayController {
 
-    private final EmployeeService employeeService;
-    private final IssueRequestService issueRequestService;
-    private final UploadedFileService uploadedFileService;
+    private final HolidayService holidayService;
+    private final FormService formService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService, IssueRequestService issueRequestService, UploadedFileService uploadedFileService) {
-        this.employeeService = employeeService;
-        this.issueRequestService = issueRequestService;
-        this.uploadedFileService = uploadedFileService;
+    public HolidayController(HolidayService holidayService, FormService formService) {
+        this.holidayService = holidayService;
+        this.formService = formService;
     }
 
     @GetMapping("/request-holiday")
     public ModelAndView requestHoliday(Authentication authentication) {
         ModelAndView mv = new ModelAndView("request-holiday");
-        mv.addObject("error", "");
+        mv.addObject("error", null);
         try {
-            mv.addObject("delegates", employeeService.loadPossibleDelegates(authentication.getName()));
+            mv.addObject("delegates", formService.loadPossibleDelegates(authentication.getName()));
         } catch (UserNotFoundException e) {
             mv.addObject("delegates", null);
         }
@@ -58,8 +52,8 @@ public class EmployeeController {
     public ModelAndView requestHoliday(@RequestParam("file") MultipartFile file, @RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("redirect:/");
         try {
-            employeeService.addHolidayRequest(authentication.getName(), params, file);
-            ra.addFlashAttribute("upperNotification", "Your request was sent to your team leader!");
+            holidayService.addHolidayRequest(authentication.getName(), params, file);
+            ra.addFlashAttribute("upperNotification", "Your request will be processed!");
         } catch (FileStorageException e) {
             ra.addFlashAttribute("upperNotification", e.getMessage());
         } catch (NotEnoughDaysException e) {
@@ -69,53 +63,26 @@ public class EmployeeController {
         return mv;
     }
 
-    @GetMapping("/report-issue")
-    public ModelAndView reportIssue() {
-        return new ModelAndView("report-issue");
-    }
-
-    @PostMapping("/report-issue")
-    public RedirectView reportIssue(@RequestParam Map<String, String> params, Authentication authentication, RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/tom/");
-        try {
-            issueRequestService.addIssueRequest(authentication.getName(), params);
-            ra.addFlashAttribute("upperNotification", "Issue reported!");
-        } catch (UserNotFoundException e) {
-            ra.addFlashAttribute("upperNotification", "There was an error in the system! The request was not sent!");
-        }
-        return rv;
-    }
-
     @GetMapping("/pending-holiday-requests")
     public ModelAndView pendingHolidayRequests(Authentication authentication) {
         ModelAndView mv = new ModelAndView("pending-holiday-requests");
         try {
-            mv.addObject("pendingHolidayRequests", employeeService.loadPendingHolidayRequestsForATeamLeader(authentication.getName()));
+            mv.addObject("pendingHolidayRequests", holidayService.loadPendingHolidayRequestsForATeamLeader(authentication.getName()));
         } catch (UserNotFoundException e) {
             mv.addObject("pendingHolidayRequests", null);
         }
         return mv;
     }
 
-    @GetMapping("/team-schedule")
-    @ResponseBody
-    public List<CalendarEvent> teamSchedule(Authentication authentication) {
-        try {
-            return employeeService.loadHolidayRequestsOfTeamLeaderForCalendar(authentication.getName());
-        } catch (UserNotFoundException e) {
-            return null;
-        }
-    }
-
     @PostMapping("/update-holiday-request")
     @ResponseBody
     public void updateHolidayRequest(@RequestParam("id") String holidayRequestId, @RequestParam("act") String action) {
-        employeeService.updateStatusOfHolidayRequest(holidayRequestId, action);
+        holidayService.updateStatusOfHolidayRequest(holidayRequestId, action);
     }
 
     @GetMapping("/download-file")
     public ResponseEntity<Resource> downloadFile(@RequestParam("holidayRequestId") String holidayRequestId) {
-        UploadedFile databaseFile = uploadedFileService.getFileByRequest(holidayRequestId);
+        UploadedFile databaseFile = holidayService.getFileOfRequest(holidayRequestId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(databaseFile.getFileType()))

@@ -19,7 +19,7 @@
 <div class="container h-100">
     <div class="row h-25 align-items-center index__alert">
         <div class="col-4 mx-auto align-items-center">
-            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != ""}'
+            <div class="alert alert-warning my-3 d-none" th:if='${upperNotification != null}'
                  th:text="${upperNotification}" role="alert"></div>
         </div>
     </div>
@@ -69,12 +69,12 @@
                 <div class="list-group">
                     <a th:href="@{/request-holiday}" class="list-group-item">Request a holiday</a>
                     <a th:href="@{/not-mapped-yet}" class="list-group-item">My requests status</a>
-                    <a th:if="${iAmTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
+                    <a th:if="${isTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
                         schedule</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
                         employee</a>
-                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/pending-holiday-requests-hr}"
-                       class="list-group-item">Holiday requests of company</a>
+                    <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-requests-feedback}"
+                       class="list-group-item">Whole company requests</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-schedule}"
                        class="list-group-item">Whole company schedule</a>
                     <a sec:authorize="hasAnyAuthority('IT', 'ADMIN')" th:href="@{/pending-issues}"
@@ -85,6 +85,7 @@
                         departments</a>
                     <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/delete-employee}" class="list-group-item">Manage
                         employee</a>
+                    <a sec:authorize="hasAuthority('ADMIN') and hasAuthority('IT')" th:href="@{/change-team-leader}" class="list-group-item">Manage teams</a>
                     <a th:href="@{/report-issue}" class="list-group-item">Report an issue</a>
                 </div>
             </div>
@@ -94,7 +95,6 @@
 
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<script th:src="@{js/alert-handler.js}"></script>
 <script th:src="@{js/index.js}"></script>
 </body>
 </html>
