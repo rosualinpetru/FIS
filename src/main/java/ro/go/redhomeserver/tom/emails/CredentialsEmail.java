@@ -7,8 +7,8 @@ import ro.go.redhomeserver.tom.models.Account;
 @Getter
 public class CredentialsEmail extends EmailData {
 
-    public CredentialsEmail(Account to, String subject, String username, String password) {
-        super(to, subject);
+    public CredentialsEmail(Account to, String username, String password) {
+        super(to, "Account data");
 
         context.setVariable("username", username);
         context.setVariable("password", password);
