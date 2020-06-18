@@ -3,6 +3,7 @@ package ro.go.redhomeserver.tom.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ro.go.redhomeserver.tom.emails.HolidayStatusUpdateEmail;
 import ro.go.redhomeserver.tom.enums.RequestStatus;
 import ro.go.redhomeserver.tom.enums.RequestType;
 import ro.go.redhomeserver.tom.exceptions.FileStorageException;
@@ -17,17 +18,22 @@ import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class HolidayService {
 
+    private final EmailService emailService;
     private final AccountRepository accountRepository;
     private final HolidayRequestRepository holidayRequestRepository;
     private final UploadedFileService uploadedFileService;
 
     @Autowired
-    public HolidayService(AccountRepository accountRepository, HolidayRequestRepository holidayRequestRepository, UploadedFileService uploadedFileService) {
+    public HolidayService(EmailService emailService, AccountRepository accountRepository, HolidayRequestRepository holidayRequestRepository, UploadedFileService uploadedFileService) {
+        this.emailService = emailService;
         this.accountRepository = accountRepository;
         this.holidayRequestRepository = holidayRequestRepository;
         this.uploadedFileService = uploadedFileService;
@@ -91,6 +97,23 @@ public class HolidayService {
         }
     }
 
+    private List<HolidayRequest> loadHolidayRequestsBasedOnUserAndStatus(String username, RequestStatus status) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        return accountOptional.map(account -> holidayRequestRepository.findAllByRequesterAndStatus(account, status)).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " was not found!"));
+    }
+
+    public List<HolidayRequest> loadMyAcceptedHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.accTl);
+    }
+
+    public List<HolidayRequest> loadMyDeclinedHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.decTL);
+    }
+
+    public List<HolidayRequest> loadMyPendingHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.sentTL);
+    }
+
     public List<HolidayRequest> loadPendingHolidayRequestsForATeamLeader(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         return accountOptional.map(account -> holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentTL)).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " was not found!"));
@@ -99,18 +122,24 @@ public class HolidayService {
     public void updateStatusOfHolidayRequest(String holidayRequestId, String action) {
         Optional<HolidayRequest> requestOptional = holidayRequestRepository.findById(holidayRequestId);
         if (requestOptional.isPresent()) {
+            String actionEmail = "";
             HolidayRequest request = requestOptional.get();
-            if (action.equals("acc"))
+            if (action.equals("acc")) {
                 request.setStatus(RequestStatus.accTl);
+                actionEmail = "accepted";
+            }
+
 
             if (action.equals("dec")) {
                 request.setStatus(RequestStatus.decTL);
                 Account account = request.getRequester();
-                account.setRemainingDays(account.getRemainingDays()+request.getWorkingDays());
+                account.setRemainingDays(account.getRemainingDays() + request.getWorkingDays());
                 accountRepository.save(account);
+                actionEmail = "declined";
             }
 
             holidayRequestRepository.save(request);
+            emailService.sendEmail(new HolidayStatusUpdateEmail(request.getRequester(), actionEmail));
         }
     }
 

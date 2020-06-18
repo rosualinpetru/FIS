@@ -79,7 +79,7 @@ public class AccountService {
         else
             acc = new Account(username, hashedPassword, salt, employeeOptional.get(), null, 30);
 
-        CredentialsEmail data = new CredentialsEmail(acc, "Account data", username, passwordToSend);
+        CredentialsEmail data = new CredentialsEmail(acc, username, passwordToSend);
 
         try {
             emailService.sendEmail(data);

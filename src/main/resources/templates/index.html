@@ -25,7 +25,7 @@
     </div>
     <div class="row index__content">
         <div class="col-6 mx-auto text-center">
-            <div class="card text-white bg-secondary rounded p-2 text-left">
+            <div class="card text-white bg-dark rounded p-2 text-left">
                 <div class="card-body">
                     <div class="row no-gutters card-title m-0">
                         <div class="col-9">
@@ -35,7 +35,7 @@
                             <img class="w-50" th:src="@{images/favicon.png}" src="" alt="TOM">
                         </div>
                     </div>
-                    <div class="card text-white bg-secondary border border-dark m-2 mt-3">
+                    <div class="card text-white bg-dark border border-secondary m-2 mt-3">
                         <div class="card-body">
                             <ul>
                                 <li>
@@ -68,9 +68,9 @@
             <div class="collapse multi-collapse index__menu w-75 mx-auto text-left" id="index__menu">
                 <div class="list-group">
                     <a th:href="@{/request-holiday}" class="list-group-item">Request a holiday</a>
-                    <a th:href="@{/not-mapped-yet}" class="list-group-item">My requests status</a>
-                    <a th:if="${isTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">My team
-                        schedule</a>
+                    <a th:href="@{/my-requests-status}" class="list-group-item">My requests status</a>
+                    <a th:if="${isTeamLeader}" th:href="@{/pending-holiday-requests}" class="list-group-item">Pending
+                        holiday requests</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/sign-up}" class="list-group-item">Add
                         employee</a>
                     <a sec:authorize="hasAnyAuthority('HR', 'ADMIN')" th:href="@{/company-requests-feedback}"
