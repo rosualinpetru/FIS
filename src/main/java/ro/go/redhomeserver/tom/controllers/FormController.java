@@ -25,12 +25,12 @@ public class FormController {
     @GetMapping({"/update-delete-employee-form", "/update-change-team-leader-form-without-me"})
     @ResponseBody
     public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId, Authentication authentication) {
-        return formService.loadEmployeesOfDepartmentByIdExceptMe(departmentId, authentication.getName()).stream().map(s -> new Pair<>(s.getId(), s.getEmployee().getName())).collect(Collectors.toList());
+        return formService.loadEmployeesOfDepartmentByIdExceptMe(departmentId, authentication.getName()).stream().map(s -> new Pair<>(s.getEmployee().getId(), s.getEmployee().getName())).collect(Collectors.toList());
     }
 
     @GetMapping({"/update-sign-up-form", "/update-change-team-leader-form", "update-company-schedule-form"})
     @ResponseBody
     public List<Pair<String, String>> getEmployeesOfDepartment(@RequestParam("departmentId") String departmentId) {
-        return formService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getId(), s.getEmployee().getName())).collect(Collectors.toList());
+        return formService.loadEmployeesOfDepartmentById(departmentId).stream().map(s -> new Pair<>(s.getEmployee().getId(), s.getEmployee().getName())).collect(Collectors.toList());
     }
 }
