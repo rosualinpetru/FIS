@@ -74,6 +74,26 @@ public class HolidayController {
         return mv;
     }
 
+    @GetMapping("/my-requests-status")
+    public ModelAndView myRequestsStatus(@RequestParam(name = "status", required = false) String status, Authentication authentication) {
+        ModelAndView mv = new ModelAndView("my-requests-status");
+        mv.addObject("selectedStatus",status);
+        try {
+            if (status == null || status.equals("Sent"))
+                mv.addObject("requests", holidayService.loadMyPendingHolidayRequests(authentication.getName()));
+            else {
+                if (status.equals("Accepted"))
+                    mv.addObject("requests", holidayService.loadMyAcceptedHolidayRequests(authentication.getName()));
+
+                if (status.equals("Declined"))
+                    mv.addObject("requests", holidayService.loadMyDeclinedHolidayRequests(authentication.getName()));
+            }
+        } catch (UserNotFoundException e) {
+            mv.addObject("requests", null);
+        }
+        return mv;
+    }
+
     @PostMapping("/update-holiday-request")
     @ResponseBody
     public void updateHolidayRequest(@RequestParam("id") String holidayRequestId, @RequestParam("act") String action) {

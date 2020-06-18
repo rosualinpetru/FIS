@@ -97,6 +97,23 @@ public class HolidayService {
         }
     }
 
+    private List<HolidayRequest> loadHolidayRequestsBasedOnUserAndStatus(String username, RequestStatus status) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        return accountOptional.map(account -> holidayRequestRepository.findAllByRequesterAndStatus(account, status)).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " was not found!"));
+    }
+
+    public List<HolidayRequest> loadMyAcceptedHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.accTl);
+    }
+
+    public List<HolidayRequest> loadMyDeclinedHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.decTL);
+    }
+
+    public List<HolidayRequest> loadMyPendingHolidayRequests(String username) throws UserNotFoundException {
+        return loadHolidayRequestsBasedOnUserAndStatus(username, RequestStatus.sentTL);
+    }
+
     public List<HolidayRequest> loadPendingHolidayRequestsForATeamLeader(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         return accountOptional.map(account -> holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.sentTL)).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " was not found!"));

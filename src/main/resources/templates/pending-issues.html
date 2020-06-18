@@ -19,14 +19,14 @@
     <a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg my-5 ml-3 mr-5 text-light"><i
             class="fa fa-power-off"></i></a>
 </div>
-<div class="container h-100">
+<div class="container h-100 border border-secondary">
     <div class="row h-100">
-        <div class="col bg-secondary p-5 m-0">
+        <div class="col bg-dark p-2 m-0 h-100 overflow-auto scrollbar">
             <div class="w-100 h-100 text-light" th:if="${pendingIssues.isEmpty()}"><h1 class="text-center">No pending
                 issues!</h1></div>
-            <div id="issue-requests__pending" class="border border-dark p-5" th:if="${!pendingIssues.isEmpty()}">
-                <div class="row m-0">
-                    <h4 class="col-2 m-2 text-center">
+            <div id="issue-requests__pending" class="p-5" th:if="${!pendingIssues.isEmpty()}">
+                <div class="row m-0 text-info">
+                    <h4 class="col-2 m-2 text-center ">
                         See More
                     </h4>
                     <h4 class="col m-2 text-center">
@@ -37,11 +37,11 @@
                     </h4>
                 </div>
                 <div th:each="i : ${pendingIssues}">
-                    <hr class="border border-dark m-3">
+                    <hr class="border border-secondary m-3">
                     <div class="row m-0">
                         <div class="col-2 m-0 text-center">
                             <button type="button" class="btn btn-info btn-circle issue__pending__entry"
-                                    th:id="${i.getId()}" th:text="${i.getId()}"></button>
+                                    th:id="${i.getId()}"><i class="fa fa-info" aria-hidden="true"></i></button>
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light">

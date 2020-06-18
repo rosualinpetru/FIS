@@ -5,37 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/webjars/fullcalendar/4.3.1/core/main.css}" rel="stylesheet" type="text/css"/>
-    <link th:href='@{/webjars/fullcalendar/4.3.1/daygrid/main.css}' rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/css/calendar.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/form-select.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/button.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/images/favicon.png}" rel="icon" type="image/icon type"/>
 </head>
-<body id="requests" class="bg-dark h-100 invisible">
+<body id="requests" class="bg-dark h-100">
 <div class="position-fixed" style="z-index: 1000">
-    <a th:href="@{/}" class="btn btn-info btn-default btn-circle btn-lg mt-5 mb-3 ml-5 text-light"><i
-            class="fa fa-arrow-left"></i></a><br>
-    <a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg mt-3 mb-5 ml-5 text-light"><i
+    <a th:href="@{/}" class="btn btn-info btn-default btn-circle btn-lg my-5 ml-5 mr-3 text-light"><i
+            class="fa fa-arrow-left"></i></a>
+    <a th:href="@{/log-out}" class="btn btn-danger btn-default btn-circle btn-lg my-5 ml-3 mr-5 text-light"><i
             class="fa fa-power-off"></i></a>
 </div>
 <div class="container-fluid h-100">
     <div class="row h-100">
-        <div class="col h-75">
-            <div id="requests__calendar" class="bg-secondary text-light mx-auto my-5 p-3 w-75 border border-info"></div>
+        <div class="col m-5">
+            <div class="p-2 m-5 bg-dark border border-secondary">
+                <h3 class="text-center text-light pt-5 mb-3"><b>Status</b></h3>
+                <div class="form-group w-75 mx-auto my-5">
+                    <label for="requests__status" class="text-light">Status</label><br>
+                    <select id="requests__status" class="custom-select" required>
+                        <option value="">---</option>
+                        <option value="Sent">Sent</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Declined">Declined</option>
+                    </select>
+                </div>
+            </div>
         </div>
+
         <div class="col bg-dark p-5 m-0">
-            <div class="w-100 h-100 text-light" th:if="${pendingHolidayRequests.isEmpty()}"><h1 class="text-center">No
-                pending requests!</h1></div>
-            <div id="requests__pending" class="border border-secondary p-2 h-100 overflow-auto" th:if="${!pendingHolidayRequests.isEmpty()}" >
+            <div class="w-100 h-100 text-light" th:if="${requests.isEmpty()}"><h1 class="text-center">No
+                requests!</h1></div>
+            <div class="w-100 text-light"><h1 class="text-center" th:if="${!requests.isEmpty()}"
+                                              th:text="${selectedStatus}"></h1>
+            </div>
+            <div id="declined__requests" class="border border-secondary p-2 h-75 overflow-auto scrollbar"
+                 th:if="${!requests.isEmpty()}">
                 <div class="row m-0 text-info">
                     <h4 class="col-2 m-2 text-center">
                         Details
-                    </h4>
-                    <h4 class="col m-2 text-center">
-                        Name
                     </h4>
                     <h4 class="col m-2 text-center">
                         Start
@@ -47,18 +58,12 @@
                         Delegate
                     </h4>
                 </div>
-                <div th:each="i : ${pendingHolidayRequests}">
+                <div th:each="i : ${requests}">
                     <hr class="border border-secondary m-3">
                     <div class="row m-0">
                         <div class="col-2 m-0 text-center">
-                            <button type="button" class="btn btn-info btn-circle requests__pending__entry"
+                            <button type="button" class="btn btn-info btn-circle requests__details"
                                     th:id="${i.getId()}" th:text="${i.getType()}"></button>
-                        </div>
-                        <div class="col m-0 text-center">
-                            <h5 class="text-light">
-                                <b class="text-black-50"></b>
-                                <i th:text="${i.getRequester().getEmployee().getName()}"></i>
-                            </h5>
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light"
@@ -69,7 +74,8 @@
                                 th:text="${i.getEnd().getDay()}+'. '+${i.getEnd().getMonth()}+'. '+${i.getEnd().getYear()+1900}"></h5>
                         </div>
                         <div class="col m-0 text-center">
-                            <h5 class="text-light" th:if="${i.getDelegate()!=null}" th:text="${i.getDelegate().getEmployee().getName()}"></h5>
+                            <h5 class="text-light" th:if="${i.getDelegate()!=null}"
+                                th:text="${i.getDelegate().getEmployee().getName()}"></h5>
                             <h5 class="text-light" th:if="${i.getDelegate()==null}">Not necessary</h5>
                         </div>
                     </div>
@@ -78,7 +84,7 @@
         </div>
     </div>
 </div>
-<div th:each="i : ${pendingHolidayRequests}" th:id="${i.getId()}+'modal'" class="modal fade bg-dark" tabindex="-1"
+<div th:each="i : ${requests}" th:id="${i.getId()}+'modal'" class="modal fade bg-dark" tabindex="-1"
      role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content bg-secondary">
@@ -98,27 +104,31 @@
                 </div>
                 <div>
                     <p th:text="'Period: ' + ${i.getStart().getDay()} + '.' + ${i.getStart().getMonth()} + '.' + ${i.getStart().getYear()+1900} + ' - ' + ${i.getEnd().getDay()} + '.' + ${i.getEnd().getMonth()} + '.' + ${i.getEnd().getYear()+1900}"></p>
-                    <p th:if="${i.getDelegate()!=null}" th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
+                    <p th:if="${i.getDelegate()!=null}"
+                       th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
                     <p th:if="${i.getDelegate()==null}">Not necessary</p>
+                    <p th:text="'Remaining days: '+${i.getRequester().getRemainingDays()}"></p>
+                    <br>
+                    <p th:if="${!i.getRequestFeedback().isEmpty()}">Feedback: </p>
+                    <div th:each="j: ${i.getRequestFeedback()}" class="p-2">
+                        <span th:text="${j.getReporter().getEmployee().getName()} + '('+${j.getReporter().getEmployee().getDepartment().getName()} +'): '"></span>
+                        <p th:text="'&nbsp;'+${j.getDescription()}"></p>
+                    </div>
+                    <br>
                 </div>
                 <div th:if="${i.getType().getDisplayValue() == 'Medical'}"> Medical:
-                    <a th:href="@{/download-file(holidayRequestId=${i.getId()})}" th:id="'file'+${i.getId()}" class="file-link">Download file!</a>
+                    <a th:href="@{/download-file(holidayRequestId=${i.getId()})}" th:id="'file'+${i.getId()}"
+                       class="file-link">Download file!</a>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger update" th:id="'dec'+${i.getId()}">Decline</button>
-                <button type="button" class="btn btn-success update" th:id="'acc'+${i.getId()}">Accept</button>
             </div>
         </div>
     </div>
 </div>
 <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<script th:src="@{/webjars/fullcalendar/4.3.1/core/main.js}"></script>
-<script th:src="@{/webjars/fullcalendar/4.3.1/daygrid/main.js}"></script>
-<script th:src="@{/webjars/fullcalendar/4.3.1/interaction/main.js}"></script>
-<script th:src="@{/js/team-calendar.js}"></script>
-<script th:src="@{/js/pending-holiday-requests.js}"></script>
+<script th:src="@{/js/my-requests-status.js}"></script>
 </body>
 </html>
