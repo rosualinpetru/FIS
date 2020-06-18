@@ -70,6 +70,6 @@ public class HRController {
     @PostMapping("feedback")
     public RedirectView feedback(@RequestParam Map<String, String> params, Authentication authentication) {
         feedbackService.addFeedback(params.get("requestId"), params.get("description"), authentication.getName());
-        return new RedirectView("/tom/company-requests");
+        return new RedirectView("/tom/company-requests-feedback");
     }
 }
