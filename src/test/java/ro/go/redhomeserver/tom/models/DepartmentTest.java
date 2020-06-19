@@ -2,7 +2,6 @@ package ro.go.redhomeserver.tom.models;
 
 
 import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.*;
 
 public class DepartmentTest {
