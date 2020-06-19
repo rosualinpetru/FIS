@@ -2,14 +2,15 @@ package ro.go.redhomeserver.tom.models;
 
 
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccountTest {
     @Test
-    void checkConstructorAndGetters(){
+    void checkConstructorAndGetters() {
         Employee employee = new Employee();
         Account teamLeader = new Account();
-        Account account = new Account("It","test","it",employee,teamLeader,20);
+        Account account = new Account("It", "test", "it", employee, teamLeader, 20);
         assertThat(account.getUsername().equals("It")).isTrue();
         assertThat(account.getPassword().equals("test")).isTrue();
         assertThat(account.getSalt().equals("it")).isTrue();
