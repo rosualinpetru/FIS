@@ -24,12 +24,12 @@ public class UploadedFileService {
         this.holidayRequestRepository = holidayRequestRepository;
     }
 
-    public void storeFile(MultipartFile file, HolidayRequest request) throws FileStorageException {
+    public UploadedFile storeFile(MultipartFile file, HolidayRequest request) throws FileStorageException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String fileName = request.getRequester().getUsername() + '-' + timestamp.toString();
         try {
             UploadedFile uploadedFile = new UploadedFile(fileName, file.getContentType(), file.getBytes(), request);
-            uploadedFileRepository.save(uploadedFile);
+            return uploadedFileRepository.save(uploadedFile);
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
