@@ -25,8 +25,9 @@ public class ITService {
         this.issueRequestRepository = issueRequestRepository;
     }
 
-    public void addDepartment(String name) {
-        departmentRepository.save(new Department(name));
+    public Department addDepartment(String name) {
+        Department department = new Department(name);
+        return departmentRepository.save(department);
     }
 
     public void removeDepartment(String departmentId) {
