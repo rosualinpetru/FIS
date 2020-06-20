@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ClearDataServiceTest {
+
     @Mock
     private ResetPasswordRequestRepository resetPasswordRequestRepository;
     @Mock
@@ -27,9 +28,8 @@ public class ClearDataServiceTest {
     @InjectMocks
     private ClearDataService clearDataService;
 
-    //clearData
     @Test
-    void shouldDeleteAllExpiredResetPasswordRequestsAndAllHolidayRequestsWhichEndedOneYearAgo() {
+    void clearDataShouldDeleteAllExpiredResetPasswordRequestsAndAllHolidayRequestsWhichEndedOneYearAgo() {
         ArrayList<ResetPasswordRequest> resetPasswordRequests = new ArrayList<>();
         ArrayList<HolidayRequest> holidayRequests = new ArrayList<>();
 

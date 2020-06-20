@@ -33,15 +33,14 @@ public class IssueRequestServiceTest {
     @InjectMocks
     private IssueRequestService issueRequestService;
 
-    //addIssueRequest
     @Test
-    void should_ThrowUserNotFoundException_NullUsername() {
+    void addIssueRequestShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> issueRequestService.addIssueRequest(null, null));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
-    void checkIfIssueRequestIsSavedCorrectly() {
+    void addIssueRequestShouldSaveIssueIfAccountFound() {
         Account account = new Account();
         account.setId("id");
         account.setUsername("username");
@@ -60,9 +59,8 @@ public class IssueRequestServiceTest {
 
     }
 
-    //deleteIssueRequestById
     @Test
-    void checkIfDeleteRequestByIdWorksIfRequestFoundOrNot() {
+    void deleteIssueRequestByIdShouldDeleteRequestByIdWorksIfRequestFoundOrNot() {
         List<IssueRequest> issueRequests = new ArrayList<>();
         IssueRequest ir;
         for (int i = 0; i < 10; i++) {
@@ -81,9 +79,8 @@ public class IssueRequestServiceTest {
         assertThat(issueRequests.get(3).getId().equals("4")).isTrue();
     }
 
-    //loadAllPendingIssueRequests
     @Test
-    void checkIfAllPendingRequestsAreLoadedAndIfRequesterNullThenITSERVICEName() {
+    void loadAllPendingIssueRequestAllPendingRequestsWithNullRequesterShouldHaveITSERVICEName() {
         List<IssueRequest> issueRequests = new ArrayList<>();
         IssueRequest ir;
         Account account;

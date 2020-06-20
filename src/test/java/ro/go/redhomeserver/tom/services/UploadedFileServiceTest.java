@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UploadedFileServiceTest {
+
     @Mock
     private UploadedFileRepository uploadedFileRepository;
     @Mock
@@ -29,20 +30,19 @@ public class UploadedFileServiceTest {
     @InjectMocks
     private UploadedFileService uploadedFileService;
 
-    //getFileByRequestId
     @Test
-    void getFileByRequestId_Null_RequestNotFound() {
+    void getFileByRequestIdShouldBeNullIfRequestNotFound() {
         assertThat(uploadedFileService.getFileByRequestId(anyString())).isNull();
     }
 
     @Test
-    void getFileByRequestId_Null_RequestFoundButFileNotSet() {
+    void getFileByRequestIdShouldBeNullIfRequestFoundButFileNotSet() {
         when(holidayRequestRepository.findById(anyString())).thenReturn(java.util.Optional.of(new HolidayRequest()));
         assertThat(uploadedFileService.getFileByRequestId(anyString())).isNull();
     }
 
     @Test
-    void getFileByRequestId_AFile_RequestFoundButFileNotSet() {
+    void getFileByRequestIdShouldBeAFileIfRequestFoundButFileNotSet() {
         HolidayRequest hr = new HolidayRequest();
         UploadedFile f = new UploadedFile();
         hr.setUploadedFile(f);
@@ -51,7 +51,6 @@ public class UploadedFileServiceTest {
         assertThat(uploadedFileService.getFileByRequestId(anyString()).equals(f)).isNotNull();
     }
 
-    //storeFile
     @Test
     void storeFileShouldReturnTheUploadedFile() {
         HolidayRequest hr = new HolidayRequest();

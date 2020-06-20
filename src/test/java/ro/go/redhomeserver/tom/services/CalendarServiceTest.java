@@ -37,7 +37,7 @@ public class CalendarServiceTest {
     //as it is dependent on the others
 
     @Test
-    void should_ThrowUserNotFoundException_AccountFoundByIdOrUsername() {
+    void loadShouldThrowUserNotFoundExceptionIfAccountNotFoundByIdOrUsername() {
         Throwable throwable = catchThrowable(() -> calendarService.loadHolidayRequestsOfTeamLeaderForCalendarById(""));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(new Account()));

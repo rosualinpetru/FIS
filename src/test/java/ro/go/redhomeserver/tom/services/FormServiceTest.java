@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class FormServiceTest {
+
     @Mock
     private DepartmentRepository departmentRepository;
     @Mock
@@ -27,9 +28,8 @@ public class FormServiceTest {
     @InjectMocks
     private FormService formService;
 
-    //loadAccountsOfDepartmentById + loadAccountsOfDepartmentByIdExceptMe
     @Test
-    void methodsMustReturnResultOfAccountRepositoryQuery() {
+    void loadAccountMethodsMustReturnResultOfAccountRepositoryQuery() {
         ArrayList<Account> accountList = new ArrayList<>();
         when(accountRepository.findAllByEmployee_Department_Id(anyString())).thenReturn(accountList);
         when(accountRepository.findAllByEmployee_Department_IdAndUsernameNot(anyString(), anyString())).thenReturn(accountList);
@@ -37,23 +37,21 @@ public class FormServiceTest {
         assertThat(formService.loadAccountsOfDepartmentByIdExceptMe(anyString(), anyString()) == accountList).isTrue();
     }
 
-    //loadDepartments
     @Test
-    void methodsMustReturnResultOfDepartmentRepositoryQuery() {
+    void loadDepartmentMustReturnResultOfDepartmentRepositoryQuery() {
         ArrayList<Department> departments = new ArrayList<>();
         when(departmentRepository.findAll()).thenReturn(departments);
         assertThat(formService.loadDepartments() == departments).isTrue();
     }
 
-    //loadPossibleDelegates
     @Test
-    void should_ThrowUserNotFoundException_UsernameNotFound() {
+    void loadPossibleDelegatesShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> formService.loadPossibleDelegates(null));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
-    void ifNotATeamLeaderShouldReturnNull() {
+    void loadPossibleDelegatesShouldBeNullIfNotATeamLeader() {
         Account account = new Account();
         when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(account));
         try {
@@ -64,7 +62,7 @@ public class FormServiceTest {
     }
 
     @Test
-    void ifUserIsTeamLeaderAndUserHasATeamLeaderShouldReturnColleagues() {
+    void loadPossibleDelegatesShouldReturnColleaguesIfUserIsTeamLeaderAndUserHasATeamLeader() {
         Account me = new Account();
         Account account;
         Account teamLeader = new Account();
@@ -96,7 +94,7 @@ public class FormServiceTest {
     }
 
     @Test
-    void ifUserIsTeamLeaderAndUserHasNotATeamLeaderShouldReturnColleaguesWithNullTeamLeaderOfSameDepartmentIfPresent() {
+    void loadPossibleDelegatesShouldReturnColleaguesWithNullTeamLeaderOfSameDepartmentIfPresentIfUserIsTeamLeaderAndUserHasNotATeamLeader() {
         Account me = new Account();
         Employee employee = new Employee();
         employee.setDepartment(new Department());
@@ -126,7 +124,7 @@ public class FormServiceTest {
     }
 
     @Test
-    void ifUserIsTeamLeaderAndUserHasNotATeamLeaderShouldReturnTeamMembersIfColleaguesAreMissing() {
+    void loadPossibleDelegatesShouldReturnTeamMembersIfColleaguesAreMissingIfUserIsTeamLeaderAndUserHasNotATeamLeader() {
         Account me = new Account();
         Employee employee = new Employee();
         employee.setDepartment(new Department());

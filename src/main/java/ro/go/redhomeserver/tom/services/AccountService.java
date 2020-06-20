@@ -89,7 +89,7 @@ public class AccountService {
         }
     }
 
-    public void informItAboutSystemError(String message) {
-        issueRequestRepository.save(new IssueRequest(message, null));
+    public IssueRequest informItAboutSystemError(String message) {
+        return issueRequestRepository.save(new IssueRequest(message, null));
     }
 }

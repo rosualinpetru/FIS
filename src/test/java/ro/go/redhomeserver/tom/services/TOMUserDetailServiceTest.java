@@ -13,29 +13,31 @@ import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith(MockitoExtension.class)
 public class TOMUserDetailServiceTest {
+
     @Mock
     private AccountRepository accountRepository;
 
     @InjectMocks
     private TOMUserDetailService tomUserDetailService;
 
-    //loadUserByUsername
     @Test
-    void should_ThrowUsernameNotFoundException_NullUsername() {
+    void loadUserByUsernameShouldThrowUsernameNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> tomUserDetailService.loadUserByUsername(anyString()));
         assertThat(throwable).isInstanceOf(UsernameNotFoundException.class);
     }
 
     @Test
-    void loadUserByUsername_ResultInstanceOfTOMUserDetails_UsernameFound() {
+    void loadUserByUsernameShoundBeResultInstanceOfTOMUserDetailsIfUsernameFound() {
         Account account = new Account();
         Employee employee = new Employee();
-        Department department= new Department("IT");
+        Department department = new Department("IT");
         employee.setDepartment(department);
         account.setEmployee(employee);
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(account));

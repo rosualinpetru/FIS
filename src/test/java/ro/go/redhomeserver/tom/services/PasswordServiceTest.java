@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mail.MailException;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ro.go.redhomeserver.tom.emails.EmailData;
@@ -37,21 +36,20 @@ public class PasswordServiceTest {
     @InjectMocks
     private PasswordService passwordService;
 
-    //validatePassword
     @Test
-    void should_ThrowPasswordVerificationException_DifferentPasswords() {
+    void validatePasswordShouldThrowPasswordVerificationExceptionIfDifferentPasswords() {
         Throwable throwable = catchThrowable(() -> passwordService.validatePassword("1", "2"));
         assertThat(throwable).isInstanceOf(PasswordVerificationException.class);
     }
 
     @Test
-    void should_ThrowWeakPasswordException_ShortPassword() {
+    void validatePasswordShouldThrowWeakPasswordExceptionIfShortPassword() {
         Throwable throwable = catchThrowable(() -> passwordService.validatePassword("arosu", "arosu"));
         assertThat(throwable).isInstanceOf(WeakPasswordException.class);
     }
 
     @Test
-    void strongestPasswordsShouldBe8() {
+    void validatePasswordStrongestPasswordsShouldBe8() {
         int score = 0;
         try {
             score = passwordService.validatePassword("Pdsfadsdfsafsaf!1", "Pdsfadsdfsafsaf!1");
@@ -61,15 +59,14 @@ public class PasswordServiceTest {
         assertThat(score == 8).isTrue();
     }
 
-    //updateAccountPasswordById
     @Test
-    void should_ThrowUserNotFoundException_EmptyUsername() {
+    void updateAccountPasswordByIdsShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> passwordService.updateAccountPasswordById(null, null));
         assertThat(throwable).isInstanceOf(SignUpException.class);
     }
 
     @Test
-    void userShouldHaveHisPasswordChangedAndAllResetRequestsShouldBeDeleted() {
+    void updateAccountPasswordByIdUserShouldHaveHisPasswordChangedAndAllResetRequestsShouldBeDeleted() {
         Account account = new Account();
         ArrayList<ResetPasswordRequest> resetPasswordRequests = new ArrayList<>();
         ResetPasswordRequest r1 = new ResetPasswordRequest();
@@ -100,15 +97,14 @@ public class PasswordServiceTest {
         assertThat(resetPasswordRequests.contains(r2)).isFalse();
     }
 
-    //identifyAccountUsingToken
     @Test
-    void should_ThrowInvalidTokenException_ResetRequestMissing() {
+    void identifyAccountUsingTokenShouldThrowInvalidTokenExceptionResetRequestMissing() {
         Throwable throwable = catchThrowable(() -> passwordService.identifyAccountUsingToken(""));
         assertThat(throwable).isInstanceOf(InvalidTokenException.class);
     }
 
     @Test
-    void identifyAccountUsingToken_AccountId_ResetRequestWithAccount() {
+    void identifyAccountUsingTokenShouldBeAccountIdForResetRequestWithAccount() {
         Account account = new Account();
         account.setId("id");
         ResetPasswordRequest rpr = new ResetPasswordRequest();
@@ -124,15 +120,14 @@ public class PasswordServiceTest {
         }
     }
 
-    //addResetRequest
     @Test
-    void should_ThrowUserNotFoundException_NullUsername() {
+    void addResetRequestShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> passwordService.addResetRequest("", ""));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
-    void should_ThrowSystemException_EmailServiceThrowsMailException() {
+    void addResetRequestShouldThrowSystemExceptionIfEmailServiceThrowsMailException() {
         when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(new Account()));
         doThrow(new MailPreparationException("Failed")).when(emailService).sendEmail(any(EmailData.class));
         Throwable throwable = catchThrowable(() -> passwordService.addResetRequest("", ""));
@@ -140,7 +135,7 @@ public class PasswordServiceTest {
     }
 
     @Test
-    void theResetNeedsToBeSavedWithExpirationDateInOneHourAndAnEmailWillBeSent() {
+    void addResetRequestShouldBeSavedWithExpirationDateInOneHourAndAnEmailWillBeSent() {
         Account account = new Account();
         when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(account));
         doAnswer(invocation -> invocation.getArguments()[0]).when(resetPasswordRequestRepository).save(any(ResetPasswordRequest.class));
@@ -153,7 +148,7 @@ public class PasswordServiceTest {
             calendar.setTime(rpr.getExpirationDate());
             long expirationHour = calendar.getTimeInMillis();
             long diff = TimeUnit.MINUTES.convert(expirationHour-nowHour, TimeUnit.MILLISECONDS);
-            assertThat(diff==59).isTrue();
+            assertThat(diff>=59 && diff<=61).isTrue();
             assertThat(rpr.getAccount().equals(account)).isTrue();
         } catch (Exception e) {
             fail("Exception interfered!");

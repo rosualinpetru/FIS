@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ITServiceTest {
+
     @Mock
     private DepartmentRepository departmentRepository;
     @Mock
@@ -34,17 +35,15 @@ public class ITServiceTest {
     @InjectMocks
     private ITService itService;
 
-    //addDepartment
     @Test
-    void checkIfDepartmentIsAdded() {
+    void addDepartmentShouldAddDepartmentCorrectly() {
         when(departmentRepository.save(any(Department.class))).then(invocation -> invocation.getArguments()[0]);
         Department result = itService.addDepartment("IT");
         assertThat(result.getName().equals("IT")).isTrue();
     }
 
-    //removeDepartment
     @Test
-    void deletionNeedsToAddAnIssueIfThereAreEmployeesInTheDepartment() {
+    void removeDepartmentShouldAddAnIssueIfThereAreEmployeesInTheDepartment() {
         ArrayList<Department> departments= new ArrayList<>();
         Department it = new Department();
         Department hr = new Department();
@@ -84,7 +83,7 @@ public class ITServiceTest {
     }
 
     @Test
-    void ifNoEmployeesInDepartmentJustDeleteIt() {
+    void removeDepartmentShouldJustDeleteItIfNoEmployeesInDepartment() {
         ArrayList<Department> departments= new ArrayList<>();
         Department it = new Department();
         Department hr = new Department();
@@ -106,15 +105,14 @@ public class ITServiceTest {
         assertThat(departments.contains(hr)).isTrue();
     }
 
-    //removeEmployee
     @Test
-    void deleteEmployeeByIdShouldNeverBeCalledIfEmployeeNotFound() {
+    void removeEmployeeShouldNeverCallDeleteEmployeeByIdIfEmployeeNotFound() {
         itService.removeEmployee(null);
         verify(employeeRepository, times(0)).deleteById(anyString());
     }
 
     @Test
-    void employeeShouldBeRemovedIfFound() {
+    void removeEmployeeShouldRemoveEmployeeIfFound() {
         Employee e;
         ArrayList<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -135,15 +133,14 @@ public class ITServiceTest {
         }
     }
 
-    //updateTeamLeader
     @Test
-    void should_DoNothing_IfFirstEmployeeWasNotFound() {
+    void updateTeamLeaderShouldDoNothingIfFirstEmployeeWasNotFound() {
         itService.updateTeamLeader(null, null);
         verify(accountRepository, times(0)).save(any(Account.class));
     }
 
     @Test
-    void theEmployeeShouldHaveHisTeamLeaderNullIfSecondIsNotFound() {
+    void updateTeamLeaderShouldUpdateFirstEmployeeTeamLeaderToNullIfSecondIsNotFound() {
         Employee employee = new Employee();
         employee.setId("id1");
         Account account = new Account();
@@ -162,7 +159,7 @@ public class ITServiceTest {
     }
 
     @Test
-    void employee1ShouldHaveTheTeamLeaderEmployee2IfBothFound() {
+    void updateTeamLeaderShouldUpdateEmployee1TeamLeaderToEmployee2IfBothFound() {
         Employee employee1 = new Employee();
         employee1.setId("id1");
         Employee employee2 = new Employee();

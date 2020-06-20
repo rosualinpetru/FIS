@@ -16,7 +16,6 @@ import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
 import ro.go.redhomeserver.tom.repositories.IssueRequestRepository;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,28 +38,24 @@ public class AccountServiceTest {
     @InjectMocks
     private AccountService accountService;
 
-    //informItAboutSystemError
     @Test
-    void InformItAboutSystemError_Null_issueRequesterAccount() {
-        ArrayList<IssueRequest> issueRequests = new ArrayList<>();
-        IssueRequest ir = new IssueRequest("", null);
-        doAnswer(invocation -> {issueRequests.add(ir); return ir;}).when(issueRequestRepository).save(any(IssueRequest.class));
-        accountService.informItAboutSystemError(anyString());
+    void informItAboutSystemErrorShouldSaveANewIssueRequestWithNullReporter() {
+        doAnswer(invocation -> invocation.getArguments()[0]).when(issueRequestRepository).save(any(IssueRequest.class));
+        IssueRequest result = accountService.informItAboutSystemError("message");
 
         verify(issueRequestRepository, times(1)).save(any(IssueRequest.class));
-        assertThat(issueRequests.contains(ir)).isTrue();
-        assertThat(issueRequests.get(0).getAccount()).isNull();
+        assertThat(result.getAccount()).isNull();
+        assertThat(result.getDescription().equals("message")).isTrue();
     }
 
-    //generateAccount
     @Test
-    void should_ThrowSystemException_EmployeeNotFound() {
+    void generateAccountShouldThrowSystemExceptionIfEmployeeNotFound() {
         Throwable exception = catchThrowable(() -> accountService.generateAccount("", ""));
         assertThat(exception).isInstanceOf(SystemException.class);
     }
 
     @Test
-    void should_ThrowSystemException_MailExceptionByEmailService() {
+    void generateAccountShouldThrowSystemExceptionIfMailExceptionThrownByEmailService() {
         Employee emp = new Employee("Rosu Alin", null, null, 0, "rosualinpetru@gmail.com", new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
         doThrow(new MailPreparationException("Failed")).when(emailService).sendEmail(any(EmailData.class));
@@ -69,7 +64,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    void should_SendEmail_IfAccountGenerated() {
+    void generateAccountShouldSendEmailIfAccountGenerated() {
         Employee emp = new Employee("Rosu Alin", null, null, 0, "rosualinpetru@gmail.com", new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
         try {
@@ -81,7 +76,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    void theGeneratedUserHasACorrectPassword(){
+    void theGeneratedUserShouldHaveACorrectPassword(){
         Employee emp = new Employee("Rosu Alin", null, null, 0, null, new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
         when(passwordEncoder.encode(anyString())).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -100,7 +95,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    void theGeneratedUserHasACorrectDataWithoutTeamLeader(){
+    void theGeneratedUserShouldHaveACorrectDataWithoutTeamLeader(){
         Employee emp = new Employee("Rosu Alin", null, null, 0, null, new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
@@ -117,7 +112,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    void theGeneratedUserHasACorrectDataWithTeamLeader(){
+    void theGeneratedUserShouldHaveACorrectDataWithTeamLeader(){
         Account tl = new Account();
         Employee emp = new Employee("Rosu Alin", null, null, 0, null, new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
@@ -136,7 +131,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    void employeesWithSameInitialsGetDifferentAccountUsernames() {
+    void employeesWithSameInitialsShouldGetDifferentAccountUsernames() {
         Employee emp = new Employee("Rosu Alin", null, null, 0, null, new Date(), null);
         when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArguments()[0]);

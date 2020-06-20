@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HRServiceTest {
+
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -34,7 +35,6 @@ public class HRServiceTest {
     @InjectMocks
     private HRService hrService;
 
-    //checkIfEmailIsAvailable
     @Test
     void checkIfEmailIsAvailableShouldThrowUsedEmailExceptionIfEmployeeFound() {
         Map<String, String> map = new HashMap<>();
@@ -52,7 +52,6 @@ public class HRServiceTest {
         assertThat(throwable).isNull();
     }
 
-    //loadRequestsOfDepartment
     @Test
     void loadRequestsOfDepartmentShouldBeTheResultOfHolidayRequestRepositoryQuery() {
         List<HolidayRequest> holidayRequests = new ArrayList<>();
@@ -60,7 +59,6 @@ public class HRServiceTest {
         assertThat(hrService.loadRequestsOfDepartment("") == holidayRequests).isTrue();
     }
 
-    //addFeedback
     @Test
     void addFeedbackShouldBeNullIfAccountOfRequestAreNotFound() {
         assertThat(hrService.addFeedback(null, null, null)).isNull();
@@ -79,7 +77,6 @@ public class HRServiceTest {
         assertThat(result.getRequest() == holidayRequest).isTrue();
     }
 
-    //addEmployee
     @Test
     void addEmployeeShouldThrowDepartmentMissingExceptionIfDepartmentIsNotFound() {
         Map<String, String> map = new HashMap<>();

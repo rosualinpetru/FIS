@@ -1,6 +1,5 @@
 package ro.go.redhomeserver.tom.services;
 
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.web.multipart.MultipartFile;
-import ro.go.redhomeserver.tom.dtos.CalendarEvent;
 import ro.go.redhomeserver.tom.emails.EmailData;
 import ro.go.redhomeserver.tom.enums.RequestStatus;
 import ro.go.redhomeserver.tom.enums.RequestType;
@@ -22,7 +20,6 @@ import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,6 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HolidayServiceTest {
+
     @Mock
     private EmailService emailService;
     @Mock
@@ -46,9 +44,8 @@ public class HolidayServiceTest {
     @InjectMocks
     private HolidayService holidayService;
 
-    // loadHolidayRequestsBasedOnUserAndStatus + all methods based on it (3)
     @Test
-    void loadHolidayRequestsBasedOnUserAndStatus_should_ThrowUserNotFoundException_UsernameNotFound() {
+    void loadHolidayRequestsBasedOnUserAndStatusShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> holidayService.loadMyAcceptedHolidayRequests(anyString()));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
         throwable = catchThrowable(() -> holidayService.loadMyDeclinedHolidayRequests(anyString()));
@@ -58,7 +55,7 @@ public class HolidayServiceTest {
     }
 
     @Test
-    void shouldReturnResultOfHolidayRequestRepositoryQueryAccountAndStatus() {
+    void loadHolidayRequestsBasedOnUserAndStatusShouldReturnResultOfHolidayRequestRepositoryQueryForAccountAndStatus() {
         List<HolidayRequest> result = new ArrayList<>();
         when(holidayRequestRepository.findAllByRequesterAndStatus(any(Account.class), (any(RequestStatus.class)))).thenReturn(result);
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(new Account()));
@@ -71,24 +68,22 @@ public class HolidayServiceTest {
         }
     }
 
-    //getFileOfRequest
     @Test
-    void shouldReturnResultOfUploadedFileRepositoryQuery() {
+    void getFileOfRequestShouldReturnResultOfUploadedFileRepositoryQuery() {
         assertThat(holidayService.getFileOfRequest(null)).isNull();
         UploadedFile uf = new UploadedFile();
         when(uploadedFileService.getFileByRequestId(anyString())).thenReturn(uf);
         assertThat(holidayService.getFileOfRequest("")==uf).isTrue();
     }
 
-    //loadPendingHolidayRequestsForATeamLeader
     @Test
-    void loadPendingHolidayRequestsForATeamLeader_should_ThrowUserNotFoundException_UsernameNotFound() {
+    void loadPendingHolidayRequestsForATeamLeaderShouldThrowUserNotFoundExceptionIfUsernameNotFound() {
         Throwable throwable = catchThrowable(() -> holidayService.loadPendingHolidayRequestsForATeamLeader(anyString()));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
-    void shouldReturnResultOfHolidayRequestRepositoryQueryTeamLeaderAndPending() {
+    void loadPendingHolidayRequestsForATeamLeaderShouldReturnResultOfHolidayRequestRepositoryQueryForTeamLeaderAndPendingStatus() {
         List<HolidayRequest> holidayRequests = new ArrayList<>();
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(new Account()));
         when(holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(any(Account.class), any(RequestStatus.class))).thenReturn(holidayRequests);
@@ -101,9 +96,8 @@ public class HolidayServiceTest {
         }
     }
 
-    //updateStatusOfHolidayRequest
     @Test
-    void updateStatusOfHolidayRequestShouldNotSendEmailReturnNullIfRequestNotFound() {
+    void updateStatusOfHolidayRequestShouldReturnNullAndNotSendEmailIfRequestNotFound() {
         try {
             assertThat(holidayService.updateStatusOfHolidayRequest(null, null)).isNull();
         } catch (Exception e) {
@@ -159,8 +153,7 @@ public class HolidayServiceTest {
             fail("Exception interfered!");
         }
     }
-
-    //addHolidayRequest
+    
     @Test
     void addHolidayRequestShouldThrowUserNotFoundExceptionIfUserNotFound() {
         Throwable throwable = catchThrowable(() -> holidayService.addHolidayRequest(null, null, null));

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.Account;
@@ -19,35 +18,34 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
+
     @Mock
     private AccountRepository accountRepository;
 
     @InjectMocks
     private AuthenticationService authenticationService;
 
-    //getSaltOfUser
     @Test
-    void getSaltOfUser_EmptyString_UserNotFound() {
+    void getSaltOfUserShouldReturnEmptyStringIfUserNotFound() {
         assertThat(authenticationService.getSaltOfUser(anyString()).equals("")).isTrue();
     }
 
     @Test
-    void getSaltOfUser_SpecificString_UserFound() {
+    void getSaltOfUserShouldReturnASpecificStringForAFoundUser() {
         Account account = new Account();
         account.setSalt("salt");
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(account));
         assertThat(authenticationService.getSaltOfUser(anyString()).equals("salt")).isTrue();
     }
 
-    //getMyEmployeeData
     @Test
-    void should_ThrowUserNotFoundException_UserNotFound() {
+    void getMyEmployeeDataShouldThrowUserNotFoundExceptionIfUserNotFound() {
         Throwable throwable = catchThrowable(()->authenticationService.getMyEmployeeData(anyString()));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
-    void should_ReturnEmployee_UserFound() {
+    void getMyEmployeeDataShouldReturnEmployeeDataIfUserFound() {
         Account account = new Account();
         Employee employee = new Employee();
         account.setEmployee(employee);
@@ -59,21 +57,20 @@ public class AuthenticationServiceTest {
         }
     }
 
-    //amITeamLeader
     @Test
-    void amITeamLeader_False_UserNotFound() {
+    void amITeamLeaderShouldBeFalseIfUserNotFound() {
         assertThat(authenticationService.amITeamLeader(anyString())).isFalse();
     }
 
     @Test
-    void amITeamLeader_False_UserFoundButNoMembersInTeam() {
+    void amITeamLeaderShouldBeFalseIfUserFoundButNoMembersInTeam() {
         Account account = new Account();
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(account));
         assertThat(authenticationService.amITeamLeader(anyString())).isFalse();
     }
 
     @Test
-    void amITeamLeader_True_UserFoundButMembersInTeam() {
+    void amITeamLeaderShouldBeTrueIfUserFoundButMembersInTeam() {
         Account account = new Account();
         Set<Account> set = new LinkedHashSet<>();
         set.add(new Account());

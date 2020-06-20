@@ -21,22 +21,20 @@ public class ActivationServiceTest {
     @InjectMocks
     private ActivationService activationService;
 
-    //isAccountActivated
     @Test
-    void isUserActivated_False_AccountNotFound() {
+    void isUserActivatedShouldBeFalseIfAccountNotFound() {
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(new Account()));
         assertThat(activationService.isUserActivated(anyString())).isFalse();
     }
 
     @Test
-    void isUserActivated_False_NewAccount() {
+    void isUserActivatedShouldBeFalseForANewAccount() {
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(new Account()));
         assertThat(activationService.isUserActivated(anyString())).isFalse();
     }
 
-    //activateMyAccount
     @Test
-    void should_ActivateAccountAndCallSaveOnce_AccountFound() {
+    void activateMyAccountShouldActivateAccountAndCallSaveOnceIfAccountFound() {
         Account account = new Account();
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(account));
         assertThat(account.isActivated()).isFalse();
@@ -46,7 +44,7 @@ public class ActivationServiceTest {
     }
 
     @Test
-    void should_NeverCallSave_AccountNotFound() {
+    void activateMyAccountShouldNeverCallSaveIfAccountNotFound() {
         activationService.activateMyAccount(anyString());
         verify(accountRepository, times(0)).save(any(Account.class));
     }
