@@ -5,7 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailPreparationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ro.go.redhomeserver.tom.emails.EmailData;
 import ro.go.redhomeserver.tom.emails.ResetPasswordEmail;
 import ro.go.redhomeserver.tom.exceptions.*;
 import ro.go.redhomeserver.tom.models.Account;
@@ -126,6 +129,14 @@ public class PasswordServiceTest {
     void should_ThrowUserNotFoundException_NullUsername() {
         Throwable throwable = catchThrowable(() -> passwordService.addResetRequest("", ""));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
+    }
+
+    @Test
+    void should_ThrowSystemException_EmailServiceThrowsMailException() {
+        when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(new Account()));
+        doThrow(new MailPreparationException("Failed")).when(emailService).sendEmail(any(EmailData.class));
+        Throwable throwable = catchThrowable(() -> passwordService.addResetRequest("", ""));
+        assertThat(throwable).isInstanceOf(SystemException.class);
     }
 
     @Test

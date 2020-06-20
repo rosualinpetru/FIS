@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailPreparationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ro.go.redhomeserver.tom.emails.EmailData;
 import ro.go.redhomeserver.tom.exceptions.SystemException;
@@ -55,6 +56,15 @@ public class AccountServiceTest {
     @Test
     void should_ThrowSystemException_EmployeeNotFound() {
         Throwable exception = catchThrowable(() -> accountService.generateAccount("", ""));
+        assertThat(exception).isInstanceOf(SystemException.class);
+    }
+
+    @Test
+    void should_ThrowSystemException_MailExceptionByEmailService() {
+        Employee emp = new Employee("Rosu Alin", null, null, 0, "rosualinpetru@gmail.com", new Date(), null);
+        when(employeeRepository.findById("id")).thenReturn(java.util.Optional.of(emp));
+        doThrow(new MailPreparationException("Failed")).when(emailService).sendEmail(any(EmailData.class));
+        Throwable exception = catchThrowable(() -> accountService.generateAccount("id", ""));
         assertThat(exception).isInstanceOf(SystemException.class);
     }
 
