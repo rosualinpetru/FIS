@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface AccountRepository extends CrudRepository<Account, String> {
     Optional<Account> findByEmployee_Id(String id);
     Optional<Account> findByUsername(String username);
-    List <Account> findAllByTeamLeader(Account teamLeader);
     List <Account> findAllByTeamLeaderIsNullAndEmployee_Department(Department department);
     List <Account> findAllByEmployee_Department_IdAndUsernameNot(String id, String username);
     List <Account> findAllByEmployee_Department_Id(String id);
