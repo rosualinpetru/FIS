@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import ro.go.redhomeserver.tom.services.EmployeeService;
 import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.ITService;
 
@@ -15,13 +14,11 @@ public class ITController {
 
     private final ITService itService;
     private final FormService formService;
-    private final EmployeeService employeeService;
 
     @Autowired
-    public ITController(ITService itService, FormService formService, EmployeeService employeeService) {
+    public ITController(ITService itService, FormService formService) {
         this.itService = itService;
         this.formService = formService;
-        this.employeeService = employeeService;
     }
 
     @GetMapping("/manage-department")
@@ -52,7 +49,7 @@ public class ITController {
 
     @PostMapping("/delete-employee")
     public RedirectView deleteEmployee(@RequestParam("employeeId") String employeeId) {
-        employeeService.removeEmployee(employeeId);
+        itService.removeEmployee(employeeId);
         return new RedirectView("/tom/delete-employee");
     }
 
@@ -65,7 +62,7 @@ public class ITController {
 
     @PostMapping("/change-team-leader")
     public RedirectView changeTeamLeader(@RequestParam("employeeId") String employeeId, @RequestParam("teamLeaderId") String teamLeaderId) {
-        employeeService.updateTeamLeader(employeeId, teamLeaderId);
+        itService.updateTeamLeader(employeeId, teamLeaderId);
         return new RedirectView("/tom/change-team-leader");
     }
 }
