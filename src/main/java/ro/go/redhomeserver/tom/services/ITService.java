@@ -59,7 +59,7 @@ public class ITService {
     public void updateTeamLeader(String employeeId1, String employeeId2) {
         Optional<Employee> employeeOptional1 = employeeRepository.findById(employeeId1);
         if (employeeOptional1.isPresent()) {
-            if (employeeId2.equals("")) {
+            if ("".equals(employeeId2)) {
                 Account account = employeeOptional1.get().getAccount();
                 account.setTeamLeader(null);
                 accountRepository.save(account);
