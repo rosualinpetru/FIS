@@ -22,6 +22,7 @@ import ro.go.redhomeserver.tom.models.UploadedFile;
 import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.HolidayService;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Controller
@@ -54,7 +55,7 @@ public class HolidayController {
         try {
             holidayService.addHolidayRequest(authentication.getName(), params, file);
             ra.addFlashAttribute("upperNotification", "Your request will be processed!");
-        } catch (FileStorageException e) {
+        } catch (IOException e) {
             ra.addFlashAttribute("upperNotification", e.getMessage());
         } catch (NotEnoughDaysException e) {
             mv = new ModelAndView("request-holiday");

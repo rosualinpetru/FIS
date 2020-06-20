@@ -15,6 +15,7 @@ import ro.go.redhomeserver.tom.models.UploadedFile;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class HolidayService {
         this.uploadedFileService = uploadedFileService;
     }
 
-    public void addHolidayRequest(String username, Map<String, String> params, MultipartFile file) throws FileStorageException, NotEnoughDaysException {
+    public void addHolidayRequest(String username, Map<String, String> params, MultipartFile file) throws IOException, NotEnoughDaysException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (accountOptional.isPresent()) {
             Date start_date;
@@ -89,7 +90,7 @@ public class HolidayService {
             if (RequestType.valueOf(params.get("requestTypeId")) == RequestType.Med) {
                 try {
                     uploadedFileService.storeFile(file, newHolidayRequest);
-                } catch (FileStorageException e) {
+                } catch (IOException e) {
                     holidayRequestRepository.delete(newHolidayRequest);
                     throw e;
                 }

@@ -3,7 +3,6 @@ package ro.go.redhomeserver.tom.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ro.go.redhomeserver.tom.exceptions.FileStorageException;
 import ro.go.redhomeserver.tom.models.HolidayRequest;
 import ro.go.redhomeserver.tom.models.UploadedFile;
 import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
@@ -24,15 +23,11 @@ public class UploadedFileService {
         this.holidayRequestRepository = holidayRequestRepository;
     }
 
-    public UploadedFile storeFile(MultipartFile file, HolidayRequest request) throws FileStorageException {
+    public UploadedFile storeFile(MultipartFile file, HolidayRequest request) throws IOException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String fileName = request.getRequester().getUsername() + '-' + timestamp.toString();
-        try {
-            UploadedFile uploadedFile = new UploadedFile(fileName, file.getContentType(), file.getBytes(), request);
-            return uploadedFileRepository.save(uploadedFile);
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
-        }
+        UploadedFile uploadedFile = new UploadedFile(fileName, file.getContentType(), file.getBytes(), request);
+        return uploadedFileRepository.save(uploadedFile);
     }
 
     public UploadedFile getFileByRequestId(String requestId) {
