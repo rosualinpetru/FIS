@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import ro.go.redhomeserver.tom.exceptions.SystemException;
 import ro.go.redhomeserver.tom.services.AccountService;
-
-import javax.transaction.SystemException;
 
 @Controller
 public class AccountController {

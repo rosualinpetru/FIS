@@ -7,6 +7,7 @@ import ro.go.redhomeserver.tom.models.Department;
 import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.DepartmentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +22,11 @@ public class FormService {
         this.accountRepository = accountRepository;
     }
 
-    public List<Account> loadEmployeesOfDepartmentById(String departmentId) {
+    public List<Account> loadAccountsOfDepartmentById(String departmentId) {
         return accountRepository.findAllByEmployee_Department_Id(departmentId);
     }
 
-    public List<Account> loadEmployeesOfDepartmentByIdExceptMe(String departmentId, String username) {
+    public List<Account> loadAccountsOfDepartmentByIdExceptMe(String departmentId, String username) {
         return accountRepository.findAllByEmployee_Department_IdAndUsernameNot(departmentId, username);
     }
 
@@ -37,7 +38,7 @@ public class FormService {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
-            List<Account> myTeam = accountRepository.findAllByTeamLeader(account);
+            List<Account> myTeam = new ArrayList<>(account.getMembers());
             if (myTeam.isEmpty()) return null;
             else {
                 List<Account> colleagues;
@@ -48,7 +49,7 @@ public class FormService {
                         return colleagues;
                     else return myTeam;
                 } else {
-                    colleagues = accountRepository.findAllByTeamLeader(account.getTeamLeader());
+                    colleagues = new ArrayList<>(account.getTeamLeader().getMembers());
                     colleagues.remove(account);
                     colleagues.add(account.getTeamLeader());
                     return colleagues;

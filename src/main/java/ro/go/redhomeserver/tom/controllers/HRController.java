@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
-import ro.go.redhomeserver.tom.services.FeedbackService;
 import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.HRService;
 
@@ -19,13 +18,11 @@ public class HRController {
 
     private final HRService hrService;
     private final FormService formService;
-    private final FeedbackService feedbackService;
 
     @Autowired
-    public HRController(HRService hrService, FormService formService, FeedbackService feedbackService) {
+    public HRController(HRService hrService, FormService formService) {
         this.hrService = hrService;
         this.formService = formService;
-        this.feedbackService = feedbackService;
     }
 
     @GetMapping("/sign-up")
@@ -42,7 +39,7 @@ public class HRController {
         try {
             hrService.checkIfEmailIsAvailable(params);
             mv = new ModelAndView("redirect:/create-account");
-            ra.addFlashAttribute("employeeId", hrService.addEmployee(params));
+            ra.addFlashAttribute("employeeId", hrService.addEmployee(params).getId());
             ra.addFlashAttribute("teamLeaderId", params.get("teamLeaderId"));
         } catch (SignUpException e) {
             mv.addObject("departments", formService.loadDepartments());
@@ -69,7 +66,7 @@ public class HRController {
 
     @PostMapping("feedback")
     public RedirectView feedback(@RequestParam Map<String, String> params, Authentication authentication) {
-        feedbackService.addFeedback(params.get("requestId"), params.get("description"), authentication.getName());
+        hrService.addFeedback(params.get("requestId"), params.get("description"), authentication.getName());
         return new RedirectView("/tom/company-requests-feedback");
     }
 }

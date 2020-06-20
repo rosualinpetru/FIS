@@ -5,12 +5,8 @@ import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.exceptions.MissingDepartmentException;
 import ro.go.redhomeserver.tom.exceptions.SignUpException;
 import ro.go.redhomeserver.tom.exceptions.UsedEmailException;
-import ro.go.redhomeserver.tom.models.Department;
-import ro.go.redhomeserver.tom.models.Employee;
-import ro.go.redhomeserver.tom.models.HolidayRequest;
-import ro.go.redhomeserver.tom.repositories.DepartmentRepository;
-import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
-import ro.go.redhomeserver.tom.repositories.HolidayRequestRepository;
+import ro.go.redhomeserver.tom.models.*;
+import ro.go.redhomeserver.tom.repositories.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,20 +23,19 @@ public class HRService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final HolidayRequestRepository holidayRequestRepository;
+    private final FeedbackRepository feedbackRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public HRService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, HolidayRequestRepository holidayRequestRepository) {
+    public HRService(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository, HolidayRequestRepository holidayRequestRepository, FeedbackRepository feedbackRepository, AccountRepository accountRepository) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.holidayRequestRepository = holidayRequestRepository;
+        this.feedbackRepository = feedbackRepository;
+        this.accountRepository = accountRepository;
     }
 
-    public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
-        if (employeeRepository.findByEmail(params.get("email")).isPresent())
-            throw new UsedEmailException("The email is already used!");
-    }
-
-    public String addEmployee(Map<String, String> params) throws MissingDepartmentException {
+    public Employee addEmployee(Map<String, String> params) throws MissingDepartmentException {
         Date date;
         try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,13 +55,27 @@ public class HRService {
                     date,
                     departmentOptional.get()
             );
-            employeeRepository.save(newEmployee);
-            return newEmployee.getId();
+
+            return employeeRepository.save(newEmployee);
         }
         throw new MissingDepartmentException("Department could not be found!");
     }
 
+    public Feedback addFeedback(String requestId, String description, String username) {
+        Optional<HolidayRequest> holidayRequestOptional = holidayRequestRepository.findById(requestId);
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if(holidayRequestOptional.isPresent() && accountOptional.isPresent())
+            return feedbackRepository.save(new Feedback(holidayRequestOptional.get(), description, accountOptional.get()));
+        else
+            return null;
+    }
+
     public List<HolidayRequest> loadRequestsOfDepartment(String departmentId) {
         return holidayRequestRepository.findAllByRequester_Employee_Department_Id(departmentId);
+    }
+
+    public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
+        if (employeeRepository.findByEmail(params.get("email")).isPresent())
+            throw new UsedEmailException("The email is already used!");
     }
 }

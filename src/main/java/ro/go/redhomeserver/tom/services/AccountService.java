@@ -5,6 +5,7 @@ import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ro.go.redhomeserver.tom.emails.CredentialsEmail;
+import ro.go.redhomeserver.tom.exceptions.SystemException;
 import ro.go.redhomeserver.tom.models.Account;
 import ro.go.redhomeserver.tom.models.Employee;
 import ro.go.redhomeserver.tom.models.IssueRequest;
@@ -12,7 +13,6 @@ import ro.go.redhomeserver.tom.repositories.AccountRepository;
 import ro.go.redhomeserver.tom.repositories.EmployeeRepository;
 import ro.go.redhomeserver.tom.repositories.IssueRequestRepository;
 
-import javax.transaction.SystemException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -34,12 +34,12 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void generateAccount(String employeeId, String teamLeaderId) throws SystemException {
+    public Account generateAccount(String employeeId, String teamLeaderId) throws SystemException {
         Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
         Optional<Account> teamLeaderOptional = accountRepository.findByEmployee_Id(teamLeaderId);
 
         if (!employeeOptional.isPresent())
-            throw new SystemException();
+            throw new SystemException("There was an error in the system!");
 
         String username;
         String password;
@@ -83,13 +83,13 @@ public class AccountService {
 
         try {
             emailService.sendEmail(data);
-            accountRepository.save(acc);
+            return accountRepository.save(acc);
         } catch (MailException e) {
             throw new SystemException("The user with id: " + employeeId + "doesn't have an account due to some system problems!");
         }
     }
 
-    public void informItAboutSystemError(String message) {
-        issueRequestRepository.save(new IssueRequest(message, null));
+    public IssueRequest informItAboutSystemError(String message) {
+        return issueRequestRepository.save(new IssueRequest(message, null));
     }
 }

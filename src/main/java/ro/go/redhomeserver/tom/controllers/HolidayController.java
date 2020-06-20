@@ -17,11 +17,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.go.redhomeserver.tom.exceptions.FileStorageException;
 import ro.go.redhomeserver.tom.exceptions.NotEnoughDaysException;
+import ro.go.redhomeserver.tom.exceptions.SystemException;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
 import ro.go.redhomeserver.tom.models.UploadedFile;
 import ro.go.redhomeserver.tom.services.FormService;
 import ro.go.redhomeserver.tom.services.HolidayService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 @Controller
@@ -54,11 +58,14 @@ public class HolidayController {
         try {
             holidayService.addHolidayRequest(authentication.getName(), params, file);
             ra.addFlashAttribute("upperNotification", "Your request will be processed!");
-        } catch (FileStorageException e) {
+        } catch (IOException | UserNotFoundException e) {
             ra.addFlashAttribute("upperNotification", e.getMessage());
         } catch (NotEnoughDaysException e) {
             mv = new ModelAndView("request-holiday");
             mv.addObject("error", e.getMessage());
+        } catch (ParseException e) {
+            mv = new ModelAndView("request-holiday");
+            mv.addObject("error", "There was an error in the system! Try again later!");
         }
         return mv;
     }
@@ -96,8 +103,13 @@ public class HolidayController {
 
     @PostMapping("/update-holiday-request")
     @ResponseBody
-    public void updateHolidayRequest(@RequestParam("id") String holidayRequestId, @RequestParam("act") String action) {
-        holidayService.updateStatusOfHolidayRequest(holidayRequestId, action);
+    public void updateHolidayRequest(@RequestParam("id") String holidayRequestId, @RequestParam("act") String action, RedirectAttributes ra, HttpServletResponse response) throws IOException {
+        try {
+            holidayService.updateStatusOfHolidayRequest(holidayRequestId, action);
+        } catch (SystemException e) {
+            ra.addFlashAttribute("upperNotification", "Confirmation email was not sent!");
+            response.sendRedirect("/tom/");
+        }
     }
 
     @GetMapping("/download-file")

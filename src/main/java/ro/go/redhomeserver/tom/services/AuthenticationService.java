@@ -29,7 +29,7 @@ public class AuthenticationService {
 
     public boolean amITeamLeader(String username) {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
-        return accountOptional.filter(account -> !accountRepository.findAllByTeamLeader(account).isEmpty()).isPresent();
+        return accountOptional.filter(account -> !account.getMembers().isEmpty()).isPresent();
     }
 
     public Employee getMyEmployeeData(String username) throws UserNotFoundException {

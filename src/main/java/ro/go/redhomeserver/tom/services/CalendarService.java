@@ -26,14 +26,6 @@ public class CalendarService {
         this.holidayRequestRepository = holidayRequestRepository;
     }
 
-    public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendarById(String accountId) throws UserNotFoundException {
-        Optional<Account> accountOptional = accountRepository.findById(accountId);
-        if(accountOptional.isPresent())
-            return loadHolidayRequestsOfTeamLeaderForCalendar(accountOptional.get().getUsername());
-        else
-            return null;
-    }
-
     public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendar(String username) throws UserNotFoundException {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (accountOptional.isPresent()) {
@@ -49,6 +41,14 @@ public class CalendarService {
             return result;
         } else
             throw new UserNotFoundException("User " + username + " was not found!");
+    }
+
+    public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendarById(String accountId) throws UserNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        if (accountOptional.isPresent())
+            return loadHolidayRequestsOfTeamLeaderForCalendar(accountOptional.get().getUsername());
+        else
+            throw new UserNotFoundException("User was not found!");
     }
 
     private List<CalendarEvent> foreachHolidayRequestExtractCalendarEvent(List<HolidayRequest> list, String name) {
@@ -68,7 +68,6 @@ public class CalendarService {
                 case Rel:
                     color = "#C38D9E";
                     break;
-
             }
             if (name.equals(""))
                 name = h.getRequester().getEmployee().getName();
