@@ -39,7 +39,7 @@ public class HRController {
         try {
             hrService.checkIfEmailIsAvailable(params);
             mv = new ModelAndView("redirect:/create-account");
-            ra.addFlashAttribute("employeeId", hrService.addEmployee(params));
+            ra.addFlashAttribute("employeeId", hrService.addEmployee(params).getId());
             ra.addFlashAttribute("teamLeaderId", params.get("teamLeaderId"));
         } catch (SignUpException e) {
             mv.addObject("departments", formService.loadDepartments());

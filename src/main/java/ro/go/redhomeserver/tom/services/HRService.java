@@ -35,12 +35,7 @@ public class HRService {
         this.accountRepository = accountRepository;
     }
 
-    public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
-        if (employeeRepository.findByEmail(params.get("email")).isPresent())
-            throw new UsedEmailException("The email is already used!");
-    }
-
-    public String addEmployee(Map<String, String> params) throws MissingDepartmentException {
+    public Employee addEmployee(Map<String, String> params) throws MissingDepartmentException {
         Date date;
         try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -60,14 +55,10 @@ public class HRService {
                     date,
                     departmentOptional.get()
             );
-            employeeRepository.save(newEmployee);
-            return newEmployee.getId();
+
+            return employeeRepository.save(newEmployee);
         }
         throw new MissingDepartmentException("Department could not be found!");
-    }
-
-    public List<HolidayRequest> loadRequestsOfDepartment(String departmentId) {
-        return holidayRequestRepository.findAllByRequester_Employee_Department_Id(departmentId);
     }
 
     public Feedback addFeedback(String requestId, String description, String username) {
@@ -77,5 +68,14 @@ public class HRService {
             return feedbackRepository.save(new Feedback(holidayRequestOptional.get(), description, accountOptional.get()));
         else
             return null;
+    }
+
+    public List<HolidayRequest> loadRequestsOfDepartment(String departmentId) {
+        return holidayRequestRepository.findAllByRequester_Employee_Department_Id(departmentId);
+    }
+
+    public void checkIfEmailIsAvailable(Map<String, String> params) throws SignUpException {
+        if (employeeRepository.findByEmail(params.get("email")).isPresent())
+            throw new UsedEmailException("The email is already used!");
     }
 }
