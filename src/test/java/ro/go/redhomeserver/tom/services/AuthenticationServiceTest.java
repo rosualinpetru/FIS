@@ -53,7 +53,7 @@ public class AuthenticationServiceTest {
         account.setEmployee(employee);
         when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(account));
         try {
-            assertThat(account.getEmployee()==authenticationService.getMyEmployeeData(anyString()));
+            assertThat(account.getEmployee()==authenticationService.getMyEmployeeData(anyString())).isTrue();
         } catch (Exception e) {
             fail("Exception interfered!");
         }

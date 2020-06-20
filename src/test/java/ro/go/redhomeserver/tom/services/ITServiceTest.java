@@ -179,7 +179,7 @@ public class ITServiceTest {
         when(employeeRepository.findById("id1")).thenReturn(Optional.of(employee1));
         when(employeeRepository.findById("id2")).thenReturn(Optional.of(employee2));
         doAnswer(invocation -> {
-            ((Account) (invocation.getArguments()[0])).setTeamLeader(null);
+            ((Account) (invocation.getArguments()[0])).setTeamLeader(employee2.getAccount());
             return invocation.getArguments()[0];
         }).when(accountRepository).save(any(Account.class));
 
@@ -187,6 +187,6 @@ public class ITServiceTest {
         itService.updateTeamLeader("id1", "id2");
         verify(accountRepository, times(1)).save(any(Account.class));
         assertThat(employee1.getAccount().getTeamLeader() == teamLeader).isFalse();
-        assertThat(employee1.getAccount().getTeamLeader() == employee2.getAccount());
+        assertThat(employee1.getAccount().getTeamLeader() == employee2.getAccount()).isTrue();
     }
 }

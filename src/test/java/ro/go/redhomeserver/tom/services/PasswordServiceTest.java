@@ -77,9 +77,10 @@ public class PasswordServiceTest {
         r3.setAccount(new Account());
         resetPasswordRequests.add(r1);
         resetPasswordRequests.add(r2);
+        resetPasswordRequests.add(r3);
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(account));
         when(accountRepository.save(any(Account.class))).then(invocation -> invocation.getArguments()[0]);
-        doAnswer(invocation -> resetPasswordRequests.removeIf(i -> i.equals(invocation.getArguments()[0]))).when(resetPasswordRequestRepository).deleteAllByAccount(any(Account.class));
+        doAnswer(invocation -> resetPasswordRequests.removeIf(i -> i.getAccount()==invocation.getArguments()[0])).when(resetPasswordRequestRepository).deleteAllByAccount(any(Account.class));
         when(passwordEncoder.encode(anyString())).thenReturn("password");
 
         Account result = null;
@@ -90,9 +91,10 @@ public class PasswordServiceTest {
         }
 
         assertThat(result).isNotNull();
-        assertThat(result.getPassword().equals("password"));
-        assertThat(resetPasswordRequests.size()==1);
-        assertThat(resetPasswordRequests.contains(r2)).isTrue();
+        assertThat(result.getPassword().equals("password")).isTrue();
+        assertThat(resetPasswordRequests.size()==1).isTrue();
+        assertThat(resetPasswordRequests.contains(r3)).isTrue();
+        assertThat(resetPasswordRequests.contains(r2)).isFalse();
     }
 
     //identifyAccountUsingToken
@@ -113,7 +115,7 @@ public class PasswordServiceTest {
         rpr.setExpirationDate(calendar.getTime());
         when(resetPasswordRequestRepository.findByToken(anyString())).thenReturn(java.util.Optional.of(rpr));
         try {
-            assertThat(passwordService.identifyAccountUsingToken("").equals("id"));
+            assertThat(passwordService.identifyAccountUsingToken("").equals("id")).isTrue();
         } catch (Exception e) {
             fail("Exception interfered!");
         }
@@ -139,9 +141,9 @@ public class PasswordServiceTest {
             long nowHour = calendar.getTimeInMillis();
             calendar.setTime(rpr.getExpirationDate());
             long expirationHour = calendar.getTimeInMillis();
-            long diff = TimeUnit.HOURS.convert(expirationHour-nowHour, TimeUnit.MILLISECONDS);
-            assertThat(diff==1);
-            assertThat(rpr.getAccount().equals(account));
+            long diff = TimeUnit.MINUTES.convert(expirationHour-nowHour, TimeUnit.MILLISECONDS);
+            assertThat(diff==59).isTrue();
+            assertThat(rpr.getAccount().equals(account)).isTrue();
         } catch (Exception e) {
             fail("Exception interfered!");
         }
