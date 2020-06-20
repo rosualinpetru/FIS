@@ -26,6 +26,6 @@ public class ClearDataService {
         resetPasswordRequestRepository.deleteAllByExpirationDateIsLessThanEqual(now);
         cal.add(Calendar.YEAR, -1); // to get previous year add -1
         Date yearAgo = cal.getTime();
-        holidayRequestRepository.deleteAllByStartIsLessThan(yearAgo);
+        holidayRequestRepository.deleteAllByEndIsLessThan(yearAgo);
     }
 }

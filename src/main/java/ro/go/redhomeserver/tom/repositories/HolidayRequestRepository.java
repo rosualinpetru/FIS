@@ -16,5 +16,5 @@ public interface HolidayRequestRepository extends CrudRepository<HolidayRequest,
     List<HolidayRequest> findAllByRequesterAndStatus(Account account, RequestStatus status);
     List<HolidayRequest> findAllByRequester_Employee_Department_Id(String id);
     @Transactional
-    void deleteAllByStartIsLessThan(Date date);
+    void deleteAllByEndIsLessThan(Date date);
 }
