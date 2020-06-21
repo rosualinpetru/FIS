@@ -12,10 +12,10 @@ public class CredentialsEmailTest {
     void checkConstructorAndGetters() {
 
         Account account = new Account();
-        CredentialsEmail credentialsEmail= new CredentialsEmail(account,"test","test");
-       assertThat(credentialsEmail.getTo().equals(account)).isTrue();
-       assertThat(credentialsEmail.getSubject().equals("Account data")).isTrue();
-
+        CredentialsEmail credentialsEmail = new CredentialsEmail(account, "test", "test");
+        assertThat(credentialsEmail.getTo().equals(account)).isTrue();
+        assertThat(credentialsEmail.getSubject().equals("Account data")).isTrue();
+        assertThat(credentialsEmail.getContext().getVariable("username").equals("test")).isTrue();
     }
 
 }

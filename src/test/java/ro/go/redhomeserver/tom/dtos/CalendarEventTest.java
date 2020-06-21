@@ -26,10 +26,12 @@ public class CalendarEventTest {
 
          Date date1 = new Date();
          Date date2 = new Date();
-         CalendarEvent calendarEvent= new CalendarEvent("id","test",date1,date2,"test");
+         CalendarEvent calendarEvent= new CalendarEvent("id","test",new Date(),new Date(),"test");
          calendarEvent.setColor("test2");
          calendarEvent.setId("id1");
          calendarEvent.setTitle("title2");
+         calendarEvent.setStart(date1);
+         calendarEvent.setEnd(date2);
          assertThat(calendarEvent.getColor().equals("test2")).isTrue();
          assertThat(calendarEvent.getEnd().equals(date1)).isTrue();
          assertThat(calendarEvent.getStart().equals(date2)).isTrue();

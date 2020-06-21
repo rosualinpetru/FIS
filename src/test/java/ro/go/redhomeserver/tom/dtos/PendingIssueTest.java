@@ -1,6 +1,7 @@
 package ro.go.redhomeserver.tom.dtos;
 
 import org.junit.jupiter.api.Test;
+import ro.go.redhomeserver.tom.models.Department;
 
 import java.util.Date;
 
@@ -33,5 +34,15 @@ public class PendingIssueTest {
         assertThat(pendingIssue.getDepartmentName().equals("test1")).isTrue();
         assertThat(pendingIssue.getDescription().equals("test2")).isTrue();
         assertThat(pendingIssue.getName().equals("test3")).isTrue();
+    }
+    @Test
+    void checkEquals() {
+        PendingIssue pendingIssue1 = new PendingIssue("id", "test", "test","test");
+        PendingIssue pendingIssue2 = new PendingIssue("id", "test", "test","test");
+        PendingIssue pendingIssue3 = new PendingIssue("id1", "test1", "test1","test1");
+        assertThat(pendingIssue1.equals(pendingIssue2)).isTrue();
+        assertThat(pendingIssue1.equals(pendingIssue3)).isFalse();
+        assertThat(pendingIssue1.equals(new Object())).isFalse();
+        assertThat(pendingIssue1.hashCode() == pendingIssue2.hashCode()).isTrue();
     }
 }
