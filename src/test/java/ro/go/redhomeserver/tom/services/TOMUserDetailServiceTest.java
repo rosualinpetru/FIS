@@ -34,7 +34,7 @@ public class TOMUserDetailServiceTest {
     }
 
     @Test
-    void loadUserByUsernameShoundBeResultInstanceOfTOMUserDetailsIfUsernameFound() {
+    void loadUserByUsernameShouldBeResultInstanceOfTOMUserDetailsIfUsernameFound() {
         Account account = new Account();
         Employee employee = new Employee();
         Department department = new Department("IT");

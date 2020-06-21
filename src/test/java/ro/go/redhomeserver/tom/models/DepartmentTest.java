@@ -2,6 +2,7 @@ package ro.go.redhomeserver.tom.models;
 
 
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.*;
 
 public class DepartmentTest {
@@ -30,6 +31,10 @@ public class DepartmentTest {
     void checkEquals() {
         Department department1 = new Department("It");
         Department department2 = new Department("It");
+        Department department3 = new Department("It1");
         assertThat(department1.equals(department2)).isTrue();
+        assertThat(department1.equals(department3)).isFalse();
+        assertThat(department1.equals(new Object())).isFalse();
+        assertThat(department1.hashCode() == department2.hashCode()).isTrue();
     }
 }

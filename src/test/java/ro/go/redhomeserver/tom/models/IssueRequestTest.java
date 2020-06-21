@@ -8,7 +8,7 @@ public class IssueRequestTest {
     @Test
     void checkConstructorAndGetters() {
         Account account = new Account();
-        IssueRequest issueRequest = new IssueRequest("test",account);
+        IssueRequest issueRequest = new IssueRequest("test", account);
         assertThat(issueRequest.getDescription().equals("test")).isTrue();
         assertThat(issueRequest.getAccount().equals(account)).isTrue();
         assertThat(issueRequest.getId()).isNull();
@@ -27,8 +27,12 @@ public class IssueRequestTest {
     @Test
     void checkEquals() {
         Account account = new Account();
-        IssueRequest issueRequest1 = new IssueRequest("test",account);
-        IssueRequest issueRequest2 = new IssueRequest("test",account);
+        IssueRequest issueRequest1 = new IssueRequest("test", account);
+        IssueRequest issueRequest2 = new IssueRequest("test", account);
+        IssueRequest issueRequest3 = new IssueRequest("test1", account);
         assertThat(issueRequest1.equals(issueRequest2)).isTrue();
+        assertThat(issueRequest1.equals(issueRequest3)).isFalse();
+        assertThat(issueRequest1.equals(new Object())).isFalse();
+        assertThat(issueRequest1.hashCode() == issueRequest2.hashCode()).isTrue();
     }
 }

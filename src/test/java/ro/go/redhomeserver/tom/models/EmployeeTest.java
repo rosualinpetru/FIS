@@ -56,4 +56,17 @@ public class EmployeeTest {
         assertThat(employee.getEmp_date().equals(date)).isTrue();
         assertThat(employee.getDepartment().equals(department)).isTrue();
     }
+
+    @Test
+    void checkEquals() {
+        Date date = new Date();
+        Department department = new Department();
+        Employee employee1 = new Employee("It", "address", "1111111111", 2000, "test@it.com", date, department);
+        Employee employee2 = new Employee("It", "address", "1111111111", 2000, "test@it.com", date, department);
+        Employee employee3 = new Employee("It1", "address", "1111111111", 2000, "test@it.com", date, department);
+        assertThat(employee1.equals(employee2)).isTrue();
+        assertThat(employee1.equals(employee3)).isFalse();
+        assertThat(employee1.equals(new Object())).isFalse();
+        assertThat(employee1.hashCode() == employee2.hashCode()).isTrue();
+    }
 }
