@@ -41,10 +41,11 @@ public class AuthenticationController {
         mv.addObject("isTeamLeader", authenticationService.amITeamLeader(authentication.getName()));
         try {
             mv.addObject("employee", authenticationService.getMyEmployeeData(authentication.getName()));
+            return mv;
         } catch (UserNotFoundException e) {
             httpServletResponse.sendRedirect("/tom/log-out");
+            return null;
         }
-        return mv;
     }
 
     @GetMapping("/log-in")
