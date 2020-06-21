@@ -24,10 +24,11 @@ public class AccountController {
         RedirectView rv = new RedirectView("/tom/");
         try {
             accountService.generateAccount(employeeId, teamLeaderId);
+            ra.addFlashAttribute("upperNotification", "The employee record was added and the account was generated!");
         } catch (SystemException e) {
             accountService.informItAboutSystemError(e.getMessage());
+            ra.addFlashAttribute("upperNotification", "There was an error in the system!");
         }
-        ra.addFlashAttribute("upperNotification", "The employee record was added and the account was generated!");
         return rv;
     }
 }
