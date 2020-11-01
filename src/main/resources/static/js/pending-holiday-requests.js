@@ -5,7 +5,7 @@ $(document).ready(function () {
     $(".requests__pending__entry").click(function () {
         let id = $(this).attr("id");
         $("#"+id+"modal").modal({show:true});
-    })
+    });
 
     $(".update").click(
         function () {

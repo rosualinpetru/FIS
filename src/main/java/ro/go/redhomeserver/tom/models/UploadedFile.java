@@ -25,7 +25,7 @@ public class UploadedFile implements Serializable {
     private String fileName;
     private String fileType;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "FK_request")
     private HolidayRequest request;
 

@@ -4,8 +4,8 @@
 <head>
     <title>Delete Employee</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{'/webjars/bootstrap/'+${@environment.getProperty('bootstrap.version')}+'/css/bootstrap.min.css'}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{'/webjars/font-awesome/'+${@environment.getProperty('fontawesome.version')}+'/css/all.css'}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/form-select.css}" rel="stylesheet" type="text/css"/>
@@ -60,8 +60,8 @@
         </div>
     </div>
 </div>
-<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{'/webjars/jquery/'+${@environment.getProperty('jquery.version')}+'/jquery.min.js'}"></script>
+<script th:src="@{'/webjars/bootstrap/'+${@environment.getProperty('bootstrap.version')}+'/js/bootstrap.min.js'}"></script>
 <script th:src="@{/js/delete-employee.js}"></script>
 </body>
 </html>

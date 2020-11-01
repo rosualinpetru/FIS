@@ -33,25 +33,25 @@ public class CalendarService {
             List<CalendarEvent> result;
 
             List<HolidayRequest> list = holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(account, RequestStatus.accTl);
-            result = foreachHolidayRequestExtractCalendarEvent(list, "");
+            result = foreachHolidayRequestExtractCalendarEvent(list);
 
             list = holidayRequestRepository.findAllByRequesterAndStatus(account, RequestStatus.accTl);
 
-            result.addAll(foreachHolidayRequestExtractCalendarEvent(list, "ME"));
+            result.addAll(foreachHolidayRequestExtractCalendarEvent(list));
             return result;
         } else
             throw new UserNotFoundException("User " + username + " was not found!");
     }
 
     public List<CalendarEvent> loadHolidayRequestsOfTeamLeaderForCalendarById(String accountId) throws UserNotFoundException {
-        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        Optional<Account> accountOptional = accountRepository.findByEmployee_Id(accountId);
         if (accountOptional.isPresent())
             return loadHolidayRequestsOfTeamLeaderForCalendar(accountOptional.get().getUsername());
         else
             throw new UserNotFoundException("User was not found!");
     }
 
-    private List<CalendarEvent> foreachHolidayRequestExtractCalendarEvent(List<HolidayRequest> list, String name) {
+    private List<CalendarEvent> foreachHolidayRequestExtractCalendarEvent(List<HolidayRequest> list) {
         List<CalendarEvent> result = new ArrayList<>();
         String color = "black";
         for (HolidayRequest h : list) {
@@ -69,9 +69,7 @@ public class CalendarService {
                     color = "#C38D9E";
                     break;
             }
-            if (name.equals(""))
-                name = h.getRequester().getEmployee().getName();
-            result.add(new CalendarEvent(h.getId(), name, h.getStart(), h.getEnd(), color));
+            result.add(new CalendarEvent(h.getId(), h.getRequester().getEmployee().getName(), h.getStart(), h.getEnd(), color));
         }
         return result;
     }

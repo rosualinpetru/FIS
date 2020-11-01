@@ -42,7 +42,7 @@ public class HolidayRequest implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
-    @OneToOne(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "request", orphanRemoval = true)
     private UploadedFile uploadedFile;
 
     @ManyToOne

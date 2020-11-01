@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import ro.go.redhomeserver.tom.enums.RequestStatus;
 import ro.go.redhomeserver.tom.enums.RequestType;
 
-import javax.validation.constraints.Null;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,8 +12,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HolidayRequestTest {
-    public static Date parseDate(String date) {
+class HolidayRequestTest {
+    static Date parseDate(String date) {
         try {
             return new SimpleDateFormat("yyyy-MM-dd").parse(date);
         } catch (ParseException e) {

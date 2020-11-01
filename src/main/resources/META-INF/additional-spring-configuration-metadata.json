@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "bootstrap.version",
+      "type": "java.lang.String",
+      "description": "Description for bootstrap.version."
+    },
+    {
+      "name": "jquery.version",
+      "type": "java.lang.String",
+      "description": "Description for jquery.version."
+    },
+    {
+      "name": "fontawesome.version",
+      "type": "java.lang.String",
+      "description": "Description for fontawesome.version."
+    },
+    {
+      "name": "javatuples.version",
+      "type": "java.lang.String",
+      "description": "Description for javatuples.version."
+    },
+    {
+      "name": "fullcalendar.version",
+      "type": "java.lang.String",
+      "description": "Description for fullcalendar.version."
+    }
+  ] }

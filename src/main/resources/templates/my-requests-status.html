@@ -3,8 +3,8 @@
 <head>
     <title>Holiday Requests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{/webjars/font-awesome/5.13.0/css/all.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{'/webjars/bootstrap/'+${@environment.getProperty('bootstrap.version')}+'/css/bootstrap.min.css'}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{'/webjars/font-awesome/'+${@environment.getProperty('fontawesome.version')}+'/css/all.css'}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/font.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/scrollbar.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/background.css}" rel="stylesheet" type="text/css"/>
@@ -67,11 +67,11 @@
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light"
-                                th:text="${i.getStart().getDay()}+'. '+${i.getStart().getMonth()}+'. '+${i.getStart().getYear()+1900}"></h5>
+                                th:text="${i.getStart().toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate().toString()}"></h5>
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light"
-                                th:text="${i.getEnd().getDay()}+'. '+${i.getEnd().getMonth()}+'. '+${i.getEnd().getYear()+1900}"></h5>
+                                th:text="${i.getEnd().toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate().toString()}"></h5>
                         </div>
                         <div class="col m-0 text-center">
                             <h5 class="text-light" th:if="${i.getDelegate()!=null}"
@@ -103,7 +103,7 @@
                     <p class="px-3" th:text="${i.getDescription()}"></p>
                 </div>
                 <div>
-                    <p th:text="'Period: ' + ${i.getStart().getDay()} + '.' + ${i.getStart().getMonth()} + '.' + ${i.getStart().getYear()+1900} + ' - ' + ${i.getEnd().getDay()} + '.' + ${i.getEnd().getMonth()} + '.' + ${i.getEnd().getYear()+1900}"></p>
+                    <p th:text="'Period: ' + ${i.getStart().toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate().toString()} + ' - ' + ${i.getEnd().toInstant().atZone(T(java.time.ZoneId).systemDefault()).toLocalDate().toString()}"></p>
                     <p th:if="${i.getDelegate()!=null}"
                        th:text="'Delegate: ' + ${i.getDelegate().getEmployee().getName()}"></p>
                     <p th:if="${i.getDelegate()==null}">Not necessary</p>
@@ -127,8 +127,8 @@
         </div>
     </div>
 </div>
-<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<script th:src="@{'/webjars/jquery/'+${@environment.getProperty('jquery.version')}+'/jquery.min.js'}"></script>
+<script th:src="@{'/webjars/bootstrap/'+${@environment.getProperty('bootstrap.version')}+'/js/bootstrap.min.js'}"></script>
 <script th:src="@{/js/my-requests-status.js}"></script>
 </body>
 </html>

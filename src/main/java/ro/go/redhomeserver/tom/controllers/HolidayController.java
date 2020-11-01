@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ro.go.redhomeserver.tom.exceptions.FileStorageException;
 import ro.go.redhomeserver.tom.exceptions.NotEnoughDaysException;
 import ro.go.redhomeserver.tom.exceptions.SystemException;
 import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
