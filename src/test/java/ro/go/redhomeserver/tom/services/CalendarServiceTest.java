@@ -40,52 +40,8 @@ public class CalendarServiceTest {
     void loadShouldThrowUserNotFoundExceptionIfAccountNotFoundByIdOrUsername() {
         Throwable throwable = catchThrowable(() -> calendarService.loadHolidayRequestsOfTeamLeaderForCalendarById(""));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
-        when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(new Account()));
+        when(accountRepository.findByEmployee_Id(anyString())).thenReturn(java.util.Optional.of(new Account()));
         throwable = catchThrowable(() -> calendarService.loadHolidayRequestsOfTeamLeaderForCalendarById(""));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
-    }
-
-    @Test
-    void forHolidayRequestsTharAreOnlyMineNoCalendarEventNameDiffersFromMeAndTheOthersShouldHaveTheTitleNameOfEmployee() {
-        ArrayList<HolidayRequest> holidayRequests = new ArrayList<>();
-        Account me = new Account();
-        me.setUsername("arosu");
-        HolidayRequest hr;
-        for (int i = 0; i < 10; i++) {
-            hr = new HolidayRequest();
-            hr.setRequester(me);
-            hr.setType(RequestType.values()[i % 4]);
-            if (i % 2 == 0)
-                hr.setStatus(RequestStatus.accTl);
-            else
-                hr.setStatus(RequestStatus.decTL);
-            holidayRequests.add(hr);
-        }
-
-        ArrayList<HolidayRequest> holidayRequests1 = new ArrayList<>();
-        hr = new HolidayRequest();
-        Account account = new Account();
-        Employee employee = new Employee();
-        employee.setName("name");
-        account.setEmployee(employee);
-        hr.setRequester(account);
-        hr.setType(RequestType.Med);
-        holidayRequests1.add(hr);
-
-        when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(me));
-        when(accountRepository.findByUsername(anyString())).thenReturn(java.util.Optional.of(me));
-        when(holidayRequestRepository.findAllByRequesterAndStatus(any(Account.class), any(RequestStatus.class))).thenReturn(holidayRequests);
-        when(holidayRequestRepository.findAllByRequester_TeamLeaderAndStatus(any(Account.class), any(RequestStatus.class))).thenReturn(holidayRequests1);
-
-        try {
-            List<CalendarEvent> result = calendarService.loadHolidayRequestsOfTeamLeaderForCalendarById("");
-            assertThat(result.size() == 11).isTrue();
-            for (CalendarEvent e : result.subList(1, result.size())) {
-                assertThat(e.getTitle().equals("ME")).isTrue();
-            }
-            assertThat(result.get(0).getTitle().equals("name")).isTrue();
-        } catch (Exception e) {
-            fail("Exception interfered!");
-        }
     }
 }
