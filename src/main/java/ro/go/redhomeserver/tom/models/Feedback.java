@@ -1,18 +1,19 @@
 package ro.go.redhomeserver.tom.models;
 
-import lombok.EqualsAndHashCode;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity(name = "Feedback")
 @Table(name = "feedback")
 public class Feedback implements Serializable {
@@ -37,5 +38,20 @@ public class Feedback implements Serializable {
         this.reporter = reporter;
         this.description = description;
         this.request = request;
+    }
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Feedback feedback = (Feedback) o;
+        return id != null && Objects.equals(id, feedback.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

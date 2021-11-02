@@ -2,17 +2,17 @@ package ro.go.redhomeserver.tom.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity(name = "Employee")
 @Table(name = "employee")
 public class Employee implements Serializable {
@@ -47,5 +47,20 @@ public class Employee implements Serializable {
         this.email = email;
         this.emp_date = emp_date;
         this.department = department;
+    }
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Employee employee = (Employee) o;
+        return id != null && Objects.equals(id, employee.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

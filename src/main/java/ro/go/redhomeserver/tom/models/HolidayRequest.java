@@ -1,25 +1,19 @@
 package ro.go.redhomeserver.tom.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import ro.go.redhomeserver.tom.enums.RequestStatus;
 import ro.go.redhomeserver.tom.enums.RequestType;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity(name = "HolidayRequest")
 @Table(name = "holiday_request")
 public class HolidayRequest implements Serializable {
@@ -86,5 +80,20 @@ public class HolidayRequest implements Serializable {
             } while (startCal.getTimeInMillis() < endCal.getTimeInMillis());
         }
         return workDays;
+    }
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        HolidayRequest that = (HolidayRequest) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
