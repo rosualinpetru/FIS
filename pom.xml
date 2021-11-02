@@ -6,8 +6,6 @@
     <properties>
         <java.version>11</java.version>
         <springboot.version>2.3.4.RELEASE</springboot.version>
-        <!-- https://github.com/ulisesbocchio/jasypt-spring-boot/ -->
-        <jasypt.version>2.1.2</jasypt.version>
 
         <!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
         <bootstrap.version>4.5.3</bootstrap.version>
@@ -23,6 +21,9 @@
 
         <!-- https://mvnrepository.com/artifact/org.webjars/fullcalendar -->
         <fullcalendar.version>4.4.2</fullcalendar.version>
+
+        <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+        <jacoco.version>0.8.7</jacoco.version>
     </properties>
 
     <parent>
@@ -37,7 +38,6 @@
     <packaging>war</packaging>
     <name>ToM</name>
     <description>Time off Manager</description>
-
 
 
     <dependencies>
@@ -86,11 +86,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.github.ulisesbocchio</groupId>
-            <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>${jasypt.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
@@ -113,7 +108,11 @@
             <artifactId>font-awesome</artifactId>
             <version>${fontawesome.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
