@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HolidayRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.models</a> &gt; <span class="el_source">HolidayRequest.java</span></div><h1>HolidayRequest.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
+import ro.go.redhomeserver.tom.enums.RequestStatus;
+import ro.go.redhomeserver.tom.enums.RequestType;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity(name = &quot;HolidayRequest&quot;)
+@Table(name = &quot;holiday_request&quot;)
+public class HolidayRequest implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
+    @Id
+    @GeneratedValue(generator = &quot;uuid&quot;)
+    @GenericGenerator(name = &quot;uuid&quot;, strategy = &quot;uuid2&quot;)
+    private String id;
+
+    @Enumerated(EnumType.ORDINAL)
+    private RequestType type;
+
+    @Enumerated(EnumType.ORDINAL)
+    private RequestStatus status;
+
+    private String description;
+    private Date start;
+    private Date end;
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToOne(mappedBy = &quot;request&quot;, orphanRemoval = true)
+    private UploadedFile uploadedFile;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;FK_requester&quot;)
+    private Account requester;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;FK_delegate&quot;)
+    private Account delegate;
+
+<span class="fc" id="L50">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;request&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;Feedback&gt; requestFeedback = new HashSet&lt;&gt;();
+
+<span class="fc" id="L55">    public HolidayRequest(RequestType type, RequestStatus status, String description, Date start, Date end, Account requester, Account delegate) {</span>
+<span class="fc" id="L56">        this.type = type;</span>
+<span class="fc" id="L57">        this.status = status;</span>
+<span class="fc" id="L58">        this.description = description;</span>
+<span class="fc" id="L59">        this.start = start;</span>
+<span class="fc" id="L60">        this.end = end;</span>
+<span class="fc" id="L61">        this.requester = requester;</span>
+<span class="fc" id="L62">        this.delegate = delegate;</span>
+<span class="fc" id="L63">    }</span>
+
+    public int getWorkingDays() {
+<span class="fc" id="L66">        Calendar startCal = Calendar.getInstance();</span>
+<span class="fc" id="L67">        startCal.setTime(start);</span>
+
+<span class="fc" id="L69">        Calendar endCal = Calendar.getInstance();</span>
+<span class="fc" id="L70">        endCal.setTime(end);</span>
+
+<span class="fc" id="L72">        int workDays = 0;</span>
+
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (startCal.getTimeInMillis() != endCal.getTimeInMillis()) {</span>
+            do {
+<span class="fc bfc" id="L76" title="All 4 branches covered.">                if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY &amp;&amp; startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {</span>
+<span class="fc" id="L77">                    ++workDays;</span>
+                }
+<span class="fc" id="L79">                startCal.add(Calendar.DAY_OF_MONTH, 1);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            } while (startCal.getTimeInMillis() &lt; endCal.getTimeInMillis());</span>
+        }
+<span class="fc" id="L82">        return workDays;</span>
+    }
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        HolidayRequest that = (HolidayRequest) o;
+        return id != null &amp;&amp; Objects.equals(id, that.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

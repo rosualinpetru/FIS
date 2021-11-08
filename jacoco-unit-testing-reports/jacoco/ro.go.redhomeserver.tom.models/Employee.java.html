@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Employee.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.models</a> &gt; <span class="el_source">Employee.java</span></div><h1>Employee.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity(name = &quot;Employee&quot;)
+@Table(name = &quot;employee&quot;)
+public class Employee implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
+    @Id
+    @GeneratedValue(generator = &quot;uuid&quot;)
+    @GenericGenerator(name = &quot;uuid&quot;, strategy = &quot;uuid2&quot;)
+    private String id;
+
+    private String name;
+    private String address;
+    private String tel;
+    private int salary;
+    private String email;
+    private Date emp_date;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;FK_department&quot;)
+    private Department department;
+
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToOne(mappedBy = &quot;employee&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Account account;
+
+<span class="fc" id="L42">    public Employee(String name, String address, String tel, int salary, String email, Date emp_date, Department department) {</span>
+<span class="fc" id="L43">        this.name = name;</span>
+<span class="fc" id="L44">        this.address = address;</span>
+<span class="fc" id="L45">        this.tel = tel;</span>
+<span class="fc" id="L46">        this.salary = salary;</span>
+<span class="fc" id="L47">        this.email = email;</span>
+<span class="fc" id="L48">        this.emp_date = emp_date;</span>
+<span class="fc" id="L49">        this.department = department;</span>
+<span class="fc" id="L50">    }</span>
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Employee employee = (Employee) o;
+        return id != null &amp;&amp; Objects.equals(id, employee.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

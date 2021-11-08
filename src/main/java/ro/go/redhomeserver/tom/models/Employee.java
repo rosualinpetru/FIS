@@ -55,7 +55,7 @@ public class Employee implements Serializable {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Employee employee = (Employee) o;
-        return id != null && Objects.equals(id, employee.id);
+        return Objects.equals(id, employee.id);
     }
 
     @Override

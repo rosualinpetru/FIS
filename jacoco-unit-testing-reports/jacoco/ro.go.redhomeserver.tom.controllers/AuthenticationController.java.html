@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.controllers</a> &gt; <span class="el_source">AuthenticationController.java</span></div><h1>AuthenticationController.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
+import ro.go.redhomeserver.tom.services.AuthenticationService;
+import ro.go.redhomeserver.tom.services.ClearDataService;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+
+
+@Controller
+public class AuthenticationController {
+
+    private final ClearDataService clearDataService;
+    private final AuthenticationService authenticationService;
+
+    @Autowired
+<span class="fc" id="L28">    public AuthenticationController(ClearDataService clearDataService, AuthenticationService authenticationService) {</span>
+<span class="fc" id="L29">        this.clearDataService = clearDataService;</span>
+<span class="fc" id="L30">        this.authenticationService = authenticationService;</span>
+<span class="fc" id="L31">    }</span>
+
+    private boolean isUserAuthenticated(Authentication authentication) {
+<span class="pc bpc" id="L34" title="2 of 6 branches missed.">        return authentication != null &amp;&amp; authentication.isAuthenticated() &amp;&amp; !(authentication instanceof AnonymousAuthenticationToken);</span>
+    }
+
+    @GetMapping(&quot;/&quot;)
+    public ModelAndView index(Model model, Authentication authentication, HttpServletResponse httpServletResponse) throws IOException {
+<span class="fc" id="L39">        clearDataService.clearData();</span>
+<span class="fc" id="L40">        ModelAndView mv = new ModelAndView(&quot;index&quot;);</span>
+<span class="fc" id="L41">        mv.addObject(&quot;upperNotification&quot;, model.getAttribute(&quot;upperNotification&quot;));</span>
+<span class="fc" id="L42">        mv.addObject(&quot;isTeamLeader&quot;, authenticationService.amITeamLeader(authentication.getName()));</span>
+        try {
+<span class="fc" id="L44">            mv.addObject(&quot;employee&quot;, authenticationService.getMyEmployeeData(authentication.getName()));</span>
+<span class="fc" id="L45">            return mv;</span>
+<span class="fc" id="L46">        } catch (UserNotFoundException e) {</span>
+<span class="fc" id="L47">            httpServletResponse.sendRedirect(&quot;/tom/log-out&quot;);</span>
+<span class="fc" id="L48">            return null;</span>
+        }
+    }
+
+    @GetMapping(&quot;/log-in&quot;)
+    public ModelAndView logIn(Model model, Authentication authentication) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (isUserAuthenticated(authentication))</span>
+<span class="fc" id="L55">            return new ModelAndView(&quot;redirect:/&quot;);</span>
+<span class="fc" id="L56">        ModelAndView mv = new ModelAndView(&quot;log-in&quot;);</span>
+<span class="fc" id="L57">        mv.addObject(&quot;upperNotification&quot;, model.getAttribute(&quot;upperNotification&quot;));</span>
+<span class="fc" id="L58">        return mv;</span>
+    }
+
+    @GetMapping(&quot;/get-salt&quot;)
+    @ResponseBody
+    public String saltUser(@RequestParam(&quot;username&quot;) String username) {
+<span class="fc" id="L64">        return authenticationService.getSaltOfUser(username);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

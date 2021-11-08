@@ -60,9 +60,9 @@ public class AccountService {
 
         hashedPassword = passwordEncoder.encode(password);
 
-        int index = (employeeOptional.get().getName()).indexOf(" ");
+        int index = employeeOptional.get().getName().indexOf(" ");
         String name = employeeOptional.get().getName();
-        username = (name.substring(index + 1, index + 2) + name.substring(0, index)).toLowerCase();
+        username = (name.charAt(index + 1) + name.substring(0, index)).toLowerCase();
         if (accountRepository.findByUsername(username).isPresent()) {
             int i = 1;
             String aux = username;

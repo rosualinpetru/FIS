@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CalendarController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.controllers</a> &gt; <span class="el_source">CalendarController.java</span></div><h1>CalendarController.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import ro.go.redhomeserver.tom.dtos.CalendarEvent;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
+import ro.go.redhomeserver.tom.services.CalendarService;
+
+import java.util.List;
+
+@Controller
+public class CalendarController {
+
+    private final CalendarService calendarService;
+
+    @Autowired
+<span class="fc" id="L21">    public CalendarController(CalendarService calendarService) {</span>
+<span class="fc" id="L22">        this.calendarService = calendarService;</span>
+<span class="fc" id="L23">    }</span>
+
+    @GetMapping(&quot;/team-schedule&quot;)
+    @ResponseBody
+    public List&lt;CalendarEvent&gt; teamSchedule(Authentication authentication) {
+        try {
+<span class="nc" id="L29">            return calendarService.loadHolidayRequestsOfTeamLeaderForCalendar(authentication.getName());</span>
+<span class="nc" id="L30">        } catch (UserNotFoundException e) {</span>
+<span class="nc" id="L31">            return null;</span>
+        }
+    }
+
+    @GetMapping(&quot;/company-calendar&quot;)
+    @ResponseBody
+    public List&lt;CalendarEvent&gt; companyCalendar(@RequestParam(&quot;id&quot;) String accountId) {
+        try {
+<span class="nc" id="L39">            return calendarService.loadHolidayRequestsOfTeamLeaderForCalendarById(accountId);</span>
+<span class="nc" id="L40">        } catch (UserNotFoundException e) {</span>
+<span class="nc" id="L41">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

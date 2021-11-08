@@ -46,7 +46,7 @@ public class Feedback implements Serializable {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Feedback feedback = (Feedback) o;
-        return id != null && Objects.equals(id, feedback.id);
+        return Objects.equals(id, feedback.id);
     }
 
     @Override

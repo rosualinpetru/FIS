@@ -45,7 +45,7 @@ public class IssueRequestService {
 
         withoutNull.sort(Comparator.nullsFirst(compareByIssueReq));
 
-        List<PendingIssue> result = onlyNull.stream().map((s -> new PendingIssue(s.getId(), "IT", "IT-SERVICE", s.getDescription()))).collect(Collectors.toList());
+        List<PendingIssue> result = onlyNull.stream().map(s -> new PendingIssue(s.getId(), "IT", "IT-SERVICE", s.getDescription())).collect(Collectors.toList());
         result.addAll(withoutNull.stream().map(s -> new PendingIssue(s.getId(), s.getAccount().getEmployee().getDepartment().getName(), s.getAccount().getEmployee().getName(), s.getDescription())).collect(Collectors.toList()));
         return result;
     }

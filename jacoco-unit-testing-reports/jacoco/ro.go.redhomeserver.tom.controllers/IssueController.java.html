@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IssueController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.controllers</a> &gt; <span class="el_source">IssueController.java</span></div><h1>IssueController.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
+import ro.go.redhomeserver.tom.exceptions.UserNotFoundException;
+import ro.go.redhomeserver.tom.services.IssueRequestService;
+
+import java.util.Map;
+
+@Controller
+public class IssueController {
+
+    private final IssueRequestService issueRequestService;
+
+    @Autowired
+<span class="fc" id="L24">    public IssueController(IssueRequestService issueRequestService) {</span>
+<span class="fc" id="L25">        this.issueRequestService = issueRequestService;</span>
+<span class="fc" id="L26">    }</span>
+
+    @GetMapping(&quot;/report-issue&quot;)
+    public ModelAndView reportIssue() {
+<span class="nc" id="L30">        return new ModelAndView(&quot;report-issue&quot;);</span>
+    }
+
+    @PostMapping(&quot;/report-issue&quot;)
+    public RedirectView reportIssue(@RequestParam Map&lt;String, String&gt; params, Authentication authentication, RedirectAttributes ra) {
+<span class="nc" id="L35">        RedirectView rv = new RedirectView(&quot;/tom/&quot;);</span>
+        try {
+<span class="nc" id="L37">            issueRequestService.addIssueRequest(authentication.getName(), params);</span>
+<span class="nc" id="L38">            ra.addFlashAttribute(&quot;upperNotification&quot;, &quot;Issue reported!&quot;);</span>
+<span class="nc" id="L39">        } catch (UserNotFoundException e) {</span>
+<span class="nc" id="L40">            ra.addFlashAttribute(&quot;upperNotification&quot;, &quot;There was an error in the system! The request was not sent!&quot;);</span>
+<span class="nc" id="L41">        }</span>
+<span class="nc" id="L42">        return rv;</span>
+    }
+
+    @GetMapping(&quot;/pending-issues&quot;)
+    public ModelAndView pendingIssues() {
+<span class="nc" id="L47">        ModelAndView mv = new ModelAndView(&quot;pending-issues&quot;);</span>
+<span class="nc" id="L48">        mv.addObject(&quot;pendingIssues&quot;, issueRequestService.loadAllPendingIssueRequests());</span>
+<span class="nc" id="L49">        return mv;</span>
+    }
+
+    @PostMapping(&quot;/delete-issue&quot;)
+    @ResponseBody
+    public void deleteIssue(@RequestParam(&quot;issueId&quot;) String issueId) {
+<span class="nc" id="L55">        issueRequestService.deleteIssueRequestById(issueId);</span>
+<span class="nc" id="L56">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

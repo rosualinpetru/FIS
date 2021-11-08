@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Account.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ToM</a> &gt; <a href="index.source.html" class="el_package">ro.go.redhomeserver.tom.models</a> &gt; <span class="el_source">Account.java</span></div><h1>Account.java</h1><pre class="source lang-java linenums">package ro.go.redhomeserver.tom.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity(name = &quot;Account&quot;)
+@Table(name = &quot;account&quot;)
+public class Account implements Serializable {
+    private static final long serialVersionUID = 6529685098267757690L;
+
+    @Id
+    @GeneratedValue(generator = &quot;uuid&quot;)
+    @GenericGenerator(name = &quot;uuid&quot;, strategy = &quot;uuid2&quot;)
+    private String id;
+
+    private String username;
+    private String password;
+    private String salt;
+    private boolean activated;
+    private int remainingDays;
+
+<span class="fc" id="L33">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;account&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;IssueRequest&gt; issueRequests = new HashSet&lt;&gt;();
+
+<span class="fc" id="L38">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;reporter&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;Feedback&gt; givenFeedback = new HashSet&lt;&gt;();
+
+<span class="fc" id="L43">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;requester&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;HolidayRequest&gt; sentHolidayRequests = new HashSet&lt;&gt;();
+
+<span class="fc" id="L48">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;delegate&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;HolidayRequest&gt; delegatedHolidayRequests = new HashSet&lt;&gt;();
+
+<span class="fc" id="L53">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;account&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set&lt;ResetPasswordRequest&gt; resetPasswordRequests = new HashSet&lt;&gt;();
+
+<span class="fc" id="L58">    @EqualsAndHashCode.Exclude</span>
+    @JsonIgnore
+    @OneToMany(mappedBy = &quot;teamLeader&quot;, cascade = CascadeType.ALL)
+    private Set&lt;Account&gt; members = new HashSet&lt;&gt;();
+
+    @ManyToOne
+    @JoinColumn(name = &quot;FK_team_leader&quot;)
+    private Account teamLeader;
+
+    @OneToOne
+    @JoinColumn(name = &quot;FK_employee&quot;)
+    private Employee employee;
+
+<span class="fc" id="L71">    public Account(String username, String password, String salt, Employee employee, Account teamLeader, int remainingDays) {</span>
+<span class="fc" id="L72">        this.username = username;</span>
+<span class="fc" id="L73">        this.password = password;</span>
+<span class="fc" id="L74">        this.salt = salt;</span>
+<span class="fc" id="L75">        this.employee = employee;</span>
+<span class="fc" id="L76">        this.teamLeader = teamLeader;</span>
+<span class="fc" id="L77">        this.activated = false;</span>
+<span class="fc" id="L78">        this.remainingDays = remainingDays;</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    @Generated
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Account account = (Account) o;
+        return id != null &amp;&amp; Objects.equals(id, account.id);
+    }
+
+    @Override
+    @Generated
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
