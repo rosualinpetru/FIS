@@ -2,7 +2,6 @@ package upt.ac.cti.vvs.amp;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.*;
-import com.github.dockerjava.core.DockerClientBuilder;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -13,16 +12,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import upt.ac.cti.vvs.amp.docker.DockerClientBuilder;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
 
 public class HelloController {
     @FXML
@@ -47,8 +43,6 @@ public class HelloController {
     private final String SERVER_CONTAINER_NAME = "/tom";
 
     private final DockerClient dockerClient = DockerClientBuilder.getInstance().build();
-
-    private ServerState serverState = ServerState.DOWN;
 
     private boolean existsContainer(String containerName) {
         return dockerClient.listContainersCmd().withShowAll(true).exec().stream().anyMatch(it -> Arrays.asList(it.getNames()).contains(containerName));
@@ -89,8 +83,7 @@ public class HelloController {
     }
 
     private void changeServerState(ServerState s) {
-        serverState = s;
-        switch (serverState) {
+        switch (s) {
             case UP:
                 uiServerUp();
                 break;
