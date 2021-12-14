@@ -43,7 +43,6 @@
     <groupId>ro.go.redhomeserver</groupId>
     <artifactId>tom</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
     <name>ToM</name>
     <description>Time off Manager</description>
 

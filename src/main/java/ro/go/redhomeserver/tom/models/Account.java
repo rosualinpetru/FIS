@@ -20,6 +20,7 @@ public class Account implements Serializable {
     private static final long serialVersionUID = 6529685098267757690L;
 
     @Id
+    @Setter
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;

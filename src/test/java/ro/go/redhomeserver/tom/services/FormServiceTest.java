@@ -64,17 +64,19 @@ public class FormServiceTest {
     @Test
     void loadPossibleDelegatesShouldReturnColleaguesIfUserIsTeamLeaderAndUserHasATeamLeader() {
         Account me = new Account();
+        me.setId(UUID.randomUUID().toString());
         Account account;
         Account teamLeader = new Account();
+        teamLeader.setId(UUID.randomUUID().toString());
         Set<Account> myMembers = new HashSet<>();
         Set<Account> members = new HashSet<>();
         for (int i = 0; i < 2; i++) {
             account = new Account();
-            account.setId("" + i);
+            account.setId(UUID.randomUUID().toString());
             account.setTeamLeader(teamLeader);
             members.add(account);
             account = new Account();
-            account.setId("" + (2 + i));
+            account.setId(UUID.randomUUID().toString());
             account.setTeamLeader(me);
             myMembers.add(account);
         }
@@ -96,6 +98,7 @@ public class FormServiceTest {
     @Test
     void loadPossibleDelegatesShouldReturnColleaguesWithNullTeamLeaderOfSameDepartmentIfPresentIfUserIsTeamLeaderAndUserHasNotATeamLeader() {
         Account me = new Account();
+        me.setId(UUID.randomUUID().toString());
         Employee employee = new Employee();
         employee.setDepartment(new Department());
         me.setEmployee(employee);
@@ -104,9 +107,11 @@ public class FormServiceTest {
         accountsWithNullTlOfSameDep.add(me);
         Set<Account> myMembers = new HashSet<>();
         for (int i = 0; i < 2; i++) {
-            accountsWithNullTlOfSameDep.add(new Account());
             account = new Account();
-            account.setId("" + i);
+            account.setId(UUID.randomUUID().toString());
+            accountsWithNullTlOfSameDep.add(account);
+            account = new Account();
+            account.setId(UUID.randomUUID().toString());
             account.setTeamLeader(me);
             myMembers.add(account);
         }
@@ -116,7 +121,7 @@ public class FormServiceTest {
         when(accountRepository.findAllByTeamLeaderIsNullAndEmployee_Department(any(Department.class))).thenReturn(accountsWithNullTlOfSameDep);
         try {
             List<Account> result = formService.loadPossibleDelegates(anyString());
-            assertThat(result.size() == 2).isTrue();
+            assertThat(result.size()).isEqualTo(2);
             assertThat(result.contains(me)).isFalse();
         } catch (Exception e) {
             fail("Exception interfered!");

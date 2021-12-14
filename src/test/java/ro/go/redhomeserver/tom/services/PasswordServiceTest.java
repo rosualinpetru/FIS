@@ -68,6 +68,7 @@ public class PasswordServiceTest {
     @Test
     void updateAccountPasswordByIdUserShouldHaveHisPasswordChangedAndAllResetRequestsShouldBeDeleted() {
         Account account = new Account();
+        account.setId(UUID.randomUUID().toString());
         ArrayList<ResetPasswordRequest> resetPasswordRequests = new ArrayList<>();
         ResetPasswordRequest r1 = new ResetPasswordRequest();
         ResetPasswordRequest r2 = new ResetPasswordRequest();
@@ -78,9 +79,10 @@ public class PasswordServiceTest {
         resetPasswordRequests.add(r1);
         resetPasswordRequests.add(r2);
         resetPasswordRequests.add(r3);
+        resetPasswordRequests.forEach(it -> it.setId(UUID.randomUUID().toString()));
         when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.of(account));
         when(accountRepository.save(any(Account.class))).then(invocation -> invocation.getArguments()[0]);
-        doAnswer(invocation -> resetPasswordRequests.removeIf(i -> i.getAccount()==invocation.getArguments()[0])).when(resetPasswordRequestRepository).deleteAllByAccount(any(Account.class));
+        doAnswer(invocation -> resetPasswordRequests.removeIf(i -> i.getAccount() == invocation.getArguments()[0])).when(resetPasswordRequestRepository).deleteAllByAccount(any(Account.class));
         when(passwordEncoder.encode(anyString())).thenReturn("password");
 
         Account result = null;

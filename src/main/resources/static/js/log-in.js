@@ -11,8 +11,10 @@ $(document).ready(function () {
         let passHolderField = $("#log-in__auth-form__password--holder");
         if (userField.val() !== "" && passHolderField.val() !== "") {
             $.get("/tom/get-salt", {username: userField.val()}, function (data) {
+                console.log(data)
                 if (data === "") {
                     window.location = "/tom/log-in?error";
+                    return;
                 }
                 $("#log-in__auth-form__password").val(passHolderField.val() + data);
                 $("#log-in__auth-form").submit();

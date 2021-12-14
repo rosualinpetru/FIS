@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/images/**", "/webjars/**", "/js/**", "/css/**").permitAll()
-                .antMatchers("/log-in", "/get-salt", "/reset-password", "/validate-password-reset-request", "/set-new-password").permitAll()
+                .antMatchers("/log-in", "/get-salt", "/reset-password", "/validate-password-reset-request", "/set-new-password", "/healthcheck").permitAll()
                 .antMatchers("/create-account", "/sign-up", "/pending-holiday-requests-hr", "/company-schedule").access("hasAuthority('ACTIVATED') and (hasAuthority('HR') or hasAuthority('ADMIN'))")
                 .antMatchers("/pending-issues", "/change-team-leader", "/delete-issue").access("hasAuthority('ACTIVATED') and (hasAuthority('IT') or hasAuthority('ADMIN'))")
                 .antMatchers("/manage-department", "/add-department", "/delete-department", "/delete-employee").access("hasAuthority('ACTIVATED') and (hasAuthority('IT') and hasAuthority('ADMIN'))")

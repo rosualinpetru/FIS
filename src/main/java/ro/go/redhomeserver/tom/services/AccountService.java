@@ -38,7 +38,7 @@ public class AccountService {
         Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
         Optional<Account> teamLeaderOptional = accountRepository.findByEmployee_Id(teamLeaderId);
 
-        if (!employeeOptional.isPresent())
+        if (employeeOptional.isEmpty())
             throw new SystemException("There was an error in the system!");
 
         String username;
