@@ -1,6 +1,0 @@
-CPU: The application does not have a lot of computation. It consists mostly of queries to the persistence level and simple business logic. Most CPU is managed directly by the Spring Boot framework.
-
-Memory: Regarding memory, there would have been a single problem related to file upload, yet the maximum size was set to a limit. The reports present the memory stats while file uploading. We can observe a small increase in the heap memory. The data is not streamed.
-
-Threads: Threads are fully managed by the framework. Some dead times for threads waiting for CPU time can be distinguished in the report.
-

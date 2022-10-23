@@ -1,1 +1,0 @@
-The code is clean enough; it has only some minor issues. See the report. These problems are fixed at the time of reading!
